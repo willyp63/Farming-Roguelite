@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2724184371
+    locked: 0
+  - name: Tiles
+    uniqueID: 979966797
+    locked: 0
+  - name: Placeables
+    uniqueID: 220236319
+    locked: 0
+  - name: Tile UI
+    uniqueID: 4035697263
+    locked: 0
+  - name: Floating Text
+    uniqueID: 3532356215
+    locked: 0
