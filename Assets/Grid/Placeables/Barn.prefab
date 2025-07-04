@@ -132,8 +132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Barn
-  isMovable: 0
-  validTileTypes: 
+  isPermanent: 1
 --- !u!210 &3797264127352364242
 SortingGroup:
   m_ObjectHideFlags: 0

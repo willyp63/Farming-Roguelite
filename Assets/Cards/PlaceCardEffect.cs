@@ -18,6 +18,6 @@ public class PlaceCardEffect : CardEffect
 
     public override void ApplyEffect(Vector2Int position, GridTile tile, Card card)
     {
-        GridManager.Instance.PlaceObject(position, placeablePrefab);
+        GridManager.Instance.PlaceObject(position, placeablePrefab, card.BaseScore);
     }
 }

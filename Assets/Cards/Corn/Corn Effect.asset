@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b2a27d8a58cd224d8d087dbe3db2209, type: 3}
   m_Name: Corn Effect
   m_EditorClassIdentifier: 
-  placeablePrefab: {fileID: 7652860380861964302, guid: 208e8c1d681630241ba14d658a049b06, type: 3}
-  validTileTypes: 01000000
+  placeablePrefab: {fileID: 3017428051473517123, guid: 208e8c1d681630241ba14d658a049b06, type: 3}

@@ -1183,6 +1183,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08265183efa935647a35d80d85ece046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numberOfStartingCards: 8
+  maxCardsPerTurn: 5
+  startingScore: 0
+  scoreGoal: 100
+  numberOfTurns: 3
+  OnScoreChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnCardsPlayedChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRoundStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTurnStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTurnCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnGameOver:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &125623750
 GameObject:
   m_ObjectHideFlags: 0
@@ -2020,7 +2043,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.0625, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 64
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1918548107}
   m_RootOrder: -1
@@ -4334,7 +4357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Tree
-  isMovable: 0
+  isPermanent: 0
 --- !u!1 &593096629
 GameObject:
   m_ObjectHideFlags: 0
@@ -4789,7 +4812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Rock
-  isMovable: 0
+  isPermanent: 0
 --- !u!1 &716751846
 GameObject:
   m_ObjectHideFlags: 0
@@ -7346,7 +7369,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Tree
-  isMovable: 0
+  isPermanent: 0
 --- !u!1 &1195633739
 GameObject:
   m_ObjectHideFlags: 0
@@ -10081,19 +10104,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHandSize: 8
-  startingHand:
+  startingDeck:
+  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
+  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
+  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
+  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
+  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
+  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
+  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
+  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
   - {fileID: 11400000, guid: ef1020342fa160e458455902a9b1e426, type: 2}
   - {fileID: 11400000, guid: ef1020342fa160e458455902a9b1e426, type: 2}
-  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
-  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
-  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
-  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
-  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
+  - {fileID: 11400000, guid: ef1020342fa160e458455902a9b1e426, type: 2}
   - {fileID: 11400000, guid: c6e0f0154a9698f4ab7159a35e0a9dd0, type: 2}
-  OnCardAdded:
+  OnCardAddedToHand:
     m_PersistentCalls:
       m_Calls: []
-  OnCardRemoved:
+  OnCardRemovedFromHand:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &1705170807

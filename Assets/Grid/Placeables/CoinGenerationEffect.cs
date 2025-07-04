@@ -7,24 +7,22 @@ public class CoinGenerationEffect : PlaceableEffect
     [SerializeField]
     private int amount;
 
-    public override void OnPlace(Placeable placeable) { }
+    protected override void ApplyEffect(GridTile tile, List<GridTile> affectedTiles)
+    {
+        foreach (GridTile affectedTile in affectedTiles)
+        {
+            GenerateCoins(amount, affectedTile);
+        }
+    }
 
-    public override void OnRemove(Placeable placeable) { }
-
-    public override void OnEndOfTurn(Placeable placeable)
+    private void GenerateCoins(int amount, GridTile tile)
     {
         CoinManager.Instance.GainCoins(amount);
 
         FloatingTextManager.Instance.SpawnText(
             $"+{amount} coins",
-            placeable.GridTile.transform.position,
+            tile.transform.position,
             Color.yellow
         );
     }
-
-    public override void OnStartOfTurn(Placeable placeable) { }
-
-    public override void OnEndOfRound(Placeable placeable) { }
-
-    public override void OnStartOfRound(Placeable placeable) { }
 }

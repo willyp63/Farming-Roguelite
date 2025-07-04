@@ -11,26 +11,45 @@ public class Placeable : MonoBehaviour
     public string PlaceableName => placeableName;
 
     [SerializeField]
-    private bool isMovable = false;
-    public bool IsMovable => isMovable;
+    private bool isPermanent = false;
+    public bool IsPermanent => isPermanent;
+
+    private int score;
+    public int Score => score;
 
     private GridTile gridtile;
     public GridTile GridTile => gridtile;
 
     private List<PlaceableEffect> effects = new List<PlaceableEffect>();
 
-    public void Initialize(GridTile tile)
+    public void Initialize(GridTile tile, int score)
     {
         gridtile = tile;
+        this.score = score;
 
         effects = GetComponents<PlaceableEffect>().ToList();
+    }
+
+    public void SetScore(int newScore)
+    {
+        score = newScore;
+    }
+
+    public void AddScore(int addition)
+    {
+        score += addition;
+    }
+
+    public void MultiplyScore(int multiplier)
+    {
+        score *= multiplier;
     }
 
     public void OnPlaced()
     {
         foreach (PlaceableEffect effect in effects)
         {
-            effect.OnPlace(this);
+            effect.OnPlace(GridTile);
         }
     }
 
@@ -38,7 +57,7 @@ public class Placeable : MonoBehaviour
     {
         foreach (PlaceableEffect effect in effects)
         {
-            effect.OnRemove(this);
+            effect.OnRemove(GridTile);
         }
     }
 
@@ -46,15 +65,7 @@ public class Placeable : MonoBehaviour
     {
         foreach (PlaceableEffect effect in effects)
         {
-            effect.OnEndOfTurn(this);
-        }
-    }
-
-    public void OnStartOfTurn()
-    {
-        foreach (PlaceableEffect effect in effects)
-        {
-            effect.OnStartOfTurn(this);
+            effect.OnEndOfTurn(GridTile);
         }
     }
 
@@ -62,15 +73,7 @@ public class Placeable : MonoBehaviour
     {
         foreach (PlaceableEffect effect in effects)
         {
-            effect.OnEndOfRound(this);
-        }
-    }
-
-    public void OnStartOfRound()
-    {
-        foreach (PlaceableEffect effect in effects)
-        {
-            effect.OnStartOfRound(this);
+            effect.OnEndOfRound(GridTile);
         }
     }
 }

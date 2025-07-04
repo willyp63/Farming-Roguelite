@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b2a27d8a58cd224d8d087dbe3db2209, type: 3}
   m_Name: Cow Effect
   m_EditorClassIdentifier: 
-  placeablePrefab: {fileID: 7661268991192277848, guid: bb81bd6ac466d6f40a58294c80dacacc, type: 3}
-  validTileTypes: 00000000010000000200000003000000
+  placeablePrefab: {fileID: 3821817819579965074, guid: bb81bd6ac466d6f40a58294c80dacacc, type: 3}

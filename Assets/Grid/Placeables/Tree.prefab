@@ -49,8 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b91d816673ad515428de3de1bad83f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placeableName: Tree
-  isMovable: 0
+  placeableName: Trees
+  isPermanent: 1
 --- !u!210 &8763523131220027710
 SortingGroup:
   m_ObjectHideFlags: 0

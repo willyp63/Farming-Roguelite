@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5368643174551003073}
-  - component: {fileID: 5821730972562029170}
+  - component: {fileID: 2121496598191819596}
   - component: {fileID: 3555250421083542281}
   - component: {fileID: 4781789984781640467}
   m_Layer: 0
@@ -35,7 +35,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5821730972562029170
+--- !u!114 &2121496598191819596
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,11 +44,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 226535891704081314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2ed4ae17f7eed340bb11573a4622954, type: 3}
+  m_Script: {fileID: 11500000, guid: b91d816673ad515428de3de1bad83f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Well
-  isMovable: 0
+  isPermanent: 1
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0

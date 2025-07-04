@@ -96,7 +96,12 @@ public class GridUIManager : Singleton<GridUIManager>
 
             // Play the card
             card.CardEffect.ApplyEffect(tile.Position, tile, card);
-            // TODO: remove the card from the player's hand
+
+            // Update the score of the tile
+            tileUIElements[tile.Position].SetScore(tile.PlacedObject.Score);
+
+            // Remove the card from the player's hand
+            CardManager.Instance.DiscardCard(card);
 
             OnCardPlayedOnTile?.Invoke(tile.Position, card);
         }

@@ -5,32 +5,23 @@ using UnityEngine;
 public class TileChangeEffect : PlaceableEffect
 {
     [SerializeField]
-    private List<Tile> fromTiles;
+    private List<TileType> fromTileTypes;
 
     [SerializeField]
     private Tile toTile;
 
-    public override void OnPlace(Placeable placeable) { }
-
-    public override void OnRemove(Placeable placeable) { }
-
-    public override void OnEndOfTurn(Placeable placeable)
+    protected override void ApplyEffect(GridTile tile, List<GridTile> affectedTiles)
     {
-        if (!fromTiles.Contains(placeable.GridTile.Tile))
-            return;
+        foreach (GridTile affectedTile in affectedTiles)
+        {
+            if (!fromTileTypes.Contains(affectedTile.Tile.TileType))
+                continue;
 
-        FloatingTextManager.Instance.SpawnText(
-            $"{placeable.GridTile.Tile.TileName} -> {toTile.TileName}",
-            placeable.GridTile.transform.position,
-            Color.white
-        );
-
-        placeable.GridTile.SetTile(toTile);
+            FloatingTextManager.Instance.SpawnText(
+                $"{affectedTile.Tile.TileName} -> {toTile.TileName}",
+                affectedTile.transform.position,
+                Color.white
+            );
+        }
     }
-
-    public override void OnStartOfTurn(Placeable placeable) { }
-
-    public override void OnEndOfRound(Placeable placeable) { }
-
-    public override void OnStartOfRound(Placeable placeable) { }
 }

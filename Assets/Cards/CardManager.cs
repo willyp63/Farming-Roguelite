@@ -31,10 +31,11 @@ public class CardManager : Singleton<CardManager>
     public bool IsHandFull => hand.Count >= maxHandSize;
     public bool IsHandEmpty => hand.Count == 0;
 
-    private void Start()
-    {
-        Reset();
-    }
+    public int CardsInDeck => deck.Count;
+    public bool IsDeckEmpty => deck.Count == 0;
+
+    public int CardsInDiscard => discard.Count;
+    public bool IsDiscardEmpty => discard.Count == 0;
 
     public void Reset()
     {
@@ -46,7 +47,98 @@ public class CardManager : Singleton<CardManager>
         {
             deck.Add(card);
         }
+
+        ShuffleDeck();
     }
 
-    // TODO: add methods for drawing cards, discarding cards, shuffling, etc...
+    public void ShuffleDeck()
+    {
+        for (int i = deck.Count - 1; i > 0; i--)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, i + 1);
+            Card temp = deck[i];
+            deck[i] = deck[randomIndex];
+            deck[randomIndex] = temp;
+        }
+    }
+
+    public Card DrawCard()
+    {
+        if (deck.Count == 0 || IsHandFull)
+        {
+            return null;
+        }
+
+        Card drawnCard = deck[0];
+        deck.RemoveAt(0);
+        hand.Add(drawnCard);
+
+        OnCardAddedToHand?.Invoke(drawnCard);
+        return drawnCard;
+    }
+
+    public List<Card> DrawCards(int count)
+    {
+        List<Card> drawnCards = new List<Card>();
+
+        for (int i = 0; i < count; i++)
+        {
+            Card card = DrawCard();
+            if (card != null)
+            {
+                drawnCards.Add(card);
+            }
+            else
+            {
+                break; // Stop if we can't draw more cards
+            }
+        }
+
+        return drawnCards;
+    }
+
+    public bool DiscardCard(Card card)
+    {
+        if (hand.Contains(card))
+        {
+            hand.Remove(card);
+            discard.Add(card);
+            OnCardRemovedFromHand?.Invoke(card);
+            return true;
+        }
+        return false;
+    }
+
+    public Card DiscardCardAt(int index)
+    {
+        if (index >= 0 && index < hand.Count)
+        {
+            Card card = hand[index];
+            hand.RemoveAt(index);
+            discard.Add(card);
+            OnCardRemovedFromHand?.Invoke(card);
+            return card;
+        }
+        return null;
+    }
+
+    public int DiscardCards(List<Card> cards)
+    {
+        int discardedCount = 0;
+        foreach (Card card in cards)
+        {
+            if (DiscardCard(card))
+            {
+                discardedCount++;
+            }
+        }
+        return discardedCount;
+    }
+
+    public void ShuffleDiscardIntoDeck()
+    {
+        deck.AddRange(discard);
+        discard.Clear();
+        ShuffleDeck();
+    }
 }

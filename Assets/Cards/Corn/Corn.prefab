@@ -681,7 +681,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9163254733278381642}
-  - component: {fileID: 7652860380861964302}
+  - component: {fileID: 3017428051473517123}
   - component: {fileID: 8141606273527163774}
   - component: {fileID: 7038447385482280336}
   - component: {fileID: 5217927720704310149}
@@ -716,7 +716,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7652860380861964302
+--- !u!114 &3017428051473517123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -725,16 +725,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 7660112058467355491}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 348ed85b4f496c749a10227e619b203c, type: 3}
+  m_Script: {fileID: 11500000, guid: b91d816673ad515428de3de1bad83f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Corn
-  isMovable: 0
-  maxHealth: 0
-  damage: 0
-  attackSpeed: 0
-  attackRange: 0
-  moveSpeed: 0
+  isPermanent: 0
 --- !u!114 &8141606273527163774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -747,7 +742,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f5700d801603345afd4f6c0ee58155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amount: 5
+  effectTiming: 2
+  effectedTilesType: 0
+  allowedTileTypes: 
+  amount: 2
 --- !u!210 &7038447385482280336
 SortingGroup:
   m_ObjectHideFlags: 0

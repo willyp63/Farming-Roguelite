@@ -9,8 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5368643174551003073}
-  - component: {fileID: 7661268991192277848}
+  - component: {fileID: 3821817819579965074}
   - component: {fileID: -1537029466497595087}
+  - component: {fileID: -8442559103271085971}
   - component: {fileID: 3555250421083542281}
   - component: {fileID: 4781789984781640467}
   m_Layer: 0
@@ -36,7 +37,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7661268991192277848
+--- !u!114 &3821817819579965074
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,11 +46,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 226535891704081314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4108bd5015879104084a729a74ff3bc8, type: 3}
+  m_Script: {fileID: 11500000, guid: b91d816673ad515428de3de1bad83f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Cow
-  isMovable: 1
+  isPermanent: 0
 --- !u!114 &-1537029466497595087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,9 +63,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0138685b156d9af4b804da194ed1ea09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fromTiles:
-  - {fileID: 11400000, guid: 2478c8c630ab06044a3e5448b38c889d, type: 2}
+  effectTiming: 2
+  effectedTilesType: 0
+  allowedTileTypes: 00000000
+  fromTileTypes: 00000000
   toTile: {fileID: 11400000, guid: 36796a3139bb993428dff2c0e4aca941, type: 2}
+--- !u!114 &-8442559103271085971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226535891704081314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectTiming: 2
+  effectedTilesType: 1
+  allowedTileTypes: 00000000
+  scoreAddition: 0
+  scoreMultiplier: 2
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0

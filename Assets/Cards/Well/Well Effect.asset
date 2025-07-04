@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b2a27d8a58cd224d8d087dbe3db2209, type: 3}
   m_Name: Well Effect
   m_EditorClassIdentifier: 
-  placeablePrefab: {fileID: 5821730972562029170, guid: a5884f43bd235c34dabc6e9112ed2f7c, type: 3}
-  validTileTypes: 0000000001000000
+  placeablePrefab: {fileID: 2121496598191819596, guid: a5884f43bd235c34dabc6e9112ed2f7c, type: 3}

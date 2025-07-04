@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -15,6 +16,9 @@ public class GridTileUI
     [Header("Visual Components")]
     [SerializeField]
     private Image highlightRenderer;
+
+    [SerializeField]
+    private TextMeshProUGUI scoreText;
 
     [Header("Visual Settings")]
     [SerializeField]
@@ -39,6 +43,7 @@ public class GridTileUI
         position = pos;
         tile = gridTile;
         SetHighlight(Color.white, false);
+        SetScore(gridTile.PlacedObject?.Score ?? 0);
     }
 
     public void SetHighlight(Color color, bool highlight)
@@ -48,6 +53,21 @@ public class GridTileUI
             Color highlightColor = color;
             highlightColor.a = highlight ? highlightAlpha : 0f;
             highlightRenderer.color = highlightColor;
+        }
+    }
+
+    public void SetScore(int score)
+    {
+        if (scoreText != null)
+        {
+            if (score == 0)
+            {
+                scoreText.text = "";
+            }
+            else
+            {
+                scoreText.text = score.ToString();
+            }
         }
     }
 

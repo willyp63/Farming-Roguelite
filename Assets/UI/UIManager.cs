@@ -84,6 +84,7 @@ public class UIManager : Singleton<UIManager>
 
     private void OnCardAdded(Card card)
     {
+        Debug.Log($"Card added to hand: {card.name}");
         CreateCardUI(card);
     }
 
@@ -205,6 +206,6 @@ public class UIManager : Singleton<UIManager>
 
     private void OnEndTurnButtonClicked()
     {
-        GridManager.Instance.OnEndOfTurn();
+        GameManager.Instance.CompleteTurn();
     }
 }

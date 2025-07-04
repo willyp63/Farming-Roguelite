@@ -111,27 +111,10 @@ public class GridManager : Singleton<GridManager>
     public GridTile[,] Grid => grid;
     public bool IsGridGenerated => isGridGenerated;
 
-    private void Start()
-    {
-        GenerateGrid();
-    }
-
     [ContextMenu("Generate Grid")]
     public void GenerateGridFromInspector()
     {
         GenerateGrid();
-    }
-
-    [ContextMenu("Flip Grid X")]
-    public void FlipGridXFromInspector()
-    {
-        FlipGridX();
-    }
-
-    [ContextMenu("Flip Grid Y")]
-    public void FlipGridYFromInspector()
-    {
-        FlipGridY();
     }
 
     public void GenerateGrid()
@@ -172,15 +155,6 @@ public class GridManager : Singleton<GridManager>
         }
     }
 
-    public void OnStartOfTurn()
-    {
-        foreach (GridTile tile in grid)
-        {
-            if (tile.PlacedObject != null)
-                tile.PlacedObject.OnStartOfTurn();
-        }
-    }
-
     public Dictionary<Vector2Int, GridTile> GetGrid()
     {
         Dictionary<Vector2Int, GridTile> result = new Dictionary<Vector2Int, GridTile>();
@@ -211,7 +185,7 @@ public class GridManager : Singleton<GridManager>
         }
     }
 
-    public void PlaceObject(Vector2Int position, Placeable placeablePrefab)
+    public void PlaceObject(Vector2Int position, Placeable placeablePrefab, int score = 0)
     {
         if (!IsValidPosition(position.x, position.y))
         {
@@ -231,7 +205,7 @@ public class GridManager : Singleton<GridManager>
             return;
         }
 
-        placeable.Initialize(tile);
+        placeable.Initialize(tile, score);
         placeable.transform.localPosition = Vector3.zero;
         placeable.OnPlaced();
 
@@ -250,50 +224,6 @@ public class GridManager : Singleton<GridManager>
                 tile.ClearPlacedObject();
             }
         }
-    }
-
-    public void MovePlaceable(Vector2Int fromPosition, Vector2Int toPosition)
-    {
-        if (
-            !IsValidPosition(fromPosition.x, fromPosition.y)
-            || !IsValidPosition(toPosition.x, toPosition.y)
-        )
-        {
-            Debug.LogError($"Invalid positions for move: from {fromPosition} to {toPosition}");
-            return;
-        }
-
-        GridTile fromTile = grid[fromPosition.x, fromPosition.y];
-        GridTile toTile = grid[toPosition.x, toPosition.y];
-
-        if (fromTile == null || fromTile.PlacedObject == null)
-        {
-            Debug.LogError($"No placeable found at position {fromPosition}");
-            return;
-        }
-
-        if (toTile == null || toTile.PlacedObject != null)
-        {
-            Debug.LogError($"Target tile at {toPosition} is invalid or occupied");
-            return;
-        }
-
-        // Get the placeable
-        Placeable placeable = fromTile.PlacedObject;
-
-        // Remove from old tile
-        fromTile.ClearPlacedObject();
-
-        // Place on new tile
-        placeable.transform.SetParent(toTile.transform);
-        placeable.transform.localPosition = Vector3.zero;
-        placeable.Initialize(toTile);
-        toTile.SetPlacedObject(placeable);
-
-        // Notify the placeable that it has been moved
-        placeable.OnPlaced();
-
-        Debug.Log($"Moved placeable from {fromPosition} to {toPosition}");
     }
 
     private void ClearExistingGrid()
@@ -494,6 +424,110 @@ public class GridManager : Singleton<GridManager>
         }
 
         return adjacent;
+    }
+
+    public List<GridTile> GetAdjacentTiles(Vector2Int position)
+    {
+        List<GridTile> adjacentTiles = new List<GridTile>();
+        List<Vector2Int> adjacentPositions = GetAdjacentPositions(position.x, position.y, false);
+
+        foreach (Vector2Int pos in adjacentPositions)
+        {
+            if (IsValidPosition(pos.x, pos.y))
+            {
+                adjacentTiles.Add(grid[pos.x, pos.y]);
+            }
+        }
+
+        return adjacentTiles;
+    }
+
+    public List<GridTile> GetDiagonalTiles(Vector2Int position)
+    {
+        List<GridTile> diagonalTiles = new List<GridTile>();
+
+        // Diagonal positions
+        Vector2Int[] diagonalPositions =
+        {
+            new Vector2Int(position.x + 1, position.y + 1),
+            new Vector2Int(position.x + 1, position.y - 1),
+            new Vector2Int(position.x - 1, position.y + 1),
+            new Vector2Int(position.x - 1, position.y - 1),
+        };
+
+        foreach (Vector2Int pos in diagonalPositions)
+        {
+            if (IsValidPosition(pos.x, pos.y))
+            {
+                diagonalTiles.Add(grid[pos.x, pos.y]);
+            }
+        }
+
+        return diagonalTiles;
+    }
+
+    public List<GridTile> GetSurroundingTiles(Vector2Int position)
+    {
+        List<GridTile> surroundingTiles = new List<GridTile>();
+        List<Vector2Int> surroundingPositions = GetAdjacentPositions(position.x, position.y, true);
+
+        foreach (Vector2Int pos in surroundingPositions)
+        {
+            if (IsValidPosition(pos.x, pos.y))
+            {
+                surroundingTiles.Add(grid[pos.x, pos.y]);
+            }
+        }
+
+        return surroundingTiles;
+    }
+
+    public List<GridTile> GetRowTiles(Vector2Int position)
+    {
+        List<GridTile> rowTiles = new List<GridTile>();
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            if (grid[x, position.y] != null)
+            {
+                rowTiles.Add(grid[x, position.y]);
+            }
+        }
+
+        return rowTiles;
+    }
+
+    public List<GridTile> GetColumnTiles(Vector2Int position)
+    {
+        List<GridTile> columnTiles = new List<GridTile>();
+
+        for (int y = 0; y < gridHeight; y++)
+        {
+            if (grid[position.x, y] != null)
+            {
+                columnTiles.Add(grid[position.x, y]);
+            }
+        }
+
+        return columnTiles;
+    }
+
+    public List<GridTile> GetAllTiles()
+    {
+        List<GridTile> allTiles = new List<GridTile>();
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                if (grid[x, y] != null)
+                {
+                    allTiles.Add(grid[x, y]);
+                }
+            }
+        }
+
+        return allTiles;
     }
 
     private List<Vector2Int> GetValidPositionsForPlaceable(PlaceableGenerationStep step)
