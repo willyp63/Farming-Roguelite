@@ -51,7 +51,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Tree
   isMovable: 0
-  validTileTypes: 
 --- !u!210 &8763523131220027710
 SortingGroup:
   m_ObjectHideFlags: 0

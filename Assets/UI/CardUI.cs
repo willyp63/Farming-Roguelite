@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField]
-    private TextMeshProUGUI costText;
+    private TextMeshProUGUI baseScoreText;
 
     [SerializeField]
     private Image cardImage;
@@ -20,11 +20,13 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     [SerializeField]
     private float dragScale = 0.33f;
 
+    [SerializeField]
+    private List<AllowedTileTypeUI> allowedTileTypes;
+
     private Card card;
     private Vector3 originalPosition;
     private bool isDragging = false;
-    private List<Image> raycastTargetImages;
-    private List<bool> originalRaycastTargetStates;
+    private CanvasGroup canvasGroup;
 
     // Events
     public UnityEvent<CardUI> OnCardDragStarted;
@@ -32,27 +34,22 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     private void Awake()
     {
-        // Cache all Image components that have raycast targets
-        raycastTargetImages = new List<Image>();
-        originalRaycastTargetStates = new List<bool>();
-
-        Image[] images = GetComponentsInChildren<Image>();
-        foreach (Image image in images)
-        {
-            if (image.raycastTarget)
-            {
-                raycastTargetImages.Add(image);
-                originalRaycastTargetStates.Add(true);
-            }
-        }
+        canvasGroup = GetComponent<CanvasGroup>();
     }
 
     public void SetCard(Card card)
     {
         this.card = card;
-        costText.text = card.Cost.ToString();
+        baseScoreText.text = card.BaseScore.ToString();
         cardImage.sprite = card.Image;
         cardText.text = card.Text;
+
+        foreach (AllowedTileTypeUI allowedTileType in allowedTileTypes)
+        {
+            allowedTileType.gameObject.SetActive(
+                card.AllowedTileTypes.Contains(allowedTileType.TileType)
+            );
+        }
     }
 
     public Card GetCard()
@@ -65,11 +62,8 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         isDragging = true;
         originalPosition = transform.position;
 
-        // Disable raycast targets on all Image components to allow pointer events to pass through
-        for (int i = 0; i < raycastTargetImages.Count; i++)
-        {
-            raycastTargetImages[i].raycastTarget = false;
-        }
+        // Disable raycast blocking to allow pointer events to pass through
+        canvasGroup.blocksRaycasts = false;
 
         OnCardDragStarted?.Invoke(this);
     }
@@ -89,11 +83,8 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         transform.position = originalPosition;
         transform.localScale = Vector3.one;
 
-        // Re-enable raycast targets on all Image components
-        for (int i = 0; i < raycastTargetImages.Count; i++)
-        {
-            raycastTargetImages[i].raycastTarget = originalRaycastTargetStates[i];
-        }
+        // Re-enable raycast blocking
+        canvasGroup.blocksRaycasts = true;
 
         OnCardDragEnded?.Invoke(this);
     }

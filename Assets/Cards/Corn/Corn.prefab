@@ -730,7 +730,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Corn
   isMovable: 0
-  validTileTypes: 01000000
   maxHealth: 0
   damage: 0
   attackSpeed: 0

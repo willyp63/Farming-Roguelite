@@ -11,14 +11,12 @@ public class PlaceCardEffect : CardEffect
     [SerializeField]
     private Placeable placeablePrefab;
 
-    public override bool IsValidPlacement(Vector2Int position, GridTile tile)
+    public override bool IsValidPlacement(Vector2Int position, GridTile tile, Card card)
     {
-        return tile != null
-            && tile.PlacedObject == null
-            && placeablePrefab.ValidTileTypes.Contains(tile.Tile.TileType);
+        return base.IsValidPlacement(position, tile, card) && tile.PlacedObject == null;
     }
 
-    public override void ApplyEffect(Vector2Int position, GridTile tile)
+    public override void ApplyEffect(Vector2Int position, GridTile tile, Card card)
     {
         GridManager.Instance.PlaceObject(position, placeablePrefab);
     }

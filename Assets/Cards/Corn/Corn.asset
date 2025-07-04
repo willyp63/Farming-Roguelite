@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Corn
   image: {fileID: 2070375617, guid: eecdd891a3175254aaa7d77f1f38f7e4, type: 3}
-  text: Some corn
-  cost: 2
+  text: <b>Place:</b> Gain <color=#C800FF><b>+3</b></color> for each adjacent crop
+  baseScore: 3
+  allowedTileTypes: 01000000
   effect: {fileID: 11400000, guid: 9a49d698132dc6c43ab0914cc9fd8de6, type: 2}

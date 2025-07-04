@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class CardEffect : ScriptableObject
 {
-    public virtual bool IsValidPlacement(Vector2Int position, GridTile tile)
+    public virtual bool IsValidPlacement(Vector2Int position, GridTile tile, Card card)
     {
-        // Default implementation - can be overridden by derived classes
-        return tile != null;
+        return tile != null && card.AllowedTileTypes.Contains(tile.Tile.TileType);
     }
 
-    public virtual void ApplyEffect(Vector2Int position, GridTile tile)
-    {
-        // Default implementation - can be overridden by derived classes
-        Debug.Log($"Applying card effect at position {position}");
-    }
+    public virtual void ApplyEffect(Vector2Int position, GridTile tile, Card card) { }
 }

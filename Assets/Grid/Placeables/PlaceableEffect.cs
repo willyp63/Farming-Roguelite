@@ -11,4 +11,8 @@ public abstract class PlaceableEffect : MonoBehaviour
     public abstract void OnEndOfTurn(Placeable placeable);
 
     public abstract void OnStartOfTurn(Placeable placeable);
+
+    public abstract void OnEndOfRound(Placeable placeable);
+
+    public abstract void OnStartOfRound(Placeable placeable);
 }

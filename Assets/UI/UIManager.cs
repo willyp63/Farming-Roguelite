@@ -36,8 +36,8 @@ public class UIManager : Singleton<UIManager>
         CoinManager.Instance.OnCoinsChanged.AddListener(UpdateCoinDisplay);
 
         // Subscribe to hand manager events
-        HandManager.Instance.OnCardAdded.AddListener(OnCardAdded);
-        HandManager.Instance.OnCardRemoved.AddListener(OnCardRemoved);
+        CardManager.Instance.OnCardAddedToHand.AddListener(OnCardAdded);
+        CardManager.Instance.OnCardRemovedFromHand.AddListener(OnCardRemoved);
 
         // Initialize coin display
         UpdateCoinDisplay(CoinManager.Instance.CurrentCoins);
@@ -67,10 +67,10 @@ public class UIManager : Singleton<UIManager>
             CoinManager.Instance.OnCoinsChanged.RemoveListener(UpdateCoinDisplay);
         }
 
-        if (HandManager.Instance != null)
+        if (CardManager.Instance != null)
         {
-            HandManager.Instance.OnCardAdded.RemoveListener(OnCardAdded);
-            HandManager.Instance.OnCardRemoved.RemoveListener(OnCardRemoved);
+            CardManager.Instance.OnCardAddedToHand.RemoveListener(OnCardAdded);
+            CardManager.Instance.OnCardRemovedFromHand.RemoveListener(OnCardRemoved);
         }
     }
 
@@ -98,7 +98,7 @@ public class UIManager : Singleton<UIManager>
         ClearCardUIElements();
 
         // Create UI elements for all cards in hand
-        foreach (Card card in HandManager.Instance.Cards)
+        foreach (Card card in CardManager.Instance.Hand)
         {
             CreateCardUI(card);
         }

@@ -26,19 +26,14 @@ public class GridUIManager : Singleton<GridUIManager>
     private Dictionary<Vector2Int, GridTileUI> tileUIElements;
     private GridTileUI currentHoveredTile;
     private CardUI currentDraggedCard;
-    private GridTileUI currentDraggedTile;
 
     // Placement state
     private bool isInPlacementMode;
-    private bool isInPlaceableMoveMode;
     private HashSet<Vector2Int> validPlacementTiles;
-    private HashSet<Vector2Int> validMoveTiles;
 
     // Events
-    public UnityEvent<Vector2Int> OnTileClicked;
     public UnityEvent<Vector2Int> OnTileHovered;
     public UnityEvent<Vector2Int, Card> OnCardPlayedOnTile;
-    public UnityEvent<Vector2Int, Placeable> OnPlaceableMoved;
 
     private void Start()
     {
@@ -47,13 +42,9 @@ public class GridUIManager : Singleton<GridUIManager>
         UIManager.Instance.OnCardDragEnded.AddListener(HandleCardDragEnded);
 
         if (GridManager.Instance.IsGridGenerated)
-        {
             InitializeGridUI();
-        }
         else
-        {
             GridManager.Instance.OnGridGenerated.AddListener(InitializeGridUI);
-        }
     }
 
     private void InitializeGridUI()
@@ -78,125 +69,9 @@ public class GridUIManager : Singleton<GridUIManager>
 
             tileUIComponent.OnTileHovered.AddListener(HandleTileHovered);
             tileUIComponent.OnTileExited.AddListener(HandleTileExited);
-            tileUIComponent.OnPlaceableDragStarted.AddListener(HandlePlaceableDragStarted);
-            tileUIComponent.OnPlaceableDragEnded.AddListener(HandlePlaceableDragEnded);
 
             tileUIElements[position] = tileUIComponent;
         }
-    }
-
-    public void OnPlaceableDragStarted(Vector2Int position, Placeable placeable)
-    {
-        currentDraggedTile = tileUIElements[position];
-        EnterPlaceableMoveMode(placeable);
-    }
-
-    public void OnPlaceableDragEnded(Vector2Int position, Placeable placeable)
-    {
-        Debug.Log($"Placeable drag ended for {placeable.PlaceableName} at {position}");
-        Debug.Log($"Current hovered tile: {currentHoveredTile}");
-
-        if (currentHoveredTile == null)
-        {
-            Debug.Log("No hovered tile, canceling move");
-            ExitPlaceableMoveMode();
-            currentDraggedTile = null;
-            return;
-        }
-
-        GridTile targetTile = currentHoveredTile.Tile;
-        Debug.Log($"Target tile position: {targetTile.Position}");
-
-        if (IsValidMove(targetTile.Position, placeable))
-        {
-            Debug.Log(
-                $"Moving {placeable.PlaceableName} from {placeable.GridTile.Position} to {targetTile.Position}"
-            );
-
-            // Move the placeable
-            Vector2Int oldPosition = placeable.GridTile.Position;
-            Vector2Int newPosition = targetTile.Position;
-
-            GridManager.Instance.MovePlaceable(oldPosition, newPosition);
-
-            OnPlaceableMoved?.Invoke(newPosition, placeable);
-        }
-        else
-        {
-            Debug.Log(
-                $"Invalid move: {placeable.PlaceableName} cannot be moved to {targetTile.Position}"
-            );
-        }
-
-        ExitPlaceableMoveMode();
-        currentDraggedTile = null;
-    }
-
-    private void EnterPlaceableMoveMode(Placeable placeable)
-    {
-        isInPlaceableMoveMode = true;
-        validMoveTiles = GetValidMoveTiles(placeable);
-
-        // Update visual state of all tiles
-        foreach (var kvp in tileUIElements)
-        {
-            Vector2Int position = kvp.Key;
-            GridTileUI tileUI = kvp.Value;
-
-            if (validMoveTiles.Contains(position))
-            {
-                tileUI.SetHighlight(validPlacementColor, true);
-            }
-            else
-            {
-                tileUI.SetHighlight(invalidPlacementColor, true);
-            }
-        }
-    }
-
-    private void ExitPlaceableMoveMode()
-    {
-        isInPlaceableMoveMode = false;
-        validMoveTiles?.Clear();
-
-        // Clear all tile highlights
-        foreach (var tileUI in tileUIElements.Values)
-        {
-            tileUI.SetHighlight(Color.white, false);
-        }
-    }
-
-    private HashSet<Vector2Int> GetValidMoveTiles(Placeable placeable)
-    {
-        HashSet<Vector2Int> validTiles = new HashSet<Vector2Int>();
-
-        foreach (var kvp in tileUIElements)
-        {
-            Vector2Int position = kvp.Key;
-            if (IsValidMove(position, placeable))
-            {
-                validTiles.Add(position);
-            }
-        }
-
-        return validTiles;
-    }
-
-    private bool IsValidMove(Vector2Int position, Placeable placeable)
-    {
-        // Check if the target position is different from current position
-        if (placeable.GridTile.Position == position)
-            return false;
-
-        // Check if target tile exists and is empty
-        GridTile targetTile = GridManager.Instance.GetTile(position);
-        if (targetTile == null || targetTile.PlacedObject != null)
-            return false;
-
-        if (!placeable.ValidTileTypes.Contains(targetTile.Tile.TileType))
-            return false;
-
-        return true;
     }
 
     private void HandleCardDragStarted(CardUI cardUI)
@@ -215,22 +90,13 @@ public class GridUIManager : Singleton<GridUIManager>
 
         GridTile tile = currentHoveredTile.Tile;
 
-        if (
-            IsValidPlacement(tile.Position, cardUI.GetCard())
-            && CoinManager.Instance.HasEnoughCoins(cardUI.GetCard().Cost)
-        )
+        if (IsValidPlacement(tile.Position, cardUI.GetCard()))
         {
             Card card = cardUI.GetCard();
 
             // Play the card
-            card.CardEffect.ApplyEffect(tile.Position, tile);
-            CoinManager.Instance.SpendCoins(card.Cost);
-            HandManager.Instance.RemoveCard(card);
-            FloatingTextManager.Instance.SpawnText(
-                $"-{card.Cost} coins",
-                tile.transform.position,
-                Color.yellow
-            );
+            card.CardEffect.ApplyEffect(tile.Position, tile, card);
+            // TODO: remove the card from the player's hand
 
             OnCardPlayedOnTile?.Invoke(tile.Position, card);
         }
@@ -291,27 +157,19 @@ public class GridUIManager : Singleton<GridUIManager>
 
     private bool IsValidPlacement(Vector2Int position, Card card)
     {
-        // Check if player has enough coins
-        if (CoinManager.Instance.GetCoins() < card.Cost)
-            return false;
-
         // Check card-specific placement rules
         GridTile tile = GridManager.Instance.GetTile(position);
-        if (tile == null)
-            return false;
-
-        // This would delegate to the card's effect to determine validity
-        return card.CardEffect.IsValidPlacement(position, tile);
+        return card.CardEffect.IsValidPlacement(position, tile, card);
     }
 
     private void HandleTileHovered(Vector2Int position)
     {
         // Update hovered tile (only if not in placement mode or placeable move mode)
-        if (!isInPlacementMode && !isInPlaceableMoveMode && currentHoveredTile != null)
+        if (!isInPlacementMode && currentHoveredTile != null)
             currentHoveredTile.SetHighlight(Color.white, false);
 
         currentHoveredTile = tileUIElements[position];
-        if (!isInPlacementMode && !isInPlaceableMoveMode)
+        if (!isInPlacementMode)
             currentHoveredTile.SetHighlight(hoverColor, true);
 
         OnTileHovered?.Invoke(position);
@@ -321,19 +179,9 @@ public class GridUIManager : Singleton<GridUIManager>
     {
         if (currentHoveredTile != null)
         {
-            if (!isInPlacementMode && !isInPlaceableMoveMode)
+            if (!isInPlacementMode)
                 currentHoveredTile.SetHighlight(Color.white, false);
             currentHoveredTile = null;
         }
-    }
-
-    private void HandlePlaceableDragStarted(Vector2Int position, Placeable placeable)
-    {
-        OnPlaceableDragStarted(position, placeable);
-    }
-
-    private void HandlePlaceableDragEnded(Vector2Int position, Placeable placeable)
-    {
-        OnPlaceableDragEnded(position, placeable);
     }
 }

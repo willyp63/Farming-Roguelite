@@ -50,7 +50,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Cow
   isMovable: 1
-  validTileTypes: 0000000001000000020000000300000004000000
 --- !u!114 &-1537029466497595087
 MonoBehaviour:
   m_ObjectHideFlags: 0

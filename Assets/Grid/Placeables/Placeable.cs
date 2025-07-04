@@ -14,10 +14,6 @@ public class Placeable : MonoBehaviour
     private bool isMovable = false;
     public bool IsMovable => isMovable;
 
-    [SerializeField]
-    private List<TileType> validTileTypes;
-    public List<TileType> ValidTileTypes => validTileTypes;
-
     private GridTile gridtile;
     public GridTile GridTile => gridtile;
 
@@ -59,6 +55,22 @@ public class Placeable : MonoBehaviour
         foreach (PlaceableEffect effect in effects)
         {
             effect.OnStartOfTurn(this);
+        }
+    }
+
+    public void OnEndOfRound()
+    {
+        foreach (PlaceableEffect effect in effects)
+        {
+            effect.OnEndOfRound(this);
+        }
+    }
+
+    public void OnStartOfRound()
+    {
+        foreach (PlaceableEffect effect in effects)
+        {
+            effect.OnStartOfRound(this);
         }
     }
 }

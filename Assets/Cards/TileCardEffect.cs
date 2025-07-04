@@ -9,17 +9,9 @@ using UnityEngine;
 public class TileCardEffect : CardEffect
 {
     [SerializeField]
-    private List<Tile> fromTiles;
-
-    [SerializeField]
     private Tile toTile;
 
-    public override bool IsValidPlacement(Vector2Int position, GridTile tile)
-    {
-        return tile != null && fromTiles.Contains(tile.Tile);
-    }
-
-    public override void ApplyEffect(Vector2Int position, GridTile tile)
+    public override void ApplyEffect(Vector2Int position, GridTile tile, Card card)
     {
         GridManager.Instance.GetTile(position).SetTile(toTile);
     }

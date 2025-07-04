@@ -23,4 +23,8 @@ public class CoinGenerationEffect : PlaceableEffect
     }
 
     public override void OnStartOfTurn(Placeable placeable) { }
+
+    public override void OnEndOfRound(Placeable placeable) { }
+
+    public override void OnStartOfRound(Placeable placeable) { }
 }

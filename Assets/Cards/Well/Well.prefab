@@ -49,7 +49,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Well
   isMovable: 0
-  validTileTypes: 0000000001000000
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Well
   image: {fileID: 391596124, guid: 4b7b1862e508830469b0425126744756, type: 3}
-  text: Building unit
-  cost: 10
+  text: '<color=#FFDC00><b>Permanent</b></color>
+
+    Gain <color=#C800FF><b>+1</b></color>
+    whenever a crop is placed on a surrounding tile'
+  baseScore: 0
+  allowedTileTypes: 000000000100000002000000
   effect: {fileID: 11400000, guid: e2b15e51c2a482b4ba0c64ef29431c12, type: 2}

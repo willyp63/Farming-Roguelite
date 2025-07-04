@@ -12,10 +12,14 @@ public class Card : ScriptableObject
     private Sprite image;
 
     [SerializeField]
+    [TextArea(4, 8)]
     private string text;
 
     [SerializeField]
-    private int cost;
+    private int baseScore;
+
+    [SerializeField]
+    private List<TileType> allowedTileTypes;
 
     [SerializeField]
     private CardEffect effect;
@@ -23,6 +27,7 @@ public class Card : ScriptableObject
     public string CardName => cardName;
     public Sprite Image => image;
     public string Text => text;
-    public int Cost => cost;
+    public int BaseScore => baseScore;
+    public List<TileType> AllowedTileTypes => allowedTileTypes;
     public CardEffect CardEffect => effect;
 }

@@ -133,7 +133,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Rock
   isMovable: 0
-  validTileTypes: 
 --- !u!210 &3797264127352364242
 SortingGroup:
   m_ObjectHideFlags: 0

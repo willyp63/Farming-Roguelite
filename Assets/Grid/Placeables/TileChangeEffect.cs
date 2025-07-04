@@ -29,4 +29,8 @@ public class TileChangeEffect : PlaceableEffect
     }
 
     public override void OnStartOfTurn(Placeable placeable) { }
+
+    public override void OnEndOfRound(Placeable placeable) { }
+
+    public override void OnStartOfRound(Placeable placeable) { }
 }
