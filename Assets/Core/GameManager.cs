@@ -123,14 +123,29 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
+        StartCoroutine(CompleteTurnCoroutine());
+    }
+
+    private IEnumerator CompleteTurnCoroutine()
+    {
+        GridManager.Instance.OnBeforeScoring();
+
+        yield return new WaitForSeconds(2f);
+
         // Calculate total score from all placeables on the board
-        int turnScore = CalculateBoardScore();
+        int turnScore = GridManager.Instance.CalculateBoardScore();
 
         // Add to total score
         AddScore(turnScore);
 
+        yield return new WaitForSeconds(2f);
+
+        GridManager.Instance.OnEndOfTurn();
+
+        yield return new WaitForSeconds(2f);
+
         // Clear non-permanent placeables
-        ClearNonPermanentPlaceables();
+        GridManager.Instance.ClearNonPermanentPlaceables();
 
         // End the turn
         numberOfTurns--;
@@ -140,7 +155,20 @@ public class GameManager : Singleton<GameManager>
 
         Debug.Log($"Turn completed! Turn score: {turnScore}, Total score: {currentScore}");
 
-        StartCoroutine(StartNextTurnAfterDelay(2f));
+        yield return new WaitForSeconds(2f);
+
+        if (currentScore > scoreGoal)
+        {
+            Debug.Log($"Game over! You won with {currentScore} points!");
+        }
+        else if (numberOfTurns == 0)
+        {
+            Debug.Log($"Game over! You lost with {currentScore} points!");
+        }
+        else
+        {
+            StartNewTurn();
+        }
     }
 
     private void OnCardPlayed(Vector2Int position, Card card)
@@ -168,70 +196,9 @@ public class GameManager : Singleton<GameManager>
         );
     }
 
-    private int CalculateBoardScore()
-    {
-        int totalScore = 0;
-        Dictionary<Vector2Int, GridTile> grid = GridManager.Instance.GetGrid();
-
-        foreach (var kvp in grid)
-        {
-            GridTile tile = kvp.Value;
-            if (tile != null && tile.PlacedObject != null)
-            {
-                totalScore += tile.PlacedObject.Score;
-            }
-        }
-
-        return totalScore;
-    }
-
-    private void ClearNonPermanentPlaceables()
-    {
-        Dictionary<Vector2Int, GridTile> grid = GridManager.Instance.GetGrid();
-        List<Vector2Int> positionsToClear = new List<Vector2Int>();
-
-        // Find all non-permanent placeables
-        foreach (var kvp in grid)
-        {
-            Vector2Int position = kvp.Key;
-            GridTile tile = kvp.Value;
-
-            if (tile != null && tile.PlacedObject != null && !tile.PlacedObject.IsPermanent)
-            {
-                positionsToClear.Add(position);
-            }
-        }
-
-        // Remove them
-        foreach (Vector2Int position in positionsToClear)
-        {
-            GridManager.Instance.RemoveObject(position);
-        }
-
-        Debug.Log($"Cleared {positionsToClear.Count} non-permanent placeables from the board");
-    }
-
     private void AddScore(int points)
     {
         currentScore += points;
         OnScoreChanged?.Invoke(currentScore);
-    }
-
-    private IEnumerator StartNextTurnAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        if (currentScore > scoreGoal)
-        {
-            Debug.Log($"Game over! You won with {currentScore} points!");
-        }
-        else if (numberOfTurns == 0)
-        {
-            Debug.Log($"Game over! You lost with {currentScore} points!");
-        }
-        else
-        {
-            StartNewTurn();
-        }
     }
 }

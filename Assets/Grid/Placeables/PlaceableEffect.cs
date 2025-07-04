@@ -17,6 +17,7 @@ public enum PlaceableEffectTiming
 {
     OnPlace,
     OnRemove,
+    OnBeforeScoring,
     OnEndOfTurn,
     OnEndOfRound,
 }
@@ -54,9 +55,14 @@ public abstract class PlaceableEffect : MonoBehaviour
         TryApplyEffect(tile, PlaceableEffectTiming.OnEndOfRound);
     }
 
+    public void OnBeforeScoring(GridTile tile)
+    {
+        TryApplyEffect(tile, PlaceableEffectTiming.OnBeforeScoring);
+    }
+
     private void TryApplyEffect(GridTile tile, PlaceableEffectTiming timing)
     {
-        if (!allowedTileTypes.Contains(tile.Tile.TileType))
+        if (allowedTileTypes.Count > 0 && !allowedTileTypes.Contains(tile.Tile.TileType))
             return;
 
         if (effectTiming == timing)

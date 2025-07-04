@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2121496598191819596}
   - component: {fileID: 3555250421083542281}
   - component: {fileID: 4781789984781640467}
+  - component: {fileID: 2544239216586071924}
   m_Layer: 0
   m_Name: Well
   m_TagString: Untagged
@@ -49,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Well
   isPermanent: 1
+  placeableType: 2
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -74,6 +76,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isStatic: 0
+--- !u!114 &2544239216586071924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226535891704081314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectTiming: 0
+  effectedTilesType: 1
+  allowedTileTypes: 
+  scoreAddition: 5
+  scoreMultiplier: 1
 --- !u!1 &4752959227776097147
 GameObject:
   m_ObjectHideFlags: 0

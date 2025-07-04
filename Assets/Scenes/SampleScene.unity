@@ -4358,6 +4358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Tree
   isPermanent: 0
+  placeableType: 0
 --- !u!1 &593096629
 GameObject:
   m_ObjectHideFlags: 0
@@ -4813,6 +4814,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Rock
   isPermanent: 0
+  placeableType: 0
 --- !u!1 &716751846
 GameObject:
   m_ObjectHideFlags: 0
@@ -5540,6 +5542,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 784f2a699c7add847a98b66d7341e75b, type: 2}
     minDistanceToOtherPlaceables: 2
   OnGridGenerated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnGridChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &868546405
@@ -7370,6 +7375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Tree
   isPermanent: 0
+  placeableType: 0
 --- !u!1 &1195633739
 GameObject:
   m_ObjectHideFlags: 0

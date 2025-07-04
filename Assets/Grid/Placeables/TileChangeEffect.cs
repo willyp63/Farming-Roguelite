@@ -17,6 +17,8 @@ public class TileChangeEffect : PlaceableEffect
             if (!fromTileTypes.Contains(affectedTile.Tile.TileType))
                 continue;
 
+            affectedTile.SetTile(toTile);
+
             FloatingTextManager.Instance.SpawnText(
                 $"{affectedTile.Tile.TileName} -> {toTile.TileName}",
                 affectedTile.transform.position,

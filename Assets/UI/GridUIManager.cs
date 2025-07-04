@@ -41,6 +41,8 @@ public class GridUIManager : Singleton<GridUIManager>
         UIManager.Instance.OnCardDragStarted.AddListener(HandleCardDragStarted);
         UIManager.Instance.OnCardDragEnded.AddListener(HandleCardDragEnded);
 
+        GridManager.Instance.OnGridChanged.AddListener(UpdateAllTileScores);
+
         if (GridManager.Instance.IsGridGenerated)
             InitializeGridUI();
         else
@@ -97,8 +99,8 @@ public class GridUIManager : Singleton<GridUIManager>
             // Play the card
             card.CardEffect.ApplyEffect(tile.Position, tile, card);
 
-            // Update the score of the tile
-            tileUIElements[tile.Position].SetScore(tile.PlacedObject.Score);
+            // Update the score of all tiles
+            UpdateAllTileScores();
 
             // Remove the card from the player's hand
             CardManager.Instance.DiscardCard(card);
@@ -187,6 +189,25 @@ public class GridUIManager : Singleton<GridUIManager>
             if (!isInPlacementMode)
                 currentHoveredTile.SetHighlight(Color.white, false);
             currentHoveredTile = null;
+        }
+    }
+
+    private void UpdateAllTileScores()
+    {
+        foreach (var kvp in tileUIElements)
+        {
+            Vector2Int position = kvp.Key;
+            GridTile tile = GridManager.Instance.GetTile(position);
+            GridTileUI tileUI = kvp.Value;
+
+            if (tile.PlacedObject != null)
+            {
+                tileUI.SetScore(tile.PlacedObject.Score);
+            }
+            else
+            {
+                tileUI.SetScore(0);
+            }
         }
     }
 }

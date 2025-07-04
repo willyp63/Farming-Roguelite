@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum PlaceableType
+{
+    Crop,
+    Animal,
+    Building,
+    None,
+}
+
 // Placeable represents objects that can be placed on grid tiles
 public class Placeable : MonoBehaviour
 {
@@ -13,6 +21,10 @@ public class Placeable : MonoBehaviour
     [SerializeField]
     private bool isPermanent = false;
     public bool IsPermanent => isPermanent;
+
+    [SerializeField]
+    private PlaceableType placeableType = PlaceableType.None;
+    public PlaceableType PlaceableType => placeableType;
 
     private int score;
     public int Score => score;
@@ -74,6 +86,14 @@ public class Placeable : MonoBehaviour
         foreach (PlaceableEffect effect in effects)
         {
             effect.OnEndOfRound(GridTile);
+        }
+    }
+
+    public void OnBeforeScoring()
+    {
+        foreach (PlaceableEffect effect in effects)
+        {
+            effect.OnBeforeScoring(GridTile);
         }
     }
 }

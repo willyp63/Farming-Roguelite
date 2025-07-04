@@ -99,6 +99,7 @@ public class GridManager : Singleton<GridManager>
         new List<PlaceableGenerationStep>();
 
     public UnityEvent OnGridGenerated;
+    public UnityEvent OnGridChanged;
 
     private bool isGridGenerated = false;
 
@@ -153,6 +154,19 @@ public class GridManager : Singleton<GridManager>
             if (tile.PlacedObject != null)
                 tile.PlacedObject.OnEndOfTurn();
         }
+
+        OnGridChanged?.Invoke();
+    }
+
+    public void OnBeforeScoring()
+    {
+        foreach (GridTile tile in grid)
+        {
+            if (tile.PlacedObject != null)
+                tile.PlacedObject.OnBeforeScoring();
+        }
+
+        OnGridChanged?.Invoke();
     }
 
     public Dictionary<Vector2Int, GridTile> GetGrid()
@@ -177,14 +191,6 @@ public class GridManager : Singleton<GridManager>
         return null;
     }
 
-    public void SetTile(Vector2Int position, GridTile tile)
-    {
-        if (IsValidPosition(position.x, position.y))
-        {
-            grid[position.x, position.y] = tile;
-        }
-    }
-
     public void PlaceObject(Vector2Int position, Placeable placeablePrefab, int score = 0)
     {
         if (!IsValidPosition(position.x, position.y))
@@ -206,10 +212,10 @@ public class GridManager : Singleton<GridManager>
         }
 
         placeable.Initialize(tile, score);
+        tile.SetPlacedObject(placeable);
         placeable.transform.localPosition = Vector3.zero;
         placeable.OnPlaced();
-
-        tile.SetPlacedObject(placeable);
+        OnGridChanged?.Invoke();
     }
 
     public void RemoveObject(Vector2Int position)
@@ -222,6 +228,7 @@ public class GridManager : Singleton<GridManager>
                 tile.PlacedObject.OnRemoved();
                 Destroy(tile.PlacedObject.gameObject);
                 tile.ClearPlacedObject();
+                OnGridChanged?.Invoke();
             }
         }
     }
@@ -771,5 +778,59 @@ public class GridManager : Singleton<GridManager>
                 }
             }
         }
+    }
+
+    public int CalculateBoardScore()
+    {
+        int totalScore = 0;
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                GridTile tile = grid[x, y];
+                if (tile != null && tile.PlacedObject != null && tile.PlacedObject.Score > 0)
+                {
+                    totalScore += tile.PlacedObject.Score;
+
+                    FloatingTextManager.Instance.SpawnText(
+                        $"+{tile.PlacedObject.Score}",
+                        tile.transform.position,
+                        new Color(200f / 255f, 0f / 255f, 255f / 255f, 1f)
+                    );
+                }
+            }
+        }
+
+        return totalScore;
+    }
+
+    public void ClearNonPermanentPlaceables()
+    {
+        List<Vector2Int> positionsToClear = new List<Vector2Int>();
+
+        // Find all non-permanent placeables
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                Vector2Int position = new Vector2Int(x, y);
+                GridTile tile = grid[x, y];
+
+                if (tile != null && tile.PlacedObject != null && !tile.PlacedObject.IsPermanent)
+                {
+                    positionsToClear.Add(position);
+                }
+            }
+        }
+
+        // Remove them
+        foreach (Vector2Int position in positionsToClear)
+        {
+            RemoveObject(position);
+        }
+
+        Debug.Log($"Cleared {positionsToClear.Count} non-permanent placeables from the board");
+        OnGridChanged?.Invoke();
     }
 }

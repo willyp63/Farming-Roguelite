@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5368643174551003073}
   - component: {fileID: 3821817819579965074}
-  - component: {fileID: -1537029466497595087}
   - component: {fileID: -8442559103271085971}
+  - component: {fileID: -1537029466497595087}
   - component: {fileID: 3555250421083542281}
   - component: {fileID: 4781789984781640467}
   m_Layer: 0
@@ -51,23 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Cow
   isPermanent: 0
---- !u!114 &-1537029466497595087
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 226535891704081314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0138685b156d9af4b804da194ed1ea09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectTiming: 2
-  effectedTilesType: 0
-  allowedTileTypes: 00000000
-  fromTileTypes: 00000000
-  toTile: {fileID: 11400000, guid: 36796a3139bb993428dff2c0e4aca941, type: 2}
+  placeableType: 1
 --- !u!114 &-8442559103271085971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,6 +69,23 @@ MonoBehaviour:
   allowedTileTypes: 00000000
   scoreAddition: 0
   scoreMultiplier: 2
+--- !u!114 &-1537029466497595087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226535891704081314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0138685b156d9af4b804da194ed1ea09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectTiming: 3
+  effectedTilesType: 0
+  allowedTileTypes: 00000000
+  fromTileTypes: 00000000
+  toTile: {fileID: 11400000, guid: 36796a3139bb993428dff2c0e4aca941, type: 2}
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0
