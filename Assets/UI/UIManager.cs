@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -27,8 +28,11 @@ public class UIManager : Singleton<UIManager>
 
     private List<CardUI> cardUIElements = new List<CardUI>();
 
-    public UnityEvent<CardUI> OnCardDragStarted;
-    public UnityEvent<CardUI> OnCardDragEnded;
+    [NonSerialized]
+    public UnityEvent<CardUI> OnCardDragStarted = new();
+
+    [NonSerialized]
+    public UnityEvent<CardUI> OnCardDragEnded = new();
 
     private void Start()
     {

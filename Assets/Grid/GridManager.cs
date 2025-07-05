@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -67,6 +68,9 @@ public class GridManager : Singleton<GridManager>
 {
     [Header("Grid Settings")]
     [SerializeField]
+    private Transform gridContainer;
+
+    [SerializeField]
     private int gridWidth = 10;
 
     [SerializeField]
@@ -98,8 +102,11 @@ public class GridManager : Singleton<GridManager>
     private List<PlaceableGenerationStep> placeableGenerationSteps =
         new List<PlaceableGenerationStep>();
 
-    public UnityEvent OnGridGenerated;
-    public UnityEvent OnGridChanged;
+    [NonSerialized]
+    public UnityEvent OnGridGenerated = new();
+
+    [NonSerialized]
+    public UnityEvent OnGridChanged = new();
 
     private bool isGridGenerated = false;
 
@@ -189,7 +196,12 @@ public class GridManager : Singleton<GridManager>
         }
 
         GridTile tile = grid[position.x, position.y];
-        GameObject placeableObject = Instantiate(placeablePrefab.gameObject, tile.transform);
+        GameObject placeableObject = Instantiate(
+            placeablePrefab.gameObject,
+            Vector3.zero,
+            Quaternion.identity,
+            tile.transform
+        );
         Placeable placeable = placeableObject.GetComponent<Placeable>();
 
         if (placeable == null)
@@ -308,7 +320,9 @@ public class GridManager : Singleton<GridManager>
                     break; // No valid positions left
 
                 // Choose a random valid position
-                Vector2Int position = validPositions[Random.Range(0, validPositions.Count)];
+                Vector2Int position = validPositions[
+                    UnityEngine.Random.Range(0, validPositions.Count)
+                ];
 
                 // Place the tile
                 CreateGridTile(position.x, position.y, step.tile);
@@ -347,7 +361,9 @@ public class GridManager : Singleton<GridManager>
                     break; // No valid positions left
 
                 // Choose a random valid position
-                Vector2Int position = validPositions[Random.Range(0, validPositions.Count)];
+                Vector2Int position = validPositions[
+                    UnityEngine.Random.Range(0, validPositions.Count)
+                ];
 
                 // Place the placeable
                 PlaceObject(position, step.placeablePrefab);
@@ -640,7 +656,7 @@ public class GridManager : Singleton<GridManager>
             gridTilePrefab,
             Vector3.zero,
             Quaternion.identity,
-            transform
+            gridContainer
         );
         tileObject.transform.localPosition = worldPosition;
         GridTile gridTile = tileObject.GetComponent<GridTile>();
@@ -695,14 +711,14 @@ public class GridManager : Singleton<GridManager>
     private void ApplyRandomFlips()
     {
         // 50% chance to flip on X axis
-        if (Random.Range(0f, 1f) < 0.5f)
+        if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
         {
             FlipGridX();
             Debug.Log("Grid flipped on X axis");
         }
 
         // 50% chance to flip on Y axis
-        if (Random.Range(0f, 1f) < 0.5f)
+        if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
         {
             FlipGridY();
             Debug.Log("Grid flipped on Y axis");

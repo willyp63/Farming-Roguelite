@@ -22,8 +22,11 @@ public class CardManager : Singleton<CardManager>
     public IReadOnlyList<Card> Deck => deck.AsReadOnly();
     public IReadOnlyList<Card> Discard => discard.AsReadOnly();
 
-    public UnityEvent<Card> OnCardAddedToHand;
-    public UnityEvent<Card> OnCardRemovedFromHand;
+    [NonSerialized]
+    public UnityEvent<Card> OnCardAddedToHand = new();
+
+    [NonSerialized]
+    public UnityEvent<Card> OnCardRemovedFromHand = new();
 
     public int HandSize => hand.Count;
     public int MaxHandSize => maxHandSize;

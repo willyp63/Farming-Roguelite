@@ -5,10 +5,11 @@ using UnityEngine;
 
 public enum PlaceableType
 {
+    None,
     Crop,
     Animal,
     Building,
-    None,
+    Neutral,
 }
 
 // Placeable represents objects that can be placed on grid tiles
