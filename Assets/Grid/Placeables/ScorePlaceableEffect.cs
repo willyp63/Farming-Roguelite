@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreModifier : PlaceableEffect
+public class ScorePlaceableEffect : PlaceableEffect
 {
     [SerializeField]
     private int scoreAddition = 0;
@@ -12,13 +12,24 @@ public class ScoreModifier : PlaceableEffect
 
     protected override void ApplyEffect(GridTile tile, List<GridTile> affectedTiles)
     {
-        foreach (GridTile affectedTile in affectedTiles)
+        if (isSelfModifier)
         {
-            ApplyEffectToTile(affectedTile);
+            ApplyEffectToTile(
+                tile,
+                scoreAddition * affectedTiles.Count,
+                (int)Mathf.Pow(scoreMultiplier, affectedTiles.Count)
+            );
+        }
+        else
+        {
+            foreach (GridTile affectedTile in affectedTiles)
+            {
+                ApplyEffectToTile(affectedTile, scoreAddition, scoreMultiplier);
+            }
         }
     }
 
-    private void ApplyEffectToTile(GridTile tile)
+    private void ApplyEffectToTile(GridTile tile, int totalScoreAddition, int totalScoreMultiplier)
     {
         Placeable placeable = tile.PlacedObject;
         if (placeable == null)
@@ -26,21 +37,21 @@ public class ScoreModifier : PlaceableEffect
             return;
         }
 
-        if (scoreAddition != 0)
+        if (totalScoreAddition != 0)
         {
-            placeable.AddScore(scoreAddition);
+            placeable.AddScore(totalScoreAddition);
             FloatingTextManager.Instance.SpawnText(
-                $"+{scoreAddition}",
+                $"+{totalScoreAddition}",
                 placeable.GridTile.transform.position,
                 new Color(200f / 255f, 0f / 255f, 255f / 255f, 1f)
             );
         }
 
-        if (scoreMultiplier != 1)
+        if (totalScoreMultiplier != 1)
         {
-            placeable.MultiplyScore(scoreMultiplier);
+            placeable.MultiplyScore(totalScoreMultiplier);
             FloatingTextManager.Instance.SpawnText(
-                $"x{scoreMultiplier}",
+                $"x{totalScoreMultiplier}",
                 placeable.GridTile.transform.position,
                 new Color(200f / 255f, 0f / 255f, 255f / 255f, 1f)
             );

@@ -10091,7 +10091,7 @@ GameObject:
   - component: {fileID: 1705170807}
   - component: {fileID: 1705170806}
   m_Layer: 0
-  m_Name: Hand Manager
+  m_Name: Card Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10116,10 +10116,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
   - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
   - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
-  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
-  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
-  - {fileID: 11400000, guid: 66a8babd346c1f443b2ba0e898be00ac, type: 2}
-  - {fileID: 11400000, guid: ef1020342fa160e458455902a9b1e426, type: 2}
   - {fileID: 11400000, guid: ef1020342fa160e458455902a9b1e426, type: 2}
   - {fileID: 11400000, guid: ef1020342fa160e458455902a9b1e426, type: 2}
   - {fileID: 11400000, guid: c6e0f0154a9698f4ab7159a35e0a9dd0, type: 2}

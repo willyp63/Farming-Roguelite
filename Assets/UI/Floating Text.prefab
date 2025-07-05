@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: -3 coins
+  m_text: $3
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a9f954376581694478295e01d32e2450, type: 2}
   m_sharedMaterial: {fileID: 7104344013488642166, guid: a9f954376581694478295e01d32e2450, type: 2}
@@ -94,8 +94,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

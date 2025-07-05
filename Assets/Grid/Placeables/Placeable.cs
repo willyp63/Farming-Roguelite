@@ -89,11 +89,11 @@ public class Placeable : MonoBehaviour
         }
     }
 
-    public void OnBeforeScoring()
+    public void OnEffectedTilePlaced(GridTile tile, GridTile placedTile)
     {
         foreach (PlaceableEffect effect in effects)
         {
-            effect.OnBeforeScoring(GridTile);
+            effect.OnEffectedTilePlaced(tile, placedTile);
         }
     }
 }

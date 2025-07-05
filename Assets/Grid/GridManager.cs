@@ -158,17 +158,6 @@ public class GridManager : Singleton<GridManager>
         OnGridChanged?.Invoke();
     }
 
-    public void OnBeforeScoring()
-    {
-        foreach (GridTile tile in grid)
-        {
-            if (tile.PlacedObject != null)
-                tile.PlacedObject.OnBeforeScoring();
-        }
-
-        OnGridChanged?.Invoke();
-    }
-
     public Dictionary<Vector2Int, GridTile> GetGrid()
     {
         Dictionary<Vector2Int, GridTile> result = new Dictionary<Vector2Int, GridTile>();
@@ -214,7 +203,19 @@ public class GridManager : Singleton<GridManager>
         placeable.Initialize(tile, score);
         tile.SetPlacedObject(placeable);
         placeable.transform.localPosition = Vector3.zero;
+
+        // trigger on place effects
         placeable.OnPlaced();
+
+        // trigger on effected tile placed effects for all other placeables
+        foreach (GridTile otherTile in grid)
+        {
+            if (otherTile == null || otherTile == tile || otherTile.PlacedObject == null)
+                continue;
+
+            otherTile.PlacedObject.OnEffectedTilePlaced(otherTile, tile);
+        }
+
         OnGridChanged?.Invoke();
     }
 

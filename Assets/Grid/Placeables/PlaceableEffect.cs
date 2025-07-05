@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum EffectedTilesType
+public enum EffectedTiles
 {
     Self,
     Adjacent,
@@ -16,28 +16,47 @@ public enum EffectedTilesType
 public enum PlaceableEffectTiming
 {
     OnPlace,
+    OnEffectedTilePlaced,
     OnRemove,
-    OnBeforeScoring,
     OnEndOfTurn,
     OnEndOfRound,
 }
 
 public abstract class PlaceableEffect : MonoBehaviour
 {
+    [Header("Effect Settings")]
     [SerializeField]
-    private PlaceableEffectTiming effectTiming;
+    protected PlaceableEffectTiming effectTiming;
 
     [SerializeField]
-    private EffectedTilesType effectedTilesType;
+    protected EffectedTiles effectedTiles;
 
     [SerializeField]
-    private List<TileType> allowedTileTypes;
+    [Tooltip(
+        "If true, this effect modifies the placeable itself rather than the placeables on the effected tiles"
+    )]
+    protected bool isSelfModifier = false;
+
+    [Header("Effect Conditions")]
+    [SerializeField]
+    protected List<TileType> requiredTileTypes;
+
+    [SerializeField]
+    protected List<TileType> matchingTileTypes;
+
+    [SerializeField]
+    protected List<PlaceableType> matchingPlaceableTypes;
 
     protected abstract void ApplyEffect(GridTile tile, List<GridTile> affectedTiles);
 
     public void OnPlace(GridTile tile)
     {
         TryApplyEffect(tile, PlaceableEffectTiming.OnPlace);
+    }
+
+    public void OnEffectedTilePlaced(GridTile tile, GridTile placedTile)
+    {
+        TryApplyEffect(tile, PlaceableEffectTiming.OnEffectedTilePlaced, placedTile);
     }
 
     public void OnRemove(GridTile tile)
@@ -55,40 +74,71 @@ public abstract class PlaceableEffect : MonoBehaviour
         TryApplyEffect(tile, PlaceableEffectTiming.OnEndOfRound);
     }
 
-    public void OnBeforeScoring(GridTile tile)
+    private void TryApplyEffect(
+        GridTile tile,
+        PlaceableEffectTiming timing,
+        GridTile placedTile = null
+    )
     {
-        TryApplyEffect(tile, PlaceableEffectTiming.OnBeforeScoring);
-    }
-
-    private void TryApplyEffect(GridTile tile, PlaceableEffectTiming timing)
-    {
-        if (allowedTileTypes.Count > 0 && !allowedTileTypes.Contains(tile.Tile.TileType))
+        if (requiredTileTypes.Count > 0 && !requiredTileTypes.Contains(tile.Tile.TileType))
             return;
 
-        if (effectTiming == timing)
-            ApplyEffect(tile, GetAffectedTiles(tile));
+        if (effectTiming != timing)
+            return;
+
+        List<GridTile> affectedTiles = GetAffectedTiles(tile);
+        List<GridTile> matchingTiles = affectedTiles.FindAll(IsMatchingTile);
+
+        if (placedTile == null)
+        {
+            ApplyEffect(tile, matchingTiles);
+        }
+        else if (matchingTiles.Contains(placedTile))
+        {
+            ApplyEffect(tile, new List<GridTile> { placedTile });
+        }
     }
 
     private List<GridTile> GetAffectedTiles(GridTile tile)
     {
-        switch (effectedTilesType)
+        switch (effectedTiles)
         {
-            case EffectedTilesType.Self:
+            case EffectedTiles.Self:
                 return new List<GridTile> { tile };
-            case EffectedTilesType.Adjacent:
+            case EffectedTiles.Adjacent:
                 return GridManager.Instance.GetAdjacentTiles(tile.Position);
-            case EffectedTilesType.Diagonal:
+            case EffectedTiles.Diagonal:
                 return GridManager.Instance.GetDiagonalTiles(tile.Position);
-            case EffectedTilesType.Surrounding:
+            case EffectedTiles.Surrounding:
                 return GridManager.Instance.GetSurroundingTiles(tile.Position);
-            case EffectedTilesType.Row:
+            case EffectedTiles.Row:
                 return GridManager.Instance.GetRowTiles(tile.Position);
-            case EffectedTilesType.Column:
+            case EffectedTiles.Column:
                 return GridManager.Instance.GetColumnTiles(tile.Position);
-            case EffectedTilesType.All:
+            case EffectedTiles.All:
                 return GridManager.Instance.GetAllTiles();
             default:
                 return new List<GridTile>();
         }
+    }
+
+    private bool IsMatchingTile(GridTile tile)
+    {
+        if (matchingPlaceableTypes.Count > 0)
+        {
+            if (
+                tile.PlacedObject == null
+                || !matchingPlaceableTypes.Contains(tile.PlacedObject.PlaceableType)
+            )
+                return false;
+        }
+
+        if (matchingTileTypes.Count > 0)
+        {
+            if (!matchingTileTypes.Contains(tile.Tile.TileType))
+                return false;
+        }
+
+        return true;
     }
 }

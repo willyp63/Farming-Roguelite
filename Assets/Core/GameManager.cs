@@ -128,10 +128,6 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator CompleteTurnCoroutine()
     {
-        GridManager.Instance.OnBeforeScoring();
-
-        yield return new WaitForSeconds(2f);
-
         // Calculate total score from all placeables on the board
         int turnScore = GridManager.Instance.CalculateBoardScore();
 

@@ -64,9 +64,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectTiming: 2
-  effectedTilesType: 1
-  allowedTileTypes: 00000000
+  effectTiming: 0
+  effectedTiles: 1
+  isSelfModifier: 0
+  requiredTileTypes: 00000000
+  matchingTileTypes: 
+  matchingPlaceableTypes: 00000000
   scoreAddition: 0
   scoreMultiplier: 2
 --- !u!114 &-1537029466497595087
@@ -81,10 +84,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0138685b156d9af4b804da194ed1ea09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectTiming: 3
-  effectedTilesType: 0
-  allowedTileTypes: 00000000
-  fromTileTypes: 00000000
+  effectTiming: 0
+  effectedTiles: 0
+  isSelfModifier: 0
+  requiredTileTypes: 00000000
+  matchingTileTypes: 
+  matchingPlaceableTypes: 
   toTile: {fileID: 11400000, guid: 36796a3139bb993428dff2c0e4aca941, type: 2}
 --- !u!210 &3555250421083542281
 SortingGroup:
