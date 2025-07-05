@@ -107,7 +107,7 @@ public class GameManager : Singleton<GameManager>
         CardManager.Instance.DrawCards(numberOfStartingCards);
 
         // Generate new grid
-        GridManager.Instance.GenerateGrid();
+        GridGenerationManager.Instance.GenerateGrid();
 
         OnRoundStarted?.Invoke();
         OnTurnStarted?.Invoke();
