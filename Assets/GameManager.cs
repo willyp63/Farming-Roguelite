@@ -58,21 +58,25 @@ public class GameManager : Singleton<GameManager>
     protected override void Awake()
     {
         base.Awake();
+
+        // Initialize game state
         currentScore = startingScore;
+
+        // Initialize grid
+        GridManager.Instance.InitializeGrid();
+        GridUIManager.Instance.InitializeGridUI();
+
+        // Subscribe to grid UI events
+        GridUIManager.Instance.OnCardPlayedOnTile.AddListener(OnCardPlayed);
     }
 
     private void Start()
     {
-        // Subscribe to grid UI events
-        if (GridUIManager.Instance != null)
-        {
-            GridUIManager.Instance.OnCardPlayedOnTile.AddListener(OnCardPlayed);
-        }
-
         ResetGame();
+        StartNewRound();
     }
 
-    public void ResetGame()
+    private void ResetGame()
     {
         currentScore = startingScore;
         currentRound = 0;
@@ -81,19 +85,6 @@ public class GameManager : Singleton<GameManager>
 
         OnScoreChanged?.Invoke(currentScore);
         OnCardsPlayedChanged?.Invoke(cardsPlayedThisTurn);
-
-        StartNewRound();
-    }
-
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-
-        // Unsubscribe from events
-        if (GridUIManager.Instance != null)
-        {
-            GridUIManager.Instance.OnCardPlayedOnTile.RemoveListener(OnCardPlayed);
-        }
     }
 
     public void StartNewRound()
@@ -153,7 +144,7 @@ public class GameManager : Singleton<GameManager>
         yield return new WaitForSeconds(2f);
 
         // Clear non-permanent placeables
-        GridManager.Instance.ClearNonPermanentPlaceables();
+        GridManager.Instance.ClearPlaceables(false);
 
         // End the turn
         numberOfTurns--;

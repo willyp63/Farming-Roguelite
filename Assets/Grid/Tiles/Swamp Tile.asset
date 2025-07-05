@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileName: Swamp
   tileSprite: {fileID: 1117349729, guid: 29f295a4be17a7f40af321ce33a617da, type: 3}
-  tileType: 4
+  tileType: 5

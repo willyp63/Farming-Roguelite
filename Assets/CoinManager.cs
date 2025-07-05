@@ -30,12 +30,8 @@ public class CoinManager : Singleton<CoinManager>
     protected override void Awake()
     {
         base.Awake();
-        currentCoins = startingCoins;
-    }
 
-    void Start()
-    {
-        OnCoinsChanged?.Invoke(currentCoins);
+        currentCoins = startingCoins;
     }
 
     public int GetCoins()

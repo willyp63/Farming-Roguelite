@@ -731,7 +731,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Corn
   isPermanent: 0
-  placeableType: 0
+  placeableType: 1
 --- !u!114 &8141606273527163774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -768,7 +768,7 @@ MonoBehaviour:
   isSelfModifier: 1
   requiredTileTypes: 
   matchingTileTypes: 
-  matchingPlaceableTypes: 00000000
+  matchingPlaceableTypes: 01000000
   scoreAddition: 3
   scoreMultiplier: 1
 --- !u!210 &7038447385482280336

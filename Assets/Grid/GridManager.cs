@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -24,39 +25,56 @@ public class GridManager : Singleton<GridManager>
     [SerializeField]
     private GameObject gridTilePrefab;
 
-    [NonSerialized]
-    public UnityEvent OnGridGenerated = new();
-
-    [NonSerialized]
-    public UnityEvent OnGridChanged = new();
-
-    private bool isGridGenerated = false;
+    [SerializeField]
+    private Tile emptyTile;
 
     // Grid data
     private GridTile[,] grid;
+    private bool isInitialized = false;
 
     // Properties
     public int GridWidth => gridWidth;
     public int GridHeight => gridHeight;
     public GridTile[,] Grid => grid;
-    public bool IsGridGenerated => isGridGenerated;
+    public bool IsInitialized => isInitialized;
 
-    [ContextMenu("Initialize Grid")]
-    public void InitializeGridFromInspector()
-    {
-        InitializeGrid();
-    }
+    // Events
+    [NonSerialized]
+    public UnityEvent OnGridChanged = new();
 
     public void InitializeGrid()
     {
-        // Initialize grid
+        if (isInitialized)
+            return;
+
+        if (emptyTile == null)
+            Debug.LogError("Empty tile is not set");
+
+        foreach (Transform child in gridContainer.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
         grid = new GridTile[gridWidth, gridHeight];
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                CreateGridTile(x, y, emptyTile);
+            }
+        }
 
-        // Clear any existing grid tiles
-        ClearExistingGrid();
+        isInitialized = true;
+    }
 
-        isGridGenerated = true;
-        OnGridGenerated?.Invoke();
+    public void ResetGrid()
+    {
+        ClearPlaceables(true);
+
+        foreach (GridTile tile in grid)
+        {
+            tile.SetTile(emptyTile);
+        }
     }
 
     public void OnEndOfTurn()
@@ -81,6 +99,17 @@ public class GridManager : Singleton<GridManager>
             }
         }
         return result;
+    }
+
+    public bool HasEmptyTiles()
+    {
+        foreach (GridTile tile in grid)
+        {
+            if (tile.Tile.TileType == TileType.Empty)
+                return true;
+        }
+
+        return false;
     }
 
     public GridTile GetTile(Vector2Int position)
@@ -138,156 +167,62 @@ public class GridManager : Singleton<GridManager>
 
     public void RemoveObject(Vector2Int position)
     {
-        if (IsValidPosition(position.x, position.y))
-        {
-            GridTile tile = grid[position.x, position.y];
-            if (tile != null)
-            {
-                tile.PlacedObject.OnRemoved();
-                Destroy(tile.PlacedObject.gameObject);
-                tile.ClearPlacedObject();
-                OnGridChanged?.Invoke();
-            }
-        }
-    }
+        if (!IsValidPosition(position.x, position.y))
+            return;
 
-    private void ClearExistingGrid()
-    {
-        // Find and destroy any existing grid tiles
-        GridTile[] existingTiles = FindObjectsOfType<GridTile>();
-        foreach (GridTile tile in existingTiles)
-        {
-            if (Application.isPlaying)
-                Destroy(tile.gameObject);
-            else
-                DestroyImmediate(tile.gameObject);
-        }
-    }
+        GridTile tile = grid[position.x, position.y];
+        if (tile.PlacedObject == null)
+            return;
 
-    private List<Vector2Int> GetAdjacentPositions(int x, int y, bool includeDiagonal)
-    {
-        List<Vector2Int> adjacent = new List<Vector2Int>();
-
-        // Orthogonal positions
-        adjacent.Add(new Vector2Int(x + 1, y));
-        adjacent.Add(new Vector2Int(x - 1, y));
-        adjacent.Add(new Vector2Int(x, y + 1));
-        adjacent.Add(new Vector2Int(x, y - 1));
-
-        if (includeDiagonal)
-        {
-            // Diagonal positions
-            adjacent.Add(new Vector2Int(x + 1, y + 1));
-            adjacent.Add(new Vector2Int(x + 1, y - 1));
-            adjacent.Add(new Vector2Int(x - 1, y + 1));
-            adjacent.Add(new Vector2Int(x - 1, y - 1));
-        }
-
-        return adjacent;
+        tile.PlacedObject.OnRemoved();
+        Destroy(tile.PlacedObject.gameObject);
+        tile.ClearPlacedObject();
+        OnGridChanged?.Invoke();
     }
 
     public List<GridTile> GetAdjacentTiles(Vector2Int position)
     {
-        List<GridTile> adjacentTiles = new List<GridTile>();
-        List<Vector2Int> adjacentPositions = GetAdjacentPositions(position.x, position.y, false);
-
-        foreach (Vector2Int pos in adjacentPositions)
-        {
-            if (IsValidPosition(pos.x, pos.y))
-            {
-                adjacentTiles.Add(grid[pos.x, pos.y]);
-            }
-        }
-
-        return adjacentTiles;
+        return GetTilesFromPositions(GetOrthogonalPositions(position));
     }
 
     public List<GridTile> GetDiagonalTiles(Vector2Int position)
     {
-        List<GridTile> diagonalTiles = new List<GridTile>();
-
-        // Diagonal positions
-        Vector2Int[] diagonalPositions =
-        {
-            new Vector2Int(position.x + 1, position.y + 1),
-            new Vector2Int(position.x + 1, position.y - 1),
-            new Vector2Int(position.x - 1, position.y + 1),
-            new Vector2Int(position.x - 1, position.y - 1),
-        };
-
-        foreach (Vector2Int pos in diagonalPositions)
-        {
-            if (IsValidPosition(pos.x, pos.y))
-            {
-                diagonalTiles.Add(grid[pos.x, pos.y]);
-            }
-        }
-
-        return diagonalTiles;
+        return GetTilesFromPositions(GetDiagonalPositions(position));
     }
 
     public List<GridTile> GetSurroundingTiles(Vector2Int position)
     {
-        List<GridTile> surroundingTiles = new List<GridTile>();
-        List<Vector2Int> surroundingPositions = GetAdjacentPositions(position.x, position.y, true);
-
-        foreach (Vector2Int pos in surroundingPositions)
-        {
-            if (IsValidPosition(pos.x, pos.y))
-            {
-                surroundingTiles.Add(grid[pos.x, pos.y]);
-            }
-        }
-
-        return surroundingTiles;
+        return GetTilesFromPositions(
+            GetDiagonalPositions(position).Concat(GetOrthogonalPositions(position))
+        );
     }
 
     public List<GridTile> GetRowTiles(Vector2Int position)
     {
-        List<GridTile> rowTiles = new List<GridTile>();
-
-        for (int x = 0; x < gridWidth; x++)
-        {
-            if (grid[x, position.y] != null)
-            {
-                rowTiles.Add(grid[x, position.y]);
-            }
-        }
-
-        return rowTiles;
+        return GetTilesFromPositions(
+            Enumerable.Range(0, gridWidth).Select(x => new Vector2Int(x, position.y))
+        );
     }
 
     public List<GridTile> GetColumnTiles(Vector2Int position)
     {
-        List<GridTile> columnTiles = new List<GridTile>();
-
-        for (int y = 0; y < gridHeight; y++)
-        {
-            if (grid[position.x, y] != null)
-            {
-                columnTiles.Add(grid[position.x, y]);
-            }
-        }
-
-        return columnTiles;
+        return GetTilesFromPositions(
+            Enumerable.Range(0, gridHeight).Select(y => new Vector2Int(position.x, y))
+        );
     }
 
     public List<GridTile> GetAllTiles()
     {
-        List<GridTile> allTiles = new List<GridTile>();
+        // TODO: not sure if this works
+        return grid.Cast<GridTile>().ToList();
+    }
 
-        for (int x = 0; x < gridWidth; x++)
-        {
-            for (int y = 0; y < gridHeight; y++)
-            {
-                if (grid[x, y] != null)
-                {
-                    allTiles.Add(grid[x, y]);
-                }
-            }
-        }
-
-        return allTiles;
+    private List<GridTile> GetTilesFromPositions(IEnumerable<Vector2Int> positions)
+    {
+        return positions
+            .Where(pos => IsValidPosition(pos.x, pos.y))
+            .Select(pos => grid[pos.x, pos.y])
+            .ToList();
     }
 
     public bool IsValidPosition(int x, int y)
@@ -295,7 +230,7 @@ public class GridManager : Singleton<GridManager>
         return x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
     }
 
-    public void CreateGridTile(int x, int y, Tile tile)
+    private void CreateGridTile(int x, int y, Tile tile)
     {
         if (!IsValidPosition(x, y) || grid[x, y] != null)
             return;
@@ -336,102 +271,6 @@ public class GridManager : Singleton<GridManager>
         );
     }
 
-    public Vector2Int GetGridPosition(Vector3 worldPosition)
-    {
-        // Convert world position to local position relative to the grid
-        Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
-
-        // Calculate grid dimensions
-        float gridWidthSize = gridWidth * (tileSize + padding);
-        float gridHeightSize = gridHeight * (tileSize + padding);
-
-        // Calculate the offset from the grid center
-        float offsetX = localPosition.x + gridWidthSize / 2 - tileSize / 2 - padding / 2;
-        float offsetY = localPosition.y + gridHeightSize / 2 - tileSize / 2 - padding / 2;
-
-        // Convert to grid coordinates
-        int x = Mathf.FloorToInt(offsetX / (tileSize + padding));
-        int y = Mathf.FloorToInt(offsetY / (tileSize + padding));
-
-        // Clamp to grid bounds
-        x = Mathf.Clamp(x, 0, gridWidth - 1);
-        y = Mathf.Clamp(y, 0, gridHeight - 1);
-
-        return new Vector2Int(x, y);
-    }
-
-    public void FlipGridX()
-    {
-        if (grid == null)
-        {
-            Debug.LogWarning("Grid is not initialized. Generate grid first.");
-            return;
-        }
-
-        // Flip the grid data array
-        for (int y = 0; y < gridHeight; y++)
-        {
-            for (int x = 0; x < gridWidth / 2; x++)
-            {
-                int oppositeX = gridWidth - 1 - x;
-
-                // Swap the grid data
-                GridTile temp = grid[x, y];
-                grid[x, y] = grid[oppositeX, y];
-                grid[oppositeX, y] = temp;
-            }
-        }
-
-        // Update the visual positions of all tiles
-        UpdateTilePositions();
-    }
-
-    public void FlipGridY()
-    {
-        if (grid == null)
-        {
-            Debug.LogWarning("Grid is not initialized. Generate grid first.");
-            return;
-        }
-
-        // Flip the grid data array
-        for (int x = 0; x < gridWidth; x++)
-        {
-            for (int y = 0; y < gridHeight / 2; y++)
-            {
-                int oppositeY = gridHeight - 1 - y;
-
-                // Swap the grid data
-                GridTile temp = grid[x, y];
-                grid[x, y] = grid[x, oppositeY];
-                grid[x, oppositeY] = temp;
-            }
-        }
-
-        // Update the visual positions of all tiles
-        UpdateTilePositions();
-    }
-
-    private void UpdateTilePositions()
-    {
-        // Update the world positions of all tiles to match their new grid positions
-        for (int x = 0; x < gridWidth; x++)
-        {
-            for (int y = 0; y < gridHeight; y++)
-            {
-                if (grid[x, y] != null)
-                {
-                    Vector3 newWorldPosition = GetWorldPosition(x, y);
-
-                    // Update the tile's position and grid coordinates
-                    grid[x, y].transform.localPosition = newWorldPosition;
-                    grid[x, y].SetPosition(x, y);
-                    grid[x, y].transform.localPosition = GetWorldPosition(x, y);
-                }
-            }
-        }
-    }
-
     public int CalculateBoardScore()
     {
         int totalScore = 0;
@@ -457,32 +296,44 @@ public class GridManager : Singleton<GridManager>
         return totalScore;
     }
 
-    public void ClearNonPermanentPlaceables()
+    public void ClearPlaceables(bool clearPermanents = false)
     {
-        List<Vector2Int> positionsToClear = new List<Vector2Int>();
-
-        // Find all non-permanent placeables
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                Vector2Int position = new Vector2Int(x, y);
                 GridTile tile = grid[x, y];
 
-                if (tile != null && tile.PlacedObject != null && !tile.PlacedObject.IsPermanent)
+                if (
+                    tile.PlacedObject != null
+                    && (clearPermanents || !tile.PlacedObject.IsPermanent)
+                )
                 {
-                    positionsToClear.Add(position);
+                    RemoveObject(new Vector2Int(x, y));
                 }
             }
         }
+    }
 
-        // Remove them
-        foreach (Vector2Int position in positionsToClear)
+    public static List<Vector2Int> GetOrthogonalPositions(Vector2Int position)
+    {
+        return new List<Vector2Int>
         {
-            RemoveObject(position);
-        }
+            new Vector2Int(position.x + 1, position.y),
+            new Vector2Int(position.x - 1, position.y),
+            new Vector2Int(position.x, position.y + 1),
+            new Vector2Int(position.x, position.y - 1),
+        };
+    }
 
-        Debug.Log($"Cleared {positionsToClear.Count} non-permanent placeables from the board");
-        OnGridChanged?.Invoke();
+    public static List<Vector2Int> GetDiagonalPositions(Vector2Int position)
+    {
+        return new List<Vector2Int>
+        {
+            new Vector2Int(position.x + 1, position.y + 1),
+            new Vector2Int(position.x + 1, position.y - 1),
+            new Vector2Int(position.x - 1, position.y + 1),
+            new Vector2Int(position.x - 1, position.y - 1),
+        };
     }
 }

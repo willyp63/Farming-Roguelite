@@ -46,14 +46,9 @@ public class GridUIManager : Singleton<GridUIManager>
         UIManager.Instance.OnCardDragEnded.AddListener(HandleCardDragEnded);
 
         GridManager.Instance.OnGridChanged.AddListener(UpdateAllTileScores);
-
-        if (GridManager.Instance.IsGridGenerated)
-            InitializeGridUI();
-        else
-            GridManager.Instance.OnGridGenerated.AddListener(InitializeGridUI);
     }
 
-    private void InitializeGridUI()
+    public void InitializeGridUI()
     {
         tileUIElements = new();
 

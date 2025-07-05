@@ -17,5 +17,5 @@ MonoBehaviour:
   text: <b>Place:</b> If placed on a grass tile, give adjacent crops <color=#C800FF><b>2x</b></color>
     and turns the tile into dirt
   baseScore: 2
-  allowedTileTypes: 00000000010000000200000003000000
+  allowedTileTypes: 01000000020000000300000004000000
   effect: {fileID: 11400000, guid: 043586a387b373040b5f1044615c4bc5, type: 2}

@@ -65,9 +65,6 @@ public class PlaceableGenerationStep
 
 public class GridGenerationManager : Singleton<GridGenerationManager>
 {
-    [SerializeField]
-    private GridManager gridManager;
-
     [Header("Initial Tiles")]
     [SerializeField]
     private List<InitialTileData> initialTiles = new List<InitialTileData>();
@@ -85,11 +82,9 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
     private List<PlaceableGenerationStep> placeableGenerationSteps =
         new List<PlaceableGenerationStep>();
 
-    [ContextMenu("Generate Grid")]
     public void GenerateGrid()
     {
-        // Initialize the grid first
-        gridManager.InitializeGrid();
+        GridManager.Instance.ResetGrid();
 
         // Place initial tiles
         PlaceInitialTiles();
@@ -103,8 +98,9 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
         // Apply placeable generation steps
         ApplyPlaceableGenerationSteps();
 
-        // Randomly flip the grid after generation
-        ApplyRandomFlips();
+        // Verify that generation is complete
+        if (GridManager.Instance.HasEmptyTiles())
+            Debug.LogError("Grid generation incomplete! Found empty tiles");
     }
 
     private void PlaceInitialTiles()
@@ -112,11 +108,11 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
         foreach (InitialTileData initialTile in initialTiles)
         {
             if (
-                gridManager.IsValidPosition(initialTile.x, initialTile.y)
+                GridManager.Instance.IsValidPosition(initialTile.x, initialTile.y)
                 && initialTile.tile != null
             )
             {
-                gridManager.CreateGridTile(initialTile.x, initialTile.y, initialTile.tile);
+                GridManager.Instance.Grid[initialTile.x, initialTile.y].SetTile(initialTile.tile);
             }
         }
     }
@@ -126,11 +122,11 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
         foreach (InitialPlaceableData initialPlaceable in initialPlaceables)
         {
             if (
-                gridManager.IsValidPosition(initialPlaceable.x, initialPlaceable.y)
+                GridManager.Instance.IsValidPosition(initialPlaceable.x, initialPlaceable.y)
                 && initialPlaceable.placeable != null
             )
             {
-                gridManager.PlaceObject(
+                GridManager.Instance.PlaceObject(
                     new Vector2Int(initialPlaceable.x, initialPlaceable.y),
                     initialPlaceable.placeable
                 );
@@ -146,7 +142,7 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
                 continue;
 
             int placedCount = 0;
-            int maxAttempts = gridManager.GridWidth * gridManager.GridHeight * 10; // Prevent infinite loops
+            int maxAttempts = GridManager.Instance.GridWidth * GridManager.Instance.GridHeight * 10; // Prevent infinite loops
             int attempts = 0;
 
             int totalTilesPlaced = GetTotalTilesInGrid(step.tile.TileType);
@@ -176,7 +172,7 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
                 ];
 
                 // Place the tile
-                gridManager.CreateGridTile(position.x, position.y, step.tile);
+                GridManager.Instance.Grid[position.x, position.y].SetTile(step.tile);
                 placedCount++;
                 totalTilesPlaced++;
             }
@@ -198,7 +194,7 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
                 continue;
 
             int placedCount = 0;
-            int maxAttempts = gridManager.GridWidth * gridManager.GridHeight * 10; // Prevent infinite loops
+            int maxAttempts = GridManager.Instance.GridWidth * GridManager.Instance.GridHeight * 10; // Prevent infinite loops
             int attempts = 0;
 
             while (placedCount < step.maxCount && attempts < maxAttempts)
@@ -217,7 +213,7 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
                 ];
 
                 // Place the placeable
-                gridManager.PlaceObject(position, step.placeablePrefab);
+                GridManager.Instance.PlaceObject(position, step.placeablePrefab);
                 placedCount++;
             }
 
@@ -234,9 +230,9 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
     {
         List<Vector2Int> validPositions = new List<Vector2Int>();
 
-        for (int x = 0; x < gridManager.GridWidth; x++)
+        for (int x = 0; x < GridManager.Instance.GridWidth; x++)
         {
-            for (int y = 0; y < gridManager.GridHeight; y++)
+            for (int y = 0; y < GridManager.Instance.GridHeight; y++)
             {
                 if (IsValidPositionForStep(x, y, step))
                 {
@@ -251,7 +247,7 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
     private bool IsValidPositionForStep(int x, int y, GenerationStep step)
     {
         // Position must be empty
-        if (gridManager.Grid[x, y] != null)
+        if (GridManager.Instance.Grid[x, y].Tile.TileType != TileType.Empty)
             return false;
 
         // If no adjacency requirements, any empty position is valid
@@ -259,19 +255,24 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
             return true;
 
         // Check if position has at least one adjacent tile from the allowed list
-        List<Vector2Int> adjacentPositions = GetAdjacentPositions(x, y, step.allowDiagonal);
+        Vector2Int position = new Vector2Int(x, y);
+        List<Vector2Int> adjacentPositions = GridManager.GetOrthogonalPositions(position);
+        if (step.allowDiagonal)
+        {
+            adjacentPositions.AddRange(GridManager.GetDiagonalPositions(position));
+        }
 
         foreach (Vector2Int adjPos in adjacentPositions)
         {
             if (
-                gridManager.IsValidPosition(adjPos.x, adjPos.y)
-                && gridManager.Grid[adjPos.x, adjPos.y] != null
+                GridManager.Instance.IsValidPosition(adjPos.x, adjPos.y)
+                && GridManager.Instance.Grid[adjPos.x, adjPos.y] != null
             )
             {
                 // Check if the adjacent tile is in the allowed list
                 foreach (Tile allowedTile in step.allowedAdjacentTiles)
                 {
-                    if (allowedTile == gridManager.Grid[adjPos.x, adjPos.y].Tile)
+                    if (allowedTile == GridManager.Instance.Grid[adjPos.x, adjPos.y].Tile)
                     {
                         return true;
                     }
@@ -282,35 +283,13 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
         return false;
     }
 
-    private List<Vector2Int> GetAdjacentPositions(int x, int y, bool includeDiagonal)
-    {
-        List<Vector2Int> adjacent = new List<Vector2Int>();
-
-        // Orthogonal positions
-        adjacent.Add(new Vector2Int(x + 1, y));
-        adjacent.Add(new Vector2Int(x - 1, y));
-        adjacent.Add(new Vector2Int(x, y + 1));
-        adjacent.Add(new Vector2Int(x, y - 1));
-
-        if (includeDiagonal)
-        {
-            // Diagonal positions
-            adjacent.Add(new Vector2Int(x + 1, y + 1));
-            adjacent.Add(new Vector2Int(x + 1, y - 1));
-            adjacent.Add(new Vector2Int(x - 1, y + 1));
-            adjacent.Add(new Vector2Int(x - 1, y - 1));
-        }
-
-        return adjacent;
-    }
-
     private List<Vector2Int> GetValidPositionsForPlaceable(PlaceableGenerationStep step)
     {
         List<Vector2Int> validPositions = new List<Vector2Int>();
 
-        for (int x = 0; x < gridManager.GridWidth; x++)
+        for (int x = 0; x < GridManager.Instance.GridWidth; x++)
         {
-            for (int y = 0; y < gridManager.GridHeight; y++)
+            for (int y = 0; y < GridManager.Instance.GridHeight; y++)
             {
                 if (IsValidPositionForPlaceable(x, y, step))
                 {
@@ -325,15 +304,15 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
     private bool IsValidPositionForPlaceable(int x, int y, PlaceableGenerationStep step)
     {
         // Position must be within grid bounds
-        if (!gridManager.IsValidPosition(x, y))
+        if (!GridManager.Instance.IsValidPosition(x, y))
             return false;
 
         // Position must have a tile
-        if (gridManager.Grid[x, y] == null)
+        if (GridManager.Instance.Grid[x, y] == null)
             return false;
 
         // Position must not already have a placeable
-        if (gridManager.Grid[x, y].PlacedObject != null)
+        if (GridManager.Instance.Grid[x, y].PlacedObject != null)
             return false;
 
         // Check if the tile is in the allowed tiles list
@@ -342,7 +321,7 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
             bool tileAllowed = false;
             foreach (Tile allowedTile in step.allowedTiles)
             {
-                if (allowedTile == gridManager.Grid[x, y].Tile)
+                if (allowedTile == GridManager.Instance.Grid[x, y].Tile)
                 {
                     tileAllowed = true;
                     break;
@@ -355,13 +334,13 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
         // Check minimum distance to other placeables
         if (step.minDistanceToOtherPlaceables > 0)
         {
-            for (int checkX = 0; checkX < gridManager.GridWidth; checkX++)
+            for (int checkX = 0; checkX < GridManager.Instance.GridWidth; checkX++)
             {
-                for (int checkY = 0; checkY < gridManager.GridHeight; checkY++)
+                for (int checkY = 0; checkY < GridManager.Instance.GridHeight; checkY++)
                 {
                     if (
-                        gridManager.Grid[checkX, checkY] != null
-                        && gridManager.Grid[checkX, checkY].PlacedObject != null
+                        GridManager.Instance.Grid[checkX, checkY] != null
+                        && GridManager.Instance.Grid[checkX, checkY].PlacedObject != null
                     )
                     {
                         int distance = Mathf.Max(Mathf.Abs(x - checkX), Mathf.Abs(y - checkY));
@@ -380,34 +359,17 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
     private int GetTotalTilesInGrid(TileType tileType)
     {
         int placedTiles = 0;
-        for (int x = 0; x < gridManager.GridWidth; x++)
+        for (int x = 0; x < GridManager.Instance.GridWidth; x++)
         {
-            for (int y = 0; y < gridManager.GridHeight; y++)
+            for (int y = 0; y < GridManager.Instance.GridHeight; y++)
             {
                 if (
-                    gridManager.Grid[x, y] != null
-                    && gridManager.Grid[x, y].Tile.TileType == tileType
+                    GridManager.Instance.Grid[x, y] != null
+                    && GridManager.Instance.Grid[x, y].Tile.TileType == tileType
                 )
                     placedTiles++;
             }
         }
         return placedTiles;
-    }
-
-    private void ApplyRandomFlips()
-    {
-        // 50% chance to flip on X axis
-        if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
-        {
-            gridManager.FlipGridX();
-            Debug.Log("Grid flipped on X axis");
-        }
-
-        // 50% chance to flip on Y axis
-        if (UnityEngine.Random.Range(0f, 1f) < 0.5f)
-        {
-            gridManager.FlipGridY();
-            Debug.Log("Grid flipped on Y axis");
-        }
     }
 }

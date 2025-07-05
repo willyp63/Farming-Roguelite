@@ -19,5 +19,5 @@ MonoBehaviour:
     Gain <color=#C800FF><b>+1</b></color>
     whenever a crop is placed on a surrounding tile'
   baseScore: 0
-  allowedTileTypes: 000000000100000002000000
+  allowedTileTypes: 010000000200000003000000
   effect: {fileID: 11400000, guid: e2b15e51c2a482b4ba0c64ef29431c12, type: 2}

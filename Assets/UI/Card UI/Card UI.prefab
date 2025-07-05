@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc515834975bd724d81886e41a1e7f2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: 3
+  tileType: 4
 --- !u!1 &774795306298783609
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,12 +209,6 @@ MonoBehaviour:
   - {fileID: 7791057096632555810}
   - {fileID: 5958903053210763123}
   - {fileID: 6980801055749306452}
-  OnCardDragStarted:
-    m_PersistentCalls:
-      m_Calls: []
-  OnCardDragEnded:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &1232990631949528959
 GameObject:
   m_ObjectHideFlags: 0
@@ -705,7 +699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc515834975bd724d81886e41a1e7f2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: 0
+  tileType: 1
 --- !u!1 &3207270234412209675
 GameObject:
   m_ObjectHideFlags: 0
@@ -969,7 +963,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc515834975bd724d81886e41a1e7f2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: 4
+  tileType: 5
 --- !u!1 &4423639187695166870
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,7 +1471,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc515834975bd724d81886e41a1e7f2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: 1
+  tileType: 2
 --- !u!1 &6073531829209754827
 GameObject:
   m_ObjectHideFlags: 0
@@ -1681,7 +1675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc515834975bd724d81886e41a1e7f2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: 2
+  tileType: 3
 --- !u!1 &7165811967116697540
 GameObject:
   m_ObjectHideFlags: 0
@@ -2028,4 +2022,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc515834975bd724d81886e41a1e7f2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: 5
+  tileType: 6

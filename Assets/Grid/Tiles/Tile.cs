@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum TileType
 {
+    Empty,
     Grass,
     Dirt,
     Clay,
