@@ -10,22 +10,19 @@ public class ScorePlaceableEffect : PlaceableEffect
     [SerializeField]
     private int scoreMultiplier = 1;
 
-    protected override void ApplyEffect(GridTile tile, List<GridTile> affectedTiles)
+    protected override void ApplyEffect(
+        GridTile tile,
+        GridTile newTile,
+        List<GridTile> applyToTiles,
+        int count
+    )
     {
-        if (isSelfModifier)
+        int totalScoreAddition = scoreAddition * count;
+        int totalScoreMultiplier = (int)Mathf.Pow(scoreMultiplier, count);
+
+        foreach (GridTile applyToTile in applyToTiles)
         {
-            ApplyEffectToTile(
-                tile,
-                scoreAddition * affectedTiles.Count,
-                (int)Mathf.Pow(scoreMultiplier, affectedTiles.Count)
-            );
-        }
-        else
-        {
-            foreach (GridTile affectedTile in affectedTiles)
-            {
-                ApplyEffectToTile(affectedTile, scoreAddition, scoreMultiplier);
-            }
+            ApplyEffectToTile(applyToTile, totalScoreAddition, totalScoreMultiplier);
         }
     }
 
@@ -33,13 +30,12 @@ public class ScorePlaceableEffect : PlaceableEffect
     {
         Placeable placeable = tile.PlacedObject;
         if (placeable == null)
-        {
             return;
-        }
 
         if (totalScoreAddition != 0)
         {
             placeable.AddScore(totalScoreAddition);
+
             FloatingTextManager.Instance.SpawnText(
                 $"+{totalScoreAddition}",
                 placeable.GridTile.transform.position,
@@ -50,6 +46,7 @@ public class ScorePlaceableEffect : PlaceableEffect
         if (totalScoreMultiplier != 1)
         {
             placeable.MultiplyScore(totalScoreMultiplier);
+
             FloatingTextManager.Instance.SpawnText(
                 $"x{totalScoreMultiplier}",
                 placeable.GridTile.transform.position,

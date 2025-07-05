@@ -2,7 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum EffectedTiles
+public enum PlaceableEffectTiming
+{
+    OnPlace,
+    OnNewPlace,
+    OnRemove,
+    OnEndOfTurn,
+    OnEndOfRound,
+}
+
+public enum TilePattern
 {
     Self,
     Adjacent,
@@ -13,13 +22,20 @@ public enum EffectedTiles
     All,
 }
 
-public enum PlaceableEffectTiming
+[System.Serializable]
+public class GridMatch
 {
-    OnPlace,
-    OnEffectedTilePlaced,
-    OnRemove,
-    OnEndOfTurn,
-    OnEndOfRound,
+    public TilePattern pattern;
+    public List<TileType> tileTypes;
+    public List<PlaceableType> placeableTypes;
+    public bool onlyMatchNewTile = true;
+}
+
+[System.Serializable]
+public class GridCondition
+{
+    public GridMatch match;
+    public int requiredNumberOfTiles = 0;
 }
 
 public abstract class PlaceableEffect : MonoBehaviour
@@ -29,34 +45,29 @@ public abstract class PlaceableEffect : MonoBehaviour
     protected PlaceableEffectTiming effectTiming;
 
     [SerializeField]
-    protected EffectedTiles effectedTiles;
+    protected List<GridCondition> requiredConditions;
 
     [SerializeField]
-    [Tooltip(
-        "If true, this effect modifies the placeable itself rather than the placeables on the effected tiles"
-    )]
-    protected bool isSelfModifier = false;
-
-    [Header("Effect Conditions")]
-    [SerializeField]
-    protected List<TileType> requiredTileTypes;
+    protected List<GridMatch> countMatches;
 
     [SerializeField]
-    protected List<TileType> matchingTileTypes;
+    protected List<GridMatch> applyToMatches;
 
-    [SerializeField]
-    protected List<PlaceableType> matchingPlaceableTypes;
-
-    protected abstract void ApplyEffect(GridTile tile, List<GridTile> affectedTiles);
+    protected abstract void ApplyEffect(
+        GridTile tile,
+        GridTile newTile,
+        List<GridTile> applyToTiles,
+        int count
+    );
 
     public void OnPlace(GridTile tile)
     {
         TryApplyEffect(tile, PlaceableEffectTiming.OnPlace);
     }
 
-    public void OnEffectedTilePlaced(GridTile tile, GridTile placedTile)
+    public void OnNewPlace(GridTile tile, GridTile newTile)
     {
-        TryApplyEffect(tile, PlaceableEffectTiming.OnEffectedTilePlaced, placedTile);
+        TryApplyEffect(tile, PlaceableEffectTiming.OnNewPlace, newTile);
     }
 
     public void OnRemove(GridTile tile)
@@ -77,68 +88,118 @@ public abstract class PlaceableEffect : MonoBehaviour
     private void TryApplyEffect(
         GridTile tile,
         PlaceableEffectTiming timing,
-        GridTile placedTile = null
+        GridTile newTile = null
     )
     {
-        if (requiredTileTypes.Count > 0 && !requiredTileTypes.Contains(tile.Tile.TileType))
-            return;
-
         if (effectTiming != timing)
             return;
 
-        List<GridTile> affectedTiles = GetAffectedTiles(tile);
-        List<GridTile> matchingTiles = affectedTiles.FindAll(IsMatchingTile);
+        if (!AreRequiredConditionsMet(tile))
+            return;
 
-        if (placedTile == null)
-        {
-            ApplyEffect(tile, matchingTiles);
-        }
-        else if (matchingTiles.Contains(placedTile))
-        {
-            ApplyEffect(tile, new List<GridTile> { placedTile });
-        }
+        int count = GetCount(tile, newTile);
+        List<GridTile> applyToTiles = GetApplyToTiles(tile, newTile);
+
+        ApplyEffect(tile, newTile, applyToTiles, count);
     }
 
-    private List<GridTile> GetAffectedTiles(GridTile tile)
+    private List<GridTile> GetApplyToTiles(GridTile tile, GridTile newTile)
     {
-        switch (effectedTiles)
+        List<GridTile> applyToTiles = new List<GridTile>();
+
+        foreach (GridMatch applyToMatch in applyToMatches)
         {
-            case EffectedTiles.Self:
-                return new List<GridTile> { tile };
-            case EffectedTiles.Adjacent:
-                return GridManager.Instance.GetAdjacentTiles(tile.Position);
-            case EffectedTiles.Diagonal:
-                return GridManager.Instance.GetDiagonalTiles(tile.Position);
-            case EffectedTiles.Surrounding:
-                return GridManager.Instance.GetSurroundingTiles(tile.Position);
-            case EffectedTiles.Row:
-                return GridManager.Instance.GetRowTiles(tile.Position);
-            case EffectedTiles.Column:
-                return GridManager.Instance.GetColumnTiles(tile.Position);
-            case EffectedTiles.All:
-                return GridManager.Instance.GetAllTiles();
-            default:
-                return new List<GridTile>();
+            List<GridTile> matchingTiles = GetMatchingTiles(tile, applyToMatch);
+
+            if (applyToMatch.onlyMatchNewTile && newTile != null)
+            {
+                matchingTiles = matchingTiles.FindAll(tile => tile == newTile);
+            }
+
+            applyToTiles.AddRange(matchingTiles);
         }
+
+        return applyToTiles;
     }
 
-    private bool IsMatchingTile(GridTile tile)
+    private int GetCount(GridTile tile, GridTile newTile)
     {
-        if (matchingPlaceableTypes.Count > 0)
+        int count = 0;
+
+        foreach (GridMatch countMatch in countMatches)
         {
-            if (
-                tile.PlacedObject == null
-                || !matchingPlaceableTypes.Contains(tile.PlacedObject.PlaceableType)
-            )
-                return false;
+            List<GridTile> matchingTiles = GetMatchingTiles(tile, countMatch);
+
+            if (countMatch.onlyMatchNewTile && newTile != null)
+            {
+                matchingTiles = matchingTiles.FindAll(tile => tile == newTile);
+            }
+
+            count += matchingTiles.Count;
         }
 
-        if (matchingTileTypes.Count > 0)
+        return count;
+    }
+
+    private bool AreRequiredConditionsMet(GridTile tile)
+    {
+        foreach (GridCondition requiredCondition in requiredConditions)
         {
-            if (!matchingTileTypes.Contains(tile.Tile.TileType))
+            List<GridTile> matchingTiles = GetMatchingTiles(tile, requiredCondition.match);
+            if (matchingTiles.Count < requiredCondition.requiredNumberOfTiles)
                 return false;
         }
 
         return true;
+    }
+
+    private List<GridTile> GetMatchingTiles(GridTile tile, GridMatch match)
+    {
+        List<GridTile> matchingTiles = GetTilesInPattern(tile, match.pattern);
+        return matchingTiles.FindAll(tile => IsMatchingTile(tile, match));
+    }
+
+    private bool IsMatchingTile(GridTile tile, GridMatch match)
+    {
+        if (
+            match.placeableTypes.Count > 0
+            && (
+                tile.PlacedObject == null
+                || !match.placeableTypes.Contains(tile.PlacedObject.PlaceableType)
+            )
+        )
+        {
+            return false;
+        }
+
+        if (match.tileTypes.Count > 0 && !match.tileTypes.Contains(tile.Tile.TileType))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private List<GridTile> GetTilesInPattern(GridTile tile, TilePattern pattern)
+    {
+        switch (pattern)
+        {
+            case TilePattern.Self:
+                return new List<GridTile> { tile };
+            case TilePattern.Adjacent:
+                return GridManager.Instance.GetAdjacentTiles(tile.Position);
+            case TilePattern.Diagonal:
+                return GridManager.Instance.GetDiagonalTiles(tile.Position);
+            case TilePattern.Surrounding:
+                return GridManager.Instance.GetSurroundingTiles(tile.Position);
+            case TilePattern.Row:
+                return GridManager.Instance.GetRowTiles(tile.Position);
+            case TilePattern.Column:
+                return GridManager.Instance.GetColumnTiles(tile.Position);
+            case TilePattern.All:
+                return GridManager.Instance.GetAllTiles();
+            default:
+                return new List<GridTile>();
+        }
     }
 }

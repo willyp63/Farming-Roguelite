@@ -7,26 +7,25 @@ public class CoinPlaceableEffect : PlaceableEffect
     [SerializeField]
     private int amount;
 
-    protected override void ApplyEffect(GridTile tile, List<GridTile> affectedTiles)
+    protected override void ApplyEffect(
+        GridTile tile,
+        GridTile newTile,
+        List<GridTile> applyToTiles,
+        int count
+    )
     {
-        if (isSelfModifier)
+        int totalAmount = amount * count;
+        if (totalAmount == 0)
+            return;
+
+        foreach (GridTile applyToTile in applyToTiles)
         {
-            GenerateCoins(tile, amount * affectedTiles.Count);
-        }
-        else
-        {
-            foreach (GridTile affectedTile in affectedTiles)
-            {
-                GenerateCoins(affectedTile, amount);
-            }
+            GenerateCoins(applyToTile, totalAmount);
         }
     }
 
     private void GenerateCoins(GridTile tile, int totalAmount)
     {
-        if (totalAmount == 0)
-            return;
-
         CoinManager.Instance.GainCoins(totalAmount);
 
         FloatingTextManager.Instance.SpawnText(

@@ -65,11 +65,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectTiming: 0
-  effectedTiles: 1
-  isSelfModifier: 0
-  requiredTileTypes: 01000000
-  matchingTileTypes: 
-  matchingPlaceableTypes: 01000000
+  requiredConditions:
+  - match:
+      pattern: 0
+      tileTypes: 01000000
+      placeableTypes: 
+      onlyMatchNewTile: 0
+    requiredNumberOfTiles: 1
+  countMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
+  applyToMatches:
+  - pattern: 1
+    tileTypes: 
+    placeableTypes: 01000000
+    onlyMatchNewTile: 0
   scoreAddition: 0
   scoreMultiplier: 2
 --- !u!114 &-1537029466497595087
@@ -85,11 +97,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectTiming: 0
-  effectedTiles: 0
-  isSelfModifier: 0
-  requiredTileTypes: 01000000
-  matchingTileTypes: 
-  matchingPlaceableTypes: 
+  requiredConditions:
+  - match:
+      pattern: 0
+      tileTypes: 01000000
+      placeableTypes: 
+      onlyMatchNewTile: 0
+    requiredNumberOfTiles: 1
+  countMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
+  applyToMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
   toTile: {fileID: 11400000, guid: 36796a3139bb993428dff2c0e4aca941, type: 2}
 --- !u!210 &3555250421083542281
 SortingGroup:

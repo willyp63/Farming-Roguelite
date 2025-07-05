@@ -64,11 +64,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectTiming: 1
-  effectedTiles: 3
-  isSelfModifier: 0
-  requiredTileTypes: 
-  matchingTileTypes: 
-  matchingPlaceableTypes: 01000000
+  requiredConditions: []
+  countMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
+  applyToMatches:
+  - pattern: 3
+    tileTypes: 
+    placeableTypes: 01000000
+    onlyMatchNewTile: 1
   scoreAddition: 1
   scoreMultiplier: 1
 --- !u!210 &3555250421083542281

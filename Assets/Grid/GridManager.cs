@@ -159,7 +159,7 @@ public class GridManager : Singleton<GridManager>
             if (otherTile == null || otherTile == tile || otherTile.PlacedObject == null)
                 continue;
 
-            otherTile.PlacedObject.OnEffectedTilePlaced(otherTile, tile);
+            otherTile.PlacedObject.OnNewPlaced(otherTile, tile);
         }
 
         OnGridChanged?.Invoke();

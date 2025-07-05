@@ -745,11 +745,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectTiming: 3
-  effectedTiles: 0
-  isSelfModifier: 0
-  requiredTileTypes: 
-  matchingTileTypes: 
-  matchingPlaceableTypes: 
+  requiredConditions: []
+  countMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
+  applyToMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
   amount: 1
 --- !u!114 &3911022601629908839
 MonoBehaviour:
@@ -764,11 +770,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectTiming: 0
-  effectedTiles: 1
-  isSelfModifier: 1
-  requiredTileTypes: 
-  matchingTileTypes: 
-  matchingPlaceableTypes: 01000000
+  requiredConditions: []
+  countMatches:
+  - pattern: 1
+    tileTypes: 
+    placeableTypes: 01000000
+    onlyMatchNewTile: 0
+  applyToMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
   scoreAddition: 3
   scoreMultiplier: 1
 --- !u!210 &7038447385482280336

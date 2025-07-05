@@ -90,11 +90,11 @@ public class Placeable : MonoBehaviour
         }
     }
 
-    public void OnEffectedTilePlaced(GridTile tile, GridTile placedTile)
+    public void OnNewPlaced(GridTile tile, GridTile placedTile)
     {
         foreach (PlaceableEffect effect in effects)
         {
-            effect.OnEffectedTilePlaced(tile, placedTile);
+            effect.OnNewPlace(tile, placedTile);
         }
     }
 }
