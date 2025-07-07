@@ -26,7 +26,7 @@ public class CoinPlaceableEffect : PlaceableEffect
 
     private void GenerateCoins(GridTile tile, int totalAmount)
     {
-        CoinManager.Instance.GainCoins(totalAmount);
+        PlayerManager.Instance.GainMoney(totalAmount);
 
         FloatingTextManager.Instance.SpawnText(
             $"+${totalAmount}",

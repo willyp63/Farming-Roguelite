@@ -55,8 +55,9 @@ public class UIManager : Singleton<UIManager>
 
     public void Start()
     {
-        // Subscribe to coin events
-        CoinManager.Instance.OnCoinsChanged.AddListener(OnMoneyChanged);
+        // Subscribe to player manager events
+        PlayerManager.Instance.OnEnergyChanged.AddListener(OnEnergyChanged);
+        PlayerManager.Instance.OnMoneyChanged.AddListener(OnMoneyChanged);
 
         // Subscribe to hand manager events
         CardManager.Instance.OnCardAddedToHand.AddListener(OnCardAdded);
@@ -77,7 +78,8 @@ public class UIManager : Singleton<UIManager>
         requiredScoreText.text = RoundManager.Instance.RequiredScore.ToString();
 
         // Initialize Text elements
-        OnMoneyChanged(CoinManager.Instance.CurrentCoins);
+        OnMoneyChanged(PlayerManager.Instance.CurrentMoney);
+        OnEnergyChanged(PlayerManager.Instance.CurrentEnergy);
         OnDeckCountChanged(CardManager.Instance.Deck.Count);
         OnDiscardCountChanged(CardManager.Instance.Discard.Count);
         OnScoreChanged(RoundManager.Instance.PointScore, RoundManager.Instance.MultiScore);
@@ -94,15 +96,23 @@ public class UIManager : Singleton<UIManager>
         base.OnDestroy();
 
         // Unsubscribe from events to prevent memory leaks
-        if (CoinManager.Instance != null)
+        if (PlayerManager.Instance != null)
         {
-            CoinManager.Instance.OnCoinsChanged.RemoveListener(OnMoneyChanged);
+            PlayerManager.Instance.OnMoneyChanged.RemoveListener(OnMoneyChanged);
         }
 
         if (CardManager.Instance != null)
         {
             CardManager.Instance.OnCardAddedToHand.RemoveListener(OnCardAdded);
             CardManager.Instance.OnCardRemovedFromHand.RemoveListener(OnCardRemoved);
+        }
+    }
+
+    private void OnEnergyChanged(int newAmount)
+    {
+        if (energyText != null)
+        {
+            energyText.text = $"{newAmount}/{PlayerManager.Instance.CurrentMaxEnergy}";
         }
     }
 

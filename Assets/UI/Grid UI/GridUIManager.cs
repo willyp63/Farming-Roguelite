@@ -88,14 +88,19 @@ public class GridUIManager : Singleton<GridUIManager>
             return;
 
         GridTile tile = currentHoveredTile.Tile;
+        Card card = cardUI.GetCard();
 
-        if (IsValidPlacement(tile.Position, cardUI.GetCard()))
+        if (
+            IsValidPlacement(tile.Position, card)
+            && PlayerManager.Instance.HasEnoughEnergy(card.EnergyCost)
+        )
         {
             // Play card
-            Card card = cardUI.GetCard();
             card.PlayCard(tile);
 
-            // Remove the card from the player's hand
+            if (card.EnergyCost > 0)
+                PlayerManager.Instance.SpendEnergy(card.EnergyCost);
+
             CardManager.Instance.DiscardCard(card);
 
             OnCardPlayedOnTile?.Invoke(tile.Position, card);

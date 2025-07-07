@@ -68,8 +68,9 @@ public class RoundManager : Singleton<RoundManager>
 
     private IEnumerator NextDayEnumerator()
     {
-        // Trigger end of day effects
+        // Trigger end of day effects and clear non-permanent placeables
         GridManager.Instance.OnEndOfTurn();
+        GridManager.Instance.ClearPlaceables();
         yield return new WaitForSeconds(1f);
 
         // Check if round is complete
@@ -83,7 +84,8 @@ public class RoundManager : Singleton<RoundManager>
             Debug.Log("Round failed!");
         }
 
-        // Draw cards for the next day
+        // Reset energy & draw cards for the next day
+        PlayerManager.Instance.ResetEnergy();
         CardManager.Instance.DrawCards(cardsDrawnPerDay);
 
         // Increment day and trigger event

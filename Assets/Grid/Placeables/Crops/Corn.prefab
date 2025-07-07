@@ -731,7 +731,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Corn
   placeableType: 1
-  isPermanent: 0
+  isPermanent: 1
   allowedTileTypes: 02000000
 --- !u!114 &8141606273527163774
 MonoBehaviour:

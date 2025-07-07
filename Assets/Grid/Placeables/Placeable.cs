@@ -24,7 +24,7 @@ public class Placeable : MonoBehaviour
     public PlaceableType PlaceableType => placeableType;
 
     [SerializeField]
-    private bool isPermanent = false;
+    private bool isPermanent = true;
     public bool IsPermanent => isPermanent;
 
     [SerializeField]
