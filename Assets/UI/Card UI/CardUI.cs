@@ -10,13 +10,19 @@ using UnityEngine.UI;
 public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField]
-    private TextMeshProUGUI baseScoreText;
+    private TextMeshProUGUI energyCostText;
+
+    [SerializeField]
+    private TextMeshProUGUI nameText;
+
+    [SerializeField]
+    private TextMeshProUGUI cardText;
 
     [SerializeField]
     private Image cardImage;
 
     [SerializeField]
-    private TextMeshProUGUI cardText;
+    private List<Image> backgroundImages;
 
     [SerializeField]
     private float dragScale = 0.33f;
@@ -44,14 +50,20 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     public void SetCard(Card card)
     {
         this.card = card;
-        baseScoreText.text = card.BaseScore.ToString();
-        cardImage.sprite = card.Image;
+        energyCostText.text = card.EnergyCost.ToString();
+        nameText.text = card.CardName;
         cardText.text = card.Text;
+        cardImage.sprite = card.Image;
+
+        foreach (Image backgroundImage in backgroundImages)
+        {
+            backgroundImage.color = card.GetCardColor();
+        }
 
         foreach (AllowedTileTypeUI allowedTileType in allowedTileTypes)
         {
             allowedTileType.gameObject.SetActive(
-                card.AllowedTileTypes.Contains(allowedTileType.TileType)
+                card.GetAllowedTileTypes().Contains(allowedTileType.TileType)
             );
         }
     }

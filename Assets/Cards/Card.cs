@@ -2,32 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Card", menuName = "Farming Roguelike/Card")]
-public class Card : ScriptableObject
+public abstract class Card : ScriptableObject
 {
     [SerializeField]
     private string cardName;
+    public string CardName => cardName;
 
     [SerializeField]
     private Sprite image;
+    public Sprite Image => image;
 
     [SerializeField]
     [TextArea(4, 8)]
     private string text;
-
-    [SerializeField]
-    private int baseScore;
-
-    [SerializeField]
-    private List<TileType> allowedTileTypes;
-
-    [SerializeField]
-    private CardEffect effect;
-
-    public string CardName => cardName;
-    public Sprite Image => image;
     public string Text => text;
-    public int BaseScore => baseScore;
-    public List<TileType> AllowedTileTypes => allowedTileTypes;
-    public CardEffect CardEffect => effect;
+
+    [SerializeField]
+    private int energyCost = 0;
+    public int EnergyCost => energyCost;
+
+    public abstract void PlayCard(GridTile tile);
+
+    public abstract bool IsValidPlacement(GridTile tile);
+
+    public abstract List<TileType> GetAllowedTileTypes();
+
+    public abstract Color GetCardColor();
 }

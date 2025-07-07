@@ -18,9 +18,6 @@ public class GridTileUI
     [SerializeField]
     private Image highlightRenderer;
 
-    [SerializeField]
-    private TextMeshProUGUI scoreText;
-
     [Header("Visual Settings")]
     [SerializeField]
     private float highlightAlpha = 0.3f;
@@ -51,7 +48,6 @@ public class GridTileUI
         position = pos;
         tile = gridTile;
         SetHighlight(Color.white, false);
-        SetScore(gridTile.PlacedObject?.Score ?? 0);
     }
 
     public void SetHighlight(Color color, bool highlight)
@@ -61,21 +57,6 @@ public class GridTileUI
             Color highlightColor = color;
             highlightColor.a = highlight ? highlightAlpha : 0f;
             highlightRenderer.color = highlightColor;
-        }
-    }
-
-    public void SetScore(int score)
-    {
-        if (scoreText != null)
-        {
-            if (score == 0)
-            {
-                scoreText.text = "";
-            }
-            else
-            {
-                scoreText.text = score.ToString();
-            }
         }
     }
 

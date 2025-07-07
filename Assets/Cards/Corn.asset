@@ -9,7 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b2a27d8a58cd224d8d087dbe3db2209, type: 3}
-  m_Name: Corn Effect
+  m_Script: {fileID: 11500000, guid: 6d94751e8c66ba44cbb74f883c2fdc59, type: 3}
+  m_Name: Corn
   m_EditorClassIdentifier: 
+  cardName: Corn
+  image: {fileID: 47816396, guid: 6b36457f8fc14cb4780233cffac7476b, type: 3}
+  text: <b>Place:</b> Gain <color=#C800FF><b>+3</b></color> for each adjacent crop
+  energyCost: 1
   placeablePrefab: {fileID: 3017428051473517123, guid: 208e8c1d681630241ba14d658a049b06, type: 3}

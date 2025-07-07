@@ -28,6 +28,12 @@ public class CardManager : Singleton<CardManager>
     [NonSerialized]
     public UnityEvent<Card> OnCardRemovedFromHand = new();
 
+    [NonSerialized]
+    public UnityEvent<int> OnDeckCountChanged = new();
+
+    [NonSerialized]
+    public UnityEvent<int> OnDiscardCountChanged = new();
+
     public int HandSize => hand.Count;
     public int MaxHandSize => maxHandSize;
 
@@ -52,6 +58,9 @@ public class CardManager : Singleton<CardManager>
         }
 
         ShuffleDeck();
+
+        OnDeckCountChanged?.Invoke(deck.Count);
+        OnDiscardCountChanged?.Invoke(discard.Count);
     }
 
     public void ShuffleDeck()
@@ -77,6 +86,8 @@ public class CardManager : Singleton<CardManager>
         hand.Add(drawnCard);
 
         OnCardAddedToHand?.Invoke(drawnCard);
+        OnDeckCountChanged?.Invoke(deck.Count);
+
         return drawnCard;
     }
 
@@ -106,7 +117,10 @@ public class CardManager : Singleton<CardManager>
         {
             hand.Remove(card);
             discard.Add(card);
+
             OnCardRemovedFromHand?.Invoke(card);
+            OnDiscardCountChanged?.Invoke(discard.Count);
+
             return true;
         }
         return false;
@@ -119,7 +133,10 @@ public class CardManager : Singleton<CardManager>
             Card card = hand[index];
             hand.RemoveAt(index);
             discard.Add(card);
+
             OnCardRemovedFromHand?.Invoke(card);
+            OnDiscardCountChanged?.Invoke(discard.Count);
+
             return card;
         }
         return null;
@@ -143,5 +160,8 @@ public class CardManager : Singleton<CardManager>
         deck.AddRange(discard);
         discard.Clear();
         ShuffleDeck();
+
+        OnDeckCountChanged?.Invoke(deck.Count);
+        OnDiscardCountChanged?.Invoke(discard.Count);
     }
 }

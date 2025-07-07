@@ -44,8 +44,6 @@ public class GridUIManager : Singleton<GridUIManager>
         // Subscribe to card drag events
         UIManager.Instance.OnCardDragStarted.AddListener(HandleCardDragStarted);
         UIManager.Instance.OnCardDragEnded.AddListener(HandleCardDragEnded);
-
-        GridManager.Instance.OnGridChanged.AddListener(UpdateAllTileScores);
     }
 
     public void InitializeGridUI()
@@ -93,13 +91,9 @@ public class GridUIManager : Singleton<GridUIManager>
 
         if (IsValidPlacement(tile.Position, cardUI.GetCard()))
         {
+            // Play card
             Card card = cardUI.GetCard();
-
-            // Play the card
-            card.CardEffect.ApplyEffect(tile.Position, tile, card);
-
-            // Update the score of all tiles
-            UpdateAllTileScores();
+            card.PlayCard(tile);
 
             // Remove the card from the player's hand
             CardManager.Instance.DiscardCard(card);
@@ -165,7 +159,7 @@ public class GridUIManager : Singleton<GridUIManager>
     {
         // Check card-specific placement rules
         GridTile tile = GridManager.Instance.GetTile(position);
-        return card.CardEffect.IsValidPlacement(position, tile, card);
+        return card.IsValidPlacement(tile);
     }
 
     private void HandleTileHovered(Vector2Int position)
@@ -188,25 +182,6 @@ public class GridUIManager : Singleton<GridUIManager>
             if (!isInPlacementMode)
                 currentHoveredTile.SetHighlight(Color.white, false);
             currentHoveredTile = null;
-        }
-    }
-
-    private void UpdateAllTileScores()
-    {
-        foreach (var kvp in tileUIElements)
-        {
-            Vector2Int position = kvp.Key;
-            GridTile tile = GridManager.Instance.GetTile(position);
-            GridTileUI tileUI = kvp.Value;
-
-            if (tile.PlacedObject != null)
-            {
-                tileUI.SetScore(tile.PlacedObject.Score);
-            }
-            else
-            {
-                tileUI.SetScore(0);
-            }
         }
     }
 }

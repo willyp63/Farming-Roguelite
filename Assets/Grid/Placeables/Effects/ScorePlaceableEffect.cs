@@ -5,10 +5,16 @@ using UnityEngine;
 public class ScorePlaceableEffect : PlaceableEffect
 {
     [SerializeField]
-    private int scoreAddition = 0;
+    private int pointAddition = 0;
 
     [SerializeField]
-    private int scoreMultiplier = 1;
+    private int pointMultiplier = 1;
+
+    [SerializeField]
+    private int multiAddition = 0;
+
+    [SerializeField]
+    private int multiMultiplier = 1;
 
     protected override void ApplyEffect(
         GridTile tile,
@@ -17,41 +23,66 @@ public class ScorePlaceableEffect : PlaceableEffect
         int count
     )
     {
-        int totalScoreAddition = scoreAddition * count;
-        int totalScoreMultiplier = (int)Mathf.Pow(scoreMultiplier, count);
+        int totalPointAddition = pointAddition * count;
+        int totalPointMultiplier = (int)Mathf.Pow(pointMultiplier, count);
+        int totalMultiAddition = multiAddition * count;
+        int totalMultiMultiplier = (int)Mathf.Pow(multiMultiplier, count);
 
         foreach (GridTile applyToTile in applyToTiles)
         {
-            ApplyEffectToTile(applyToTile, totalScoreAddition, totalScoreMultiplier);
+            ApplyEffectToTile(
+                applyToTile,
+                totalPointAddition,
+                totalPointMultiplier,
+                totalMultiAddition,
+                totalMultiMultiplier
+            );
         }
     }
 
-    private void ApplyEffectToTile(GridTile tile, int totalScoreAddition, int totalScoreMultiplier)
+    private void ApplyEffectToTile(
+        GridTile tile,
+        int totalPointAddition,
+        int totalPointMultiplier,
+        int totalMultiAddition,
+        int totalMultiMultiplier
+    )
     {
         Placeable placeable = tile.PlacedObject;
         if (placeable == null)
             return;
 
-        if (totalScoreAddition != 0)
+        if (totalPointAddition != 0)
         {
-            placeable.AddScore(totalScoreAddition);
-
-            FloatingTextManager.Instance.SpawnText(
-                $"+{totalScoreAddition}",
-                placeable.GridTile.transform.position,
-                new Color(200f / 255f, 0f / 255f, 255f / 255f, 1f)
-            );
+            RoundManager.Instance.AddPoints(totalPointAddition);
+            SpawnFloatingText($"+{totalPointAddition}", tile);
         }
 
-        if (totalScoreMultiplier != 1)
+        if (totalPointMultiplier != 1)
         {
-            placeable.MultiplyScore(totalScoreMultiplier);
-
-            FloatingTextManager.Instance.SpawnText(
-                $"x{totalScoreMultiplier}",
-                placeable.GridTile.transform.position,
-                new Color(200f / 255f, 0f / 255f, 255f / 255f, 1f)
-            );
+            RoundManager.Instance.AddPoints(0, totalPointMultiplier);
+            SpawnFloatingText($"x{totalPointMultiplier}", tile);
         }
+
+        if (totalMultiAddition != 0)
+        {
+            RoundManager.Instance.AddMulti(totalMultiAddition);
+            SpawnFloatingText($"+{totalMultiAddition}", tile, true);
+        }
+
+        if (totalMultiMultiplier != 1)
+        {
+            RoundManager.Instance.AddMulti(0, totalMultiMultiplier);
+            SpawnFloatingText($"x{totalMultiMultiplier}", tile, true);
+        }
+    }
+
+    private void SpawnFloatingText(string text, GridTile tile, bool isMulti = false)
+    {
+        FloatingTextManager.Instance.SpawnText(
+            text,
+            tile.transform.position,
+            isMulti ? new Color(1f, 0f, 0f, 1f) : new Color(0f, 0f, 1f, 1f)
+        );
     }
 }

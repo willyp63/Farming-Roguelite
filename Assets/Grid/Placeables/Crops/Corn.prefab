@@ -730,8 +730,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Corn
-  isPermanent: 0
   placeableType: 1
+  isPermanent: 0
+  allowedTileTypes: 02000000
 --- !u!114 &8141606273527163774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -781,8 +782,10 @@ MonoBehaviour:
     tileTypes: 
     placeableTypes: 
     onlyMatchNewTile: 0
-  scoreAddition: 3
-  scoreMultiplier: 1
+  pointAddition: 3
+  pointMultiplier: 1
+  multiAddition: 0
+  multiMultiplier: 1
 --- !u!210 &7038447385482280336
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -43,6 +43,7 @@ public abstract class PlaceableEffect : MonoBehaviour
     [Header("Effect Settings")]
     [SerializeField]
     protected PlaceableEffectTiming effectTiming;
+    public PlaceableEffectTiming EffectTiming => effectTiming;
 
     [SerializeField]
     protected List<GridCondition> requiredConditions;

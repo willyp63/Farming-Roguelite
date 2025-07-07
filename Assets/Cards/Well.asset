@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9b23b7840f05e24ca4017fbd0dcea97, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d94751e8c66ba44cbb74f883c2fdc59, type: 3}
   m_Name: Well
   m_EditorClassIdentifier: 
   cardName: Well
-  image: {fileID: 391596124, guid: 4b7b1862e508830469b0425126744756, type: 3}
+  image: {fileID: -562190540, guid: f9af6a3be9abddf42a67875efac4fee1, type: 3}
   text: '<color=#FFDC00><b>Permanent</b></color>
+
 
     Gain <color=#C800FF><b>+1</b></color>
     whenever a crop is placed on a surrounding tile'
-  baseScore: 0
-  allowedTileTypes: 010000000200000003000000
-  effect: {fileID: 11400000, guid: e2b15e51c2a482b4ba0c64ef29431c12, type: 2}
+  energyCost: 2
+  placeablePrefab: {fileID: 2121496598191819596, guid: a5884f43bd235c34dabc6e9112ed2f7c, type: 3}

@@ -50,8 +50,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Cow
-  isPermanent: 0
   placeableType: 2
+  isPermanent: 0
+  allowedTileTypes: 01000000020000000300000004000000
 --- !u!114 &-8442559103271085971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,12 +79,14 @@ MonoBehaviour:
     placeableTypes: 
     onlyMatchNewTile: 0
   applyToMatches:
-  - pattern: 1
+  - pattern: 0
     tileTypes: 
-    placeableTypes: 01000000
+    placeableTypes: 
     onlyMatchNewTile: 0
-  scoreAddition: 0
-  scoreMultiplier: 2
+  pointAddition: 0
+  pointMultiplier: 1
+  multiAddition: 4
+  multiMultiplier: 1
 --- !u!114 &-1537029466497595087
 MonoBehaviour:
   m_ObjectHideFlags: 0

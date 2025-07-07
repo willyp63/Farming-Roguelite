@@ -8,52 +8,80 @@ using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
+    [Header("Text Elements")]
     [SerializeField]
-    private TextMeshProUGUI coinText;
+    private TextMeshProUGUI dayText;
 
     [SerializeField]
-    private CardUI cardUIPrefab;
+    private TextMeshProUGUI requiredScoreText;
 
+    [SerializeField]
+    private TextMeshProUGUI scoreMultipliersText;
+
+    [SerializeField]
+    private TextMeshProUGUI scoreText;
+
+    [SerializeField]
+    private TextMeshProUGUI moneyText;
+
+    [SerializeField]
+    private TextMeshProUGUI energyText;
+
+    [SerializeField]
+    private TextMeshProUGUI deckCountText;
+
+    [SerializeField]
+    private TextMeshProUGUI discardCountText;
+
+    [Header("Buttons")]
+    [SerializeField]
+    private Button endTurnButton;
+
+    [Header("Card UI")]
     [SerializeField]
     private Transform cardContainer;
 
     [SerializeField]
-    private TextMeshProUGUI messageText;
+    private CardUI cardUIPrefab;
 
-    [SerializeField]
-    private GameObject messagePanel;
-
-    [SerializeField]
-    private Button endTurnButton;
-
-    private List<CardUI> cardUIElements = new List<CardUI>();
-
+    // Events
     [NonSerialized]
     public UnityEvent<CardUI> OnCardDragStarted = new();
 
     [NonSerialized]
     public UnityEvent<CardUI> OnCardDragEnded = new();
 
-    private void Start()
+    private List<CardUI> cardUIElements = new List<CardUI>();
+
+    public void Start()
     {
         // Subscribe to coin events
-        CoinManager.Instance.OnCoinsChanged.AddListener(UpdateCoinDisplay);
+        CoinManager.Instance.OnCoinsChanged.AddListener(OnMoneyChanged);
 
         // Subscribe to hand manager events
         CardManager.Instance.OnCardAddedToHand.AddListener(OnCardAdded);
         CardManager.Instance.OnCardRemovedFromHand.AddListener(OnCardRemoved);
 
-        // Initialize coin display
-        UpdateCoinDisplay(CoinManager.Instance.CurrentCoins);
+        // Subscribe to deck/discard events
+        CardManager.Instance.OnDeckCountChanged.AddListener(OnDeckCountChanged);
+        CardManager.Instance.OnDiscardCountChanged.AddListener(OnDiscardCountChanged);
+
+        // Subscribe to score and day events
+        RoundManager.Instance.OnScoreChange.AddListener(OnScoreChanged);
+        RoundManager.Instance.OnDayChange.AddListener(OnDayChanged);
 
         // Initialize hand display
         UpdateHandDisplay();
 
-        // Hide message panel initially
-        if (messagePanel != null)
-        {
-            messagePanel.SetActive(false);
-        }
+        // Initialize required score
+        requiredScoreText.text = RoundManager.Instance.RequiredScore.ToString();
+
+        // Initialize Text elements
+        OnMoneyChanged(CoinManager.Instance.CurrentCoins);
+        OnDeckCountChanged(CardManager.Instance.Deck.Count);
+        OnDiscardCountChanged(CardManager.Instance.Discard.Count);
+        OnScoreChanged(RoundManager.Instance.PointScore, RoundManager.Instance.MultiScore);
+        OnDayChanged(RoundManager.Instance.CurrentDay);
 
         if (endTurnButton != null)
         {
@@ -68,7 +96,7 @@ public class UIManager : Singleton<UIManager>
         // Unsubscribe from events to prevent memory leaks
         if (CoinManager.Instance != null)
         {
-            CoinManager.Instance.OnCoinsChanged.RemoveListener(UpdateCoinDisplay);
+            CoinManager.Instance.OnCoinsChanged.RemoveListener(OnMoneyChanged);
         }
 
         if (CardManager.Instance != null)
@@ -78,11 +106,11 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    private void UpdateCoinDisplay(int newAmount)
+    private void OnMoneyChanged(int newAmount)
     {
-        if (coinText != null)
+        if (moneyText != null)
         {
-            coinText.text = newAmount.ToString();
+            moneyText.text = $"${newAmount}";
         }
     }
 
@@ -95,6 +123,44 @@ public class UIManager : Singleton<UIManager>
     private void OnCardRemoved(Card card)
     {
         RemoveCardUI(card);
+    }
+
+    private void OnDeckCountChanged(int newCount)
+    {
+        if (deckCountText != null)
+        {
+            deckCountText.text = newCount.ToString();
+        }
+    }
+
+    private void OnDiscardCountChanged(int newCount)
+    {
+        if (discardCountText != null)
+        {
+            discardCountText.text = newCount.ToString();
+        }
+    }
+
+    private void OnScoreChanged(int newPoints, int newMultiplier)
+    {
+        if (scoreText != null)
+        {
+            scoreText.text = RoundManager.Instance.TotalScore.ToString();
+        }
+
+        if (scoreMultipliersText != null)
+        {
+            scoreMultipliersText.text =
+                $"<color=#0000ff>{newPoints}</color> x <color=#ff0000>{newMultiplier}</color>";
+        }
+    }
+
+    private void OnDayChanged(int newDay)
+    {
+        if (dayText != null)
+        {
+            dayText.text = $"Day {newDay} of {RoundManager.Instance.TotalDays}";
+        }
     }
 
     private void UpdateHandDisplay()
@@ -182,34 +248,8 @@ public class UIManager : Singleton<UIManager>
         OnCardDragEnded?.Invoke(cardUI);
     }
 
-    public void ShowMessage(string message)
-    {
-        if (messageText != null)
-        {
-            messageText.text = message;
-        }
-
-        if (messagePanel != null)
-        {
-            messagePanel.SetActive(true);
-
-            // Auto-hide the message after 3 seconds
-            StartCoroutine(HideMessageAfterDelay(3f));
-        }
-    }
-
-    private IEnumerator HideMessageAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        if (messagePanel != null)
-        {
-            messagePanel.SetActive(false);
-        }
-    }
-
     private void OnEndTurnButtonClicked()
     {
-        GameManager.Instance.CompleteTurn();
+        RoundManager.Instance.GoToNextDay();
     }
 }

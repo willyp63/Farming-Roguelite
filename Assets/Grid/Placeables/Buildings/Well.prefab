@@ -49,8 +49,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placeableName: Well
-  isPermanent: 1
   placeableType: 3
+  isPermanent: 1
+  allowedTileTypes: 010000000200000003000000
 --- !u!114 &-3290458095466194308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,17 +67,19 @@ MonoBehaviour:
   effectTiming: 1
   requiredConditions: []
   countMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  applyToMatches:
   - pattern: 3
     tileTypes: 
     placeableTypes: 01000000
     onlyMatchNewTile: 1
-  scoreAddition: 1
-  scoreMultiplier: 1
+  applyToMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
+  pointAddition: 1
+  pointMultiplier: 1
+  multiAddition: 0
+  multiMultiplier: 1
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0

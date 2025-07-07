@@ -121,7 +121,7 @@ public class GridManager : Singleton<GridManager>
         return null;
     }
 
-    public void PlaceObject(Vector2Int position, Placeable placeablePrefab, int score = 0)
+    public void PlaceObject(Vector2Int position, Placeable placeablePrefab)
     {
         if (!IsValidPosition(position.x, position.y))
         {
@@ -146,7 +146,7 @@ public class GridManager : Singleton<GridManager>
             return;
         }
 
-        placeable.Initialize(tile, score);
+        placeable.Initialize(tile);
         tile.SetPlacedObject(placeable);
         placeable.transform.localPosition = Vector3.zero;
 
@@ -269,31 +269,6 @@ public class GridManager : Singleton<GridManager>
             y * (tileSize + padding) - gridHeightSize / 2 + tileSize / 2 + padding / 2,
             0f
         );
-    }
-
-    public int CalculateBoardScore()
-    {
-        int totalScore = 0;
-
-        for (int x = 0; x < gridWidth; x++)
-        {
-            for (int y = 0; y < gridHeight; y++)
-            {
-                GridTile tile = grid[x, y];
-                if (tile != null && tile.PlacedObject != null && tile.PlacedObject.Score > 0)
-                {
-                    totalScore += tile.PlacedObject.Score;
-
-                    FloatingTextManager.Instance.SpawnText(
-                        $"+{tile.PlacedObject.Score}",
-                        tile.transform.position,
-                        new Color(200f / 255f, 0f / 255f, 255f / 255f, 1f)
-                    );
-                }
-            }
-        }
-
-        return totalScore;
     }
 
     public void ClearPlaceables(bool clearPermanents = false)
