@@ -51,6 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Cow
   placeableType: 2
+  placeableFamily: 8
   season: 0
   isPermanent: 1
   isMovable: 1

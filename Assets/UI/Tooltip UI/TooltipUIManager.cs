@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,12 +13,23 @@ public enum TooltipDirection
     Below,
 }
 
+[System.Serializable]
+public class PlaceableFamilyIcon
+{
+    public PlaceableFamily family;
+    public Sprite icon;
+}
+
 public class TooltipUIManager : Singleton<TooltipUIManager>
 {
     [Header("Tooltip UI References")]
     public GameObject tooltipObject;
     public TextMeshProUGUI tooltipText;
+    public Image tooltipIcon;
     public Canvas canvas;
+
+    [Header("Placeable Family Icons")]
+    public List<PlaceableFamilyIcon> placeableFamilyIcons;
 
     protected override void Awake()
     {
@@ -34,6 +46,7 @@ public class TooltipUIManager : Singleton<TooltipUIManager>
 
     public void ShowTooltip(
         string content,
+        PlaceableFamily family,
         Vector3 position,
         float offset,
         TooltipDirection direction,
@@ -111,6 +124,18 @@ public class TooltipUIManager : Singleton<TooltipUIManager>
 
         // Set tooltip text content
         tooltipText.text = content;
+
+        // Set tooltip icon
+        if (family != PlaceableFamily.None)
+        {
+            Sprite icon = placeableFamilyIcons.First(p => p.family == family)?.icon;
+            tooltipIcon.gameObject.SetActive(icon != null);
+            tooltipIcon.sprite = icon;
+        }
+        else
+        {
+            tooltipIcon.gameObject.SetActive(false);
+        }
 
         // Activate the tooltip
         tooltipObject.SetActive(true);

@@ -51,6 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Trees
   placeableType: 4
+  placeableFamily: 0
   season: 1
   isPermanent: 1
   isMovable: 0

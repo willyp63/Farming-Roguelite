@@ -82,9 +82,15 @@ public class GridTileUI
     public void UpdateTooltip()
     {
         if (tile.PlacedObject != null)
+        {
             tooltipTrigger.SetTooltipText(tile.PlacedObject.GetTooltipText());
+            tooltipTrigger.SetPlaceableFamily(tile.PlacedObject.PlaceableFamily);
+        }
         else
+        {
             tooltipTrigger.SetTooltipText("");
+            tooltipTrigger.SetPlaceableFamily(PlaceableFamily.None);
+        }
     }
 
     public void SetHighlight(bool isHighlighted, Color color)

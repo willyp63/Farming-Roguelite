@@ -731,6 +731,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Pumpkins
   placeableType: 1
+  placeableFamily: 15
   season: 2
   isPermanent: 1
   isMovable: 0

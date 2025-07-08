@@ -731,6 +731,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Winter Wheat
   placeableType: 1
+  placeableFamily: 1
   season: 3
   isPermanent: 1
   isMovable: 0

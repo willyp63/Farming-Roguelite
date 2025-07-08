@@ -58,4 +58,9 @@ public class EffectCard : Card
     {
         return CardName;
     }
+
+    public override PlaceableFamily GetPlaceableFamily()
+    {
+        return PlaceableFamily.None;
+    }
 }

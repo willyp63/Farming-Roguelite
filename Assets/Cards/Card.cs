@@ -21,4 +21,6 @@ public abstract class Card : ScriptableObject
     public abstract SeasonType GetSeason();
 
     public abstract string GetTooltipText();
+
+    public abstract PlaceableFamily GetPlaceableFamily();
 }

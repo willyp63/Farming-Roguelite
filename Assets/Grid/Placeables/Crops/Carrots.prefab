@@ -731,6 +731,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Carrots
   placeableType: 1
+  placeableFamily: 3
   season: 0
   isPermanent: 1
   isMovable: 0

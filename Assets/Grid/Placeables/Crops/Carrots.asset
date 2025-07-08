@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d94751e8c66ba44cbb74f883c2fdc59, type: 3}
   m_Name: Carrots
   m_EditorClassIdentifier: 
-  cardName: Carrots
-  image: {fileID: 1590334930, guid: 2efccede88567814db2fd6a5d5e42fcb, type: 3}
-  text: <color=#0088F1><b>+10</b></color> Points
+  image: {fileID: 64621608, guid: 9dc9bc6fa72318347adc13127a74ac91, type: 3}
   energyCost: 1
   placeablePrefab: {fileID: 3017428051473517123, guid: fb390c81a1d9a5645a67483760f848bb, type: 3}

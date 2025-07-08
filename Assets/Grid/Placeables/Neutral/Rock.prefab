@@ -133,6 +133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Rocks
   placeableType: 4
+  placeableFamily: 0
   season: 3
   isPermanent: 1
   isMovable: 0

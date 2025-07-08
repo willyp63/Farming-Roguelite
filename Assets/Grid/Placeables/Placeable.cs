@@ -12,6 +12,26 @@ public enum PlaceableType
     Neutral,
 }
 
+public enum PlaceableFamily
+{
+    None,
+    Wheat,
+    Corn,
+    Carrot,
+    Potato,
+    Cabbage,
+    Tomato,
+    Onion,
+    Cow,
+    Chicken,
+    Sheep,
+    Pig,
+    Goat,
+    Rabbit,
+    Fish,
+    Pumpkin,
+}
+
 // Placeable represents objects that can be placed on grid tiles
 public class Placeable : MonoBehaviour
 {
@@ -22,6 +42,10 @@ public class Placeable : MonoBehaviour
     [SerializeField]
     private PlaceableType placeableType = PlaceableType.None;
     public PlaceableType PlaceableType => placeableType;
+
+    [SerializeField]
+    private PlaceableFamily placeableFamily = PlaceableFamily.None;
+    public PlaceableFamily PlaceableFamily => placeableFamily;
 
     [SerializeField]
     private SeasonType season = SeasonType.Spring;
@@ -119,7 +143,7 @@ public class Placeable : MonoBehaviour
             $"<size=28><color=#{ColorUtility.ToHtmlStringRGB(seasonInfo.color)}>{placeableName}</color></size>",
             allowedTileTypes == null || allowedTileTypes.Count == 0
                 ? ""
-                : $"<size=20>Requires {FormatTileTypeList(allowedTileTypes)}</size>",
+                : $"<size=20>{FormatTileTypeList(allowedTileTypes)}</size>",
             string.IsNullOrEmpty(text) ? "" : $"\n<size=20>{text}</size>",
         };
 

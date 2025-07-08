@@ -37,4 +37,9 @@ public class PlaceableCard : Card
     {
         return placeablePrefab.GetTooltipText();
     }
+
+    public override PlaceableFamily GetPlaceableFamily()
+    {
+        return placeablePrefab.PlaceableFamily;
+    }
 }

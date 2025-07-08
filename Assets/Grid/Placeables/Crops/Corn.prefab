@@ -731,6 +731,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Corn
   placeableType: 1
+  placeableFamily: 2
   season: 1
   isPermanent: 1
   isMovable: 0

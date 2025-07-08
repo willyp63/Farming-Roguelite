@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d94751e8c66ba44cbb74f883c2fdc59, type: 3}
   m_Name: Pumpkins
   m_EditorClassIdentifier: 
-  cardName: Pumpkins
-  image: {fileID: 946000960, guid: 24020681e32b3e84d9234038d63ff9f6, type: 3}
-  text: <color=#0088F1><b>+10</b></color> Points
+  image: {fileID: -1978290199, guid: 708cb4ba30862f44183dc004e94ad0be, type: 3}
   energyCost: 1
   placeablePrefab: {fileID: 3017428051473517123, guid: 40a44e0a8ded0f54e989394e791eb012, type: 3}

@@ -12,13 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d94751e8c66ba44cbb74f883c2fdc59, type: 3}
   m_Name: Winter Wheat
   m_EditorClassIdentifier: 
-  cardName: Winter Wheat
-  image: {fileID: -1594514263, guid: 6b36457f8fc14cb4780233cffac7476b, type: 3}
-  text: '<color=#0088F1><b>+10</b></color> Points
-
-
-    Gains an additional <color=#0088F1><b>+10</b></color>
-    Points for every other wheat related crop is 5x5 grid that is centered around
-    this tile, but only if this tile is a grass tile'
+  image: {fileID: -371825533, guid: 9d842059c6789304f892485f8469861a, type: 3}
   energyCost: 1
   placeablePrefab: {fileID: 3017428051473517123, guid: d43f6afad8daba449b492abd3f720b74, type: 3}
