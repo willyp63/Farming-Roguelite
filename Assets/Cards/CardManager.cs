@@ -4,6 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[Serializable]
+public class CardQuantity
+{
+    public Card card;
+    public int quantity;
+}
+
 public class CardManager : Singleton<CardManager>
 {
     [Header("Hand Settings")]
@@ -12,7 +19,7 @@ public class CardManager : Singleton<CardManager>
 
     [Header("Hand Settings")]
     [SerializeField]
-    private List<Card> startingDeck;
+    private List<CardQuantity> startingDeck;
 
     private List<Card> hand = new List<Card>();
     private List<Card> deck = new List<Card>();
@@ -52,9 +59,12 @@ public class CardManager : Singleton<CardManager>
         hand.Clear();
         discard.Clear();
 
-        foreach (Card card in startingDeck)
+        foreach (CardQuantity cardQuantity in startingDeck)
         {
-            deck.Add(card);
+            for (int i = 0; i < cardQuantity.quantity; i++)
+            {
+                deck.Add(cardQuantity.card);
+            }
         }
 
         ShuffleDeck();

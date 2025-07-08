@@ -70,7 +70,6 @@ public class RoundManager : Singleton<RoundManager>
     {
         // Trigger end of day effects and clear non-permanent placeables
         GridManager.Instance.OnEndOfTurn();
-        GridManager.Instance.ClearPlaceables();
         yield return new WaitForSeconds(1f);
 
         // Check if round is complete

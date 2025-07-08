@@ -51,7 +51,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Trees
   placeableType: 4
+  season: 1
   isPermanent: 1
+  isMovable: 0
   allowedTileTypes: 
 --- !u!210 &8763523131220027710
 SortingGroup:
@@ -62,7 +64,7 @@ SortingGroup:
   m_GameObject: {fileID: 876030621518174340}
   m_Enabled: 1
   m_SortingLayerID: 220236319
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!114 &845913773322404448

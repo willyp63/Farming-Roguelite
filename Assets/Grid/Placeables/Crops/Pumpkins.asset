@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d94751e8c66ba44cbb74f883c2fdc59, type: 3}
-  m_Name: Cow
+  m_Name: Pumpkins
   m_EditorClassIdentifier: 
-  cardName: Cow
-  image: {fileID: 1620199196, guid: 95f36d84bd1d2c346b34aba50cefaad7, type: 3}
-  text: <b>Place:</b> If placed on a grass tile, give adjacent crops <color=#C800FF><b>2x</b></color>
-    and turns the tile into dirt
+  cardName: Pumpkins
+  image: {fileID: 946000960, guid: 24020681e32b3e84d9234038d63ff9f6, type: 3}
+  text: <color=#0088F1><b>+10</b></color> Points
   energyCost: 1
-  placeablePrefab: {fileID: 3821817819579965074, guid: bb81bd6ac466d6f40a58294c80dacacc, type: 3}
+  placeablePrefab: {fileID: 3017428051473517123, guid: 40a44e0a8ded0f54e989394e791eb012, type: 3}

@@ -133,7 +133,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Rocks
   placeableType: 4
+  season: 3
   isPermanent: 1
+  isMovable: 0
   allowedTileTypes: 
 --- !u!210 &3797264127352364242
 SortingGroup:
@@ -144,7 +146,7 @@ SortingGroup:
   m_GameObject: {fileID: 4889327605077946703}
   m_Enabled: 1
   m_SortingLayerID: 220236319
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!114 &8706798058342769002

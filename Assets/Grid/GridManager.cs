@@ -85,6 +85,16 @@ public class GridManager : Singleton<GridManager>
                 tile.PlacedObject.OnEndOfTurn();
         }
 
+        ClearPlaceables();
+
+        foreach (GridTile tile in grid)
+        {
+            if (tile.PlacedObject != null)
+            {
+                tile.PlacedObject.ResetMovementFlag();
+            }
+        }
+
         OnGridChanged?.Invoke();
     }
 
@@ -119,6 +129,12 @@ public class GridManager : Singleton<GridManager>
             return grid[position.x, position.y];
         }
         return null;
+    }
+
+    public Placeable GetPlaceableAtPosition(Vector2Int position)
+    {
+        GridTile tile = GetTile(position);
+        return tile?.PlacedObject;
     }
 
     public void PlaceObject(Vector2Int position, Placeable placeablePrefab)
@@ -178,6 +194,68 @@ public class GridManager : Singleton<GridManager>
         Destroy(tile.PlacedObject.gameObject);
         tile.ClearPlacedObject();
         OnGridChanged?.Invoke();
+    }
+
+    public bool MovePlaceable(Vector2Int fromPosition, Vector2Int toPosition)
+    {
+        if (
+            !IsValidPosition(fromPosition.x, fromPosition.y)
+            || !IsValidPosition(toPosition.x, toPosition.y)
+        )
+            return false;
+
+        GridTile fromTile = grid[fromPosition.x, fromPosition.y];
+        GridTile toTile = grid[toPosition.x, toPosition.y];
+
+        // Check if source tile has a placeable
+        if (fromTile.PlacedObject == null)
+            return false;
+
+        Placeable placeable = fromTile.PlacedObject;
+
+        // Check if placeable is movable
+        if (!placeable.IsMovable)
+            return false;
+
+        // Check if placeable has already moved today
+        if (placeable.HasMovedToday)
+            return false;
+
+        // Check if destination tile is empty
+        if (toTile.PlacedObject != null)
+            return false;
+
+        // Check if destination tile type is allowed
+        if (
+            placeable.AllowedTileTypes.Count > 0
+            && !placeable.AllowedTileTypes.Contains(toTile.Tile.TileType)
+        )
+            return false;
+
+        // Move the placeable
+        fromTile.ClearPlacedObject();
+        placeable.Initialize(toTile);
+        toTile.SetPlacedObject(placeable);
+        placeable.transform.SetParent(toTile.transform);
+        placeable.transform.localPosition = Vector3.zero;
+
+        // Mark as moved for today
+        placeable.MarkAsMoved();
+
+        // Trigger on place effects for the new location
+        placeable.OnPlaced();
+
+        // Trigger on effected tile placed effects for all other placeables
+        foreach (GridTile otherTile in grid)
+        {
+            if (otherTile == null || otherTile == toTile || otherTile.PlacedObject == null)
+                continue;
+
+            otherTile.PlacedObject.OnNewPlaced(otherTile, toTile);
+        }
+
+        OnGridChanged?.Invoke();
+        return true;
     }
 
     public List<GridTile> GetAdjacentTiles(Vector2Int position)

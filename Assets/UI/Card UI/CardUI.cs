@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -10,30 +8,23 @@ using UnityEngine.UI;
 public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField]
-    private TextMeshProUGUI energyCostText;
-
-    [SerializeField]
-    private TextMeshProUGUI nameText;
-
-    [SerializeField]
-    private TextMeshProUGUI cardText;
-
-    [SerializeField]
     private Image cardImage;
 
     [SerializeField]
     private List<Image> backgroundImages;
 
     [SerializeField]
-    private float dragScale = 0.33f;
+    private List<Image> seasonImages;
 
     [SerializeField]
-    private List<AllowedTileTypeUI> allowedTileTypes;
+    private float dragScale = 0.33f;
 
     private Card card;
     private Vector3 originalPosition;
     private bool isDragging = false;
     private CanvasGroup canvasGroup;
+
+    private TooltipTrigger tooltipTrigger;
 
     // Events
     [NonSerialized]
@@ -45,26 +36,34 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
+        tooltipTrigger = GetComponent<TooltipTrigger>();
     }
 
     public void SetCard(Card card)
     {
         this.card = card;
-        energyCostText.text = card.EnergyCost.ToString();
-        nameText.text = card.CardName;
-        cardText.text = card.Text;
         cardImage.sprite = card.Image;
+
+        tooltipTrigger.SetTooltipText(card.GetTooltipText());
+
+        Season season = card.GetSeason();
+        Color seasonColor = SeasonManager.GetSeasonColor(season);
 
         foreach (Image backgroundImage in backgroundImages)
         {
-            backgroundImage.color = card.GetCardColor();
+            backgroundImage.color = seasonColor;
         }
 
-        foreach (AllowedTileTypeUI allowedTileType in allowedTileTypes)
+        Sprite seasonSymbol = SeasonManager.GetSeasonSymbol(season);
+        if (seasonSymbol == null)
         {
-            allowedTileType.gameObject.SetActive(
-                card.GetAllowedTileTypes().Contains(allowedTileType.TileType)
-            );
+            Debug.LogWarning($"No season symbol found for season {season}");
+            return;
+        }
+
+        foreach (Image seasonImage in seasonImages)
+        {
+            seasonImage.sprite = seasonSymbol;
         }
     }
 

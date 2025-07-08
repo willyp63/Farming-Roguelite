@@ -47,11 +47,14 @@ TagManager:
   - name: Tiles
     uniqueID: 979966797
     locked: 0
+  - name: Grid UI Lower
+    uniqueID: 4035697263
+    locked: 0
   - name: Placeables
     uniqueID: 220236319
     locked: 0
-  - name: Tile UI
-    uniqueID: 4035697263
+  - name: Grid UI Upper
+    uniqueID: 1366357497
     locked: 0
   - name: Floating Text
     uniqueID: 3532356215

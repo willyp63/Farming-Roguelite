@@ -51,8 +51,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Cow
   placeableType: 2
+  season: 0
   isPermanent: 1
-  allowedTileTypes: 01000000020000000300000004000000
+  isMovable: 1
+  allowedTileTypes: 01000000
 --- !u!114 &-8442559103271085971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,7 +67,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectTiming: 0
+  effectTiming: 3
   requiredConditions:
   - match:
       pattern: 0
@@ -99,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0138685b156d9af4b804da194ed1ea09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectTiming: 0
+  effectTiming: 3
   requiredConditions:
   - match:
       pattern: 0
@@ -127,7 +129,7 @@ SortingGroup:
   m_GameObject: {fileID: 226535891704081314}
   m_Enabled: 1
   m_SortingLayerID: 220236319
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!114 &4781789984781640467

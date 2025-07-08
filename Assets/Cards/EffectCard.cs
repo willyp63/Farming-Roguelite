@@ -13,6 +13,10 @@ public class EffectCard : Card
     private List<TileType> allowedTileTypes;
     public List<TileType> AllowedTileTypes => allowedTileTypes;
 
+    [SerializeField]
+    private Season season = Season.Spring;
+    public Season Season => season;
+
     public override void PlayCard(GridTile tile)
     {
         GameObject effectObject = Instantiate(effectPrefab.gameObject);
@@ -41,8 +45,13 @@ public class EffectCard : Card
         return allowedTileTypes;
     }
 
-    public override Color GetCardColor()
+    public override Season GetSeason()
     {
-        return new Color(70f / 255f, 40f / 255f, 0f / 255f);
+        return season;
+    }
+
+    public override string GetTooltipText()
+    {
+        return CardName;
     }
 }

@@ -731,7 +731,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Corn
   placeableType: 1
+  season: 1
   isPermanent: 1
+  isMovable: 0
   allowedTileTypes: 02000000
 --- !u!114 &8141606273527163774
 MonoBehaviour:
@@ -770,7 +772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectTiming: 0
+  effectTiming: 3
   requiredConditions: []
   countMatches:
   - pattern: 1
@@ -795,7 +797,7 @@ SortingGroup:
   m_GameObject: {fileID: 7660112058467355491}
   m_Enabled: 1
   m_SortingLayerID: 220236319
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!114 &5217927720704310149

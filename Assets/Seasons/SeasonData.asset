@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c65cd3b63d66d954a9993638bcb5bfcd, type: 3}
+  m_Name: SeasonData
+  m_EditorClassIdentifier: 
+  seasonInfos:
+  - season: 0
+    name: Spring
+    color: {r: 0.4, g: 0.6, b: 0.4, a: 1}
+    symbol: {fileID: 762253879, guid: b663bf1258f262040a853575ab7a1344, type: 3}
+  - season: 1
+    name: Summer
+    color: {r: 0.8, g: 0.7, b: 0.3, a: 1}
+    symbol: {fileID: 2118872830, guid: b663bf1258f262040a853575ab7a1344, type: 3}
+  - season: 2
+    name: Autumn
+    color: {r: 0.7, g: 0.5, b: 0.4, a: 1}
+    symbol: {fileID: -1079359574, guid: b663bf1258f262040a853575ab7a1344, type: 3}
+  - season: 3
+    name: Winter
+    color: {r: 0.5, g: 0.6, b: 0.8, a: 1}
+    symbol: {fileID: -1291622809, guid: b663bf1258f262040a853575ab7a1344, type: 3}
+  - season: 4
+    name: 
+    color: {r: 0.55, g: 0.55, b: 0.55, a: 1}
+    symbol: {fileID: 0}

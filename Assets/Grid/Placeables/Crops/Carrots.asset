@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6d94751e8c66ba44cbb74f883c2fdc59, type: 3}
-  m_Name: Corn
+  m_Name: Carrots
   m_EditorClassIdentifier: 
-  cardName: Corn
-  image: {fileID: 47816396, guid: 6b36457f8fc14cb4780233cffac7476b, type: 3}
-  text: <b>Place:</b> Gain <color=#C800FF><b>+3</b></color> for each adjacent crop
+  cardName: Carrots
+  image: {fileID: 1590334930, guid: 2efccede88567814db2fd6a5d5e42fcb, type: 3}
+  text: <color=#0088F1><b>+10</b></color> Points
   energyCost: 1
-  placeablePrefab: {fileID: 3017428051473517123, guid: 208e8c1d681630241ba14d658a049b06, type: 3}
+  placeablePrefab: {fileID: 3017428051473517123, guid: fb390c81a1d9a5645a67483760f848bb, type: 3}

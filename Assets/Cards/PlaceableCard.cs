@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Placeable Card", menuName = "Farming Roguelike/Placeable Card")]
@@ -27,14 +28,37 @@ public class PlaceableCard : Card
         return placeablePrefab.AllowedTileTypes;
     }
 
-    public override Color GetCardColor()
+    public override Season GetSeason()
     {
-        return placeablePrefab.PlaceableType switch
+        return placeablePrefab.Season;
+    }
+
+    public override string GetTooltipText()
+    {
+        string seasonName = SeasonManager.GetSeasonName(GetSeason());
+        Color seasonColor = SeasonManager.GetSeasonColor(GetSeason());
+
+        List<string> lines = new List<string>
         {
-            PlaceableType.Crop => new Color(0f, 0f, 0.3f),
-            PlaceableType.Animal => new Color(0.3f, 0f, 0f),
-            PlaceableType.Building => new Color(0.2f, 0.2f, 0.2f),
-            _ => Color.white,
+            $"<size=28><color=#{ColorUtility.ToHtmlStringRGB(seasonColor)}>{CardName}</color></size>",
+            $"<size=20>{FormatTileTypeList(GetAllowedTileTypes())}</size>",
+            "",
+            $"<size=20>{Text}</size>",
         };
+
+        return string.Join("\n", lines);
+    }
+
+    private string FormatTileTypeList(List<TileType> types)
+    {
+        if (types == null || types.Count == 0)
+            return "";
+        if (types.Count == 1)
+            return types[0].ToString();
+
+        var typeStrings = types.Select(t => t.ToString()).ToList();
+        return string.Join(", ", typeStrings.Take(typeStrings.Count - 1))
+            + " or "
+            + typeStrings.Last();
     }
 }

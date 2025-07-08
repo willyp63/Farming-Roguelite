@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Well
   image: {fileID: -562190540, guid: f9af6a3be9abddf42a67875efac4fee1, type: 3}
-  text: '<color=#FFDC00><b>Permanent</b></color>
+  text: '<color=#0088F1><b>+10</b></color> Points
+
+    <color=#F4463B><b>+4</b></color>
+    Multi
 
 
-    Gain <color=#C800FF><b>+1</b></color>
-    whenever a crop is placed on a surrounding tile'
+    Gain an additional <color=#0088F1><b>+10</b></color> for each nearby
+    tree'
   energyCost: 2
   placeablePrefab: {fileID: 2121496598191819596, guid: a5884f43bd235c34dabc6e9112ed2f7c, type: 3}

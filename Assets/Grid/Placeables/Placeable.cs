@@ -24,8 +24,16 @@ public class Placeable : MonoBehaviour
     public PlaceableType PlaceableType => placeableType;
 
     [SerializeField]
+    private Season season = Season.Spring;
+    public Season Season => season;
+
+    [SerializeField]
     private bool isPermanent = true;
     public bool IsPermanent => isPermanent;
+
+    [SerializeField]
+    private bool isMovable = false;
+    public bool IsMovable => isMovable;
 
     [SerializeField]
     private List<TileType> allowedTileTypes;
@@ -35,6 +43,10 @@ public class Placeable : MonoBehaviour
     public GridTile GridTile => gridtile;
 
     private List<PlaceableEffect> effects = new List<PlaceableEffect>();
+
+    // Movement tracking
+    private bool hasMovedToday = true;
+    public bool HasMovedToday => hasMovedToday;
 
     public void Initialize(GridTile tile)
     {
@@ -81,5 +93,15 @@ public class Placeable : MonoBehaviour
         {
             effect.OnNewPlace(tile, placedTile);
         }
+    }
+
+    public void MarkAsMoved()
+    {
+        hasMovedToday = true;
+    }
+
+    public void ResetMovementFlag()
+    {
+        hasMovedToday = false;
     }
 }
