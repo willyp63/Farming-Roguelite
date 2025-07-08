@@ -15,22 +15,7 @@ public class SeasonManager : Singleton<SeasonManager>
         }
     }
 
-    public static string GetSeasonName(Season season)
-    {
-        return Instance.seasonData.GetSeasonName(season);
-    }
-
-    public static Color GetSeasonColor(Season season)
-    {
-        return Instance.seasonData.GetSeasonColor(season);
-    }
-
-    public static Sprite GetSeasonSymbol(Season season)
-    {
-        return Instance.seasonData.GetSeasonSymbol(season);
-    }
-
-    public static SeasonData.SeasonInfo GetSeasonInfo(Season season)
+    public static SeasonInfo GetSeasonInfo(SeasonType season)
     {
         return Instance.seasonData.GetSeasonInfo(season);
     }

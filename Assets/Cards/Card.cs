@@ -2,15 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Season
-{
-    Spring,
-    Summer,
-    Autumn,
-    Winter,
-    Neutral,
-}
-
 public abstract class Card : ScriptableObject
 {
     [SerializeField]
@@ -36,7 +27,7 @@ public abstract class Card : ScriptableObject
 
     public abstract List<TileType> GetAllowedTileTypes();
 
-    public abstract Season GetSeason();
+    public abstract SeasonType GetSeason();
 
     public abstract string GetTooltipText();
 }

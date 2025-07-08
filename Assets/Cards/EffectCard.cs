@@ -14,8 +14,8 @@ public class EffectCard : Card
     public List<TileType> AllowedTileTypes => allowedTileTypes;
 
     [SerializeField]
-    private Season season = Season.Spring;
-    public Season Season => season;
+    private SeasonType season = SeasonType.Spring;
+    public SeasonType Season => season;
 
     public override void PlayCard(GridTile tile)
     {
@@ -45,7 +45,7 @@ public class EffectCard : Card
         return allowedTileTypes;
     }
 
-    public override Season GetSeason()
+    public override SeasonType GetSeason()
     {
         return season;
     }

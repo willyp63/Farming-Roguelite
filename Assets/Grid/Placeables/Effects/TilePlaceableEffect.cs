@@ -5,7 +5,7 @@ using UnityEngine;
 public class TilePlaceableEffect : PlaceableEffect
 {
     [SerializeField]
-    private Tile toTile;
+    private TileType toTileType;
 
     protected override void ApplyEffect(
         GridTile tile,
@@ -16,6 +16,7 @@ public class TilePlaceableEffect : PlaceableEffect
     {
         foreach (GridTile applyToTile in applyToTiles)
         {
+            TileInfo toTile = TileManager.GetTileInfo(toTileType);
             applyToTile.SetTile(toTile);
         }
     }

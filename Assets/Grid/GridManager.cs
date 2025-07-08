@@ -25,9 +25,6 @@ public class GridManager : Singleton<GridManager>
     [SerializeField]
     private GameObject gridTilePrefab;
 
-    [SerializeField]
-    private Tile emptyTile;
-
     // Grid data
     private GridTile[,] grid;
     private bool isInitialized = false;
@@ -47,15 +44,13 @@ public class GridManager : Singleton<GridManager>
         if (isInitialized)
             return;
 
-        if (emptyTile == null)
-            Debug.LogError("Empty tile is not set");
-
         foreach (Transform child in gridContainer.transform)
         {
             Destroy(child.gameObject);
         }
 
         grid = new GridTile[gridWidth, gridHeight];
+        TileInfo emptyTile = TileManager.GetTileInfo(TileType.Empty);
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
@@ -71,6 +66,7 @@ public class GridManager : Singleton<GridManager>
     {
         ClearPlaceables(true);
 
+        TileInfo emptyTile = TileManager.GetTileInfo(TileType.Empty);
         foreach (GridTile tile in grid)
         {
             tile.SetTile(emptyTile);
@@ -308,7 +304,7 @@ public class GridManager : Singleton<GridManager>
         return x >= 0 && x < gridWidth && y >= 0 && y < gridHeight;
     }
 
-    private void CreateGridTile(int x, int y, Tile tile)
+    private void CreateGridTile(int x, int y, TileInfo tile)
     {
         if (!IsValidPosition(x, y) || grid[x, y] != null)
             return;

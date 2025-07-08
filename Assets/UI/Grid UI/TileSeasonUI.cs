@@ -11,11 +11,11 @@ public class TileSeasonUI : MonoBehaviour
     [SerializeField]
     private Image seasonImage;
 
-    public void SetSeason(Season season)
+    public void SetSeason(SeasonType season)
     {
-        backgroundImage.color = SeasonManager.GetSeasonColor(season);
-        seasonImage.sprite = SeasonManager.GetSeasonSymbol(season);
+        backgroundImage.color = SeasonManager.GetSeasonInfo(season).color;
+        seasonImage.sprite = SeasonManager.GetSeasonInfo(season).symbol;
 
-        gameObject.SetActive(season != Season.Neutral);
+        gameObject.SetActive(season != SeasonType.Neutral);
     }
 }

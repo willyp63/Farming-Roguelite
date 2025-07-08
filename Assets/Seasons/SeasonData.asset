@@ -15,19 +15,19 @@ MonoBehaviour:
   seasonInfos:
   - season: 0
     name: Spring
-    color: {r: 0.4, g: 0.6, b: 0.4, a: 1}
+    color: {r: 0.4, g: 0.6, b: 0.3, a: 1}
     symbol: {fileID: 762253879, guid: b663bf1258f262040a853575ab7a1344, type: 3}
   - season: 1
     name: Summer
-    color: {r: 0.8, g: 0.7, b: 0.3, a: 1}
+    color: {r: 0.8, g: 0.7, b: 0.2, a: 1}
     symbol: {fileID: 2118872830, guid: b663bf1258f262040a853575ab7a1344, type: 3}
   - season: 2
     name: Autumn
-    color: {r: 0.7, g: 0.5, b: 0.4, a: 1}
+    color: {r: 0.7, g: 0.4, b: 0.4, a: 1}
     symbol: {fileID: -1079359574, guid: b663bf1258f262040a853575ab7a1344, type: 3}
   - season: 3
     name: Winter
-    color: {r: 0.5, g: 0.6, b: 0.8, a: 1}
+    color: {r: 0.4, g: 0.6, b: 0.8, a: 1}
     symbol: {fileID: -1291622809, guid: b663bf1258f262040a853575ab7a1344, type: 3}
   - season: 4
     name: 

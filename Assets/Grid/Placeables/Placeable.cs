@@ -24,8 +24,8 @@ public class Placeable : MonoBehaviour
     public PlaceableType PlaceableType => placeableType;
 
     [SerializeField]
-    private Season season = Season.Spring;
-    public Season Season => season;
+    private SeasonType season = SeasonType.Spring;
+    public SeasonType Season => season;
 
     [SerializeField]
     private bool isPermanent = true;

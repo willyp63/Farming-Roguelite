@@ -28,20 +28,19 @@ public class PlaceableCard : Card
         return placeablePrefab.AllowedTileTypes;
     }
 
-    public override Season GetSeason()
+    public override SeasonType GetSeason()
     {
         return placeablePrefab.Season;
     }
 
     public override string GetTooltipText()
     {
-        string seasonName = SeasonManager.GetSeasonName(GetSeason());
-        Color seasonColor = SeasonManager.GetSeasonColor(GetSeason());
+        SeasonInfo seasonInfo = SeasonManager.GetSeasonInfo(GetSeason());
 
         List<string> lines = new List<string>
         {
-            $"<size=28><color=#{ColorUtility.ToHtmlStringRGB(seasonColor)}>{CardName}</color></size>",
-            $"<size=20>{FormatTileTypeList(GetAllowedTileTypes())}</size>",
+            $"<size=28><color=#{ColorUtility.ToHtmlStringRGB(seasonInfo.color)}>{CardName}</color></size>",
+            $"<size=20>Requires {FormatTileTypeList(GetAllowedTileTypes())}</size>",
             "",
             $"<size=20>{Text}</size>",
         };
@@ -54,11 +53,17 @@ public class PlaceableCard : Card
         if (types == null || types.Count == 0)
             return "";
         if (types.Count == 1)
-            return types[0].ToString();
+            return FormatTileTypeString(types[0]);
 
-        var typeStrings = types.Select(t => t.ToString()).ToList();
+        var typeStrings = types.Select(FormatTileTypeString).ToList();
         return string.Join(", ", typeStrings.Take(typeStrings.Count - 1))
             + " or "
             + typeStrings.Last();
+    }
+
+    private string FormatTileTypeString(TileType tileType)
+    {
+        TileInfo tile = TileManager.GetTileInfo(tileType);
+        return $"<color=#{ColorUtility.ToHtmlStringRGB(tile.TileColor)}>{tile.TileName}</color>";
     }
 }

@@ -20,18 +20,18 @@ public class GridTile : MonoBehaviour
     private int y;
 
     [SerializeField]
-    private Tile tile;
+    private TileInfo tile;
 
     private Placeable placedObject;
 
     // Properties
     public int X => x;
     public int Y => y;
-    public Tile Tile => tile;
+    public TileInfo Tile => tile;
     public Placeable PlacedObject => placedObject;
     public Vector2Int Position => new Vector2Int(x, y);
 
-    public void Initialize(int xPos, int yPos, Tile tile)
+    public void Initialize(int xPos, int yPos, TileInfo tile)
     {
         x = xPos;
         y = yPos;
@@ -39,7 +39,7 @@ public class GridTile : MonoBehaviour
         SetTile(tile);
     }
 
-    public void SetTile(Tile tile)
+    public void SetTile(TileInfo tile)
     {
         this.tile = tile;
         UpdateVisual();

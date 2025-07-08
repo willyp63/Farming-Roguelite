@@ -12,7 +12,7 @@ public class InitialTileData
     public int y;
 
     [SerializeField]
-    public Tile tile;
+    public TileType tileType;
 }
 
 [System.Serializable]
@@ -32,7 +32,7 @@ public class InitialPlaceableData
 public class GenerationStep
 {
     [SerializeField]
-    public Tile tile;
+    public TileType tileType;
 
     [SerializeField]
     public int maxCount = 1;
@@ -41,7 +41,7 @@ public class GenerationStep
     public int maxTotalCount = 99;
 
     [SerializeField]
-    public List<Tile> allowedAdjacentTiles;
+    public List<TileType> allowedAdjacentTileTypes;
 
     [SerializeField]
     public bool allowDiagonal = false; // Whether adjacent means diagonal as well
@@ -57,7 +57,7 @@ public class PlaceableGenerationStep
     public int maxCount = 1;
 
     [SerializeField]
-    public List<Tile> allowedTiles;
+    public List<TileType> allowedTileTypes;
 
     [SerializeField]
     public int minDistanceToOtherPlaceables = 1;
@@ -107,12 +107,10 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
     {
         foreach (InitialTileData initialTile in initialTiles)
         {
-            if (
-                GridManager.Instance.IsValidPosition(initialTile.x, initialTile.y)
-                && initialTile.tile != null
-            )
+            if (GridManager.Instance.IsValidPosition(initialTile.x, initialTile.y))
             {
-                GridManager.Instance.Grid[initialTile.x, initialTile.y].SetTile(initialTile.tile);
+                TileInfo tile = TileManager.GetTileInfo(initialTile.tileType);
+                GridManager.Instance.Grid[initialTile.x, initialTile.y].SetTile(tile);
             }
         }
     }
@@ -138,23 +136,17 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
     {
         foreach (GenerationStep step in generationSteps)
         {
-            if (step.tile == null)
-                continue;
-
             int placedCount = 0;
             int maxAttempts = GridManager.Instance.GridWidth * GridManager.Instance.GridHeight * 10; // Prevent infinite loops
             int attempts = 0;
 
-            int totalTilesPlaced = GetTotalTilesInGrid(step.tile.TileType);
+            int totalTilesPlaced = GetTotalTilesInGrid(step.tileType);
 
             while (placedCount < step.maxCount && attempts < maxAttempts)
             {
                 // Check if placing another tile would exceed maxTotalCount
                 if (totalTilesPlaced >= step.maxTotalCount)
                 {
-                    Debug.Log(
-                        $"Reached max total count ({step.maxTotalCount}) for step {step.tile.name}. Stopping placement."
-                    );
                     break;
                 }
 
@@ -172,16 +164,10 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
                 ];
 
                 // Place the tile
-                GridManager.Instance.Grid[position.x, position.y].SetTile(step.tile);
+                TileInfo tile = TileManager.GetTileInfo(step.tileType);
+                GridManager.Instance.Grid[position.x, position.y].SetTile(tile);
                 placedCount++;
                 totalTilesPlaced++;
-            }
-
-            if (placedCount < step.maxCount)
-            {
-                Debug.LogWarning(
-                    $"Could only place {placedCount}/{step.maxCount} tiles for step {step.tile.name}"
-                );
             }
         }
     }
@@ -251,7 +237,7 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
             return false;
 
         // If no adjacency requirements, any empty position is valid
-        if (step.allowedAdjacentTiles == null || step.allowedAdjacentTiles.Count == 0)
+        if (step.allowedAdjacentTileTypes == null || step.allowedAdjacentTileTypes.Count == 0)
             return true;
 
         // Check if position has at least one adjacent tile from the allowed list
@@ -270,9 +256,12 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
             )
             {
                 // Check if the adjacent tile is in the allowed list
-                foreach (Tile allowedTile in step.allowedAdjacentTiles)
+                foreach (TileType allowedTileType in step.allowedAdjacentTileTypes)
                 {
-                    if (allowedTile == GridManager.Instance.Grid[adjPos.x, adjPos.y].Tile)
+                    if (
+                        allowedTileType
+                        == GridManager.Instance.Grid[adjPos.x, adjPos.y].Tile.TileType
+                    )
                     {
                         return true;
                     }
@@ -316,12 +305,12 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
             return false;
 
         // Check if the tile is in the allowed tiles list
-        if (step.allowedTiles != null && step.allowedTiles.Count > 0)
+        if (step.allowedTileTypes != null && step.allowedTileTypes.Count > 0)
         {
             bool tileAllowed = false;
-            foreach (Tile allowedTile in step.allowedTiles)
+            foreach (TileType allowedTileType in step.allowedTileTypes)
             {
-                if (allowedTile == GridManager.Instance.Grid[x, y].Tile)
+                if (allowedTileType == GridManager.Instance.Grid[x, y].Tile.TileType)
                 {
                     tileAllowed = true;
                     break;

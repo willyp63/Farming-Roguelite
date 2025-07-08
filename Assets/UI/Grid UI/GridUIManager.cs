@@ -340,7 +340,8 @@ public class GridUIManager : Singleton<GridUIManager>
     private void UpdateSeasonUI(Vector2Int position, TileSeasonUI seasonUI)
     {
         GridTile tile = GridManager.Instance.GetTile(position);
-        Season season = tile.PlacedObject != null ? tile.PlacedObject.Season : Season.Neutral;
+        SeasonType season =
+            tile.PlacedObject != null ? tile.PlacedObject.Season : SeasonType.Neutral;
         seasonUI.SetSeason(season);
     }
 

@@ -46,15 +46,15 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
         tooltipTrigger.SetTooltipText(card.GetTooltipText());
 
-        Season season = card.GetSeason();
-        Color seasonColor = SeasonManager.GetSeasonColor(season);
+        SeasonType season = card.GetSeason();
+        Color seasonColor = SeasonManager.GetSeasonInfo(season).color;
 
         foreach (Image backgroundImage in backgroundImages)
         {
             backgroundImage.color = seasonColor;
         }
 
-        Sprite seasonSymbol = SeasonManager.GetSeasonSymbol(season);
+        Sprite seasonSymbol = SeasonManager.GetSeasonInfo(season).symbol;
         if (seasonSymbol == null)
         {
             Debug.LogWarning($"No season symbol found for season {season}");
