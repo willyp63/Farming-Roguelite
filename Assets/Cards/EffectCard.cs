@@ -6,6 +6,10 @@ using UnityEngine;
 public class EffectCard : Card
 {
     [SerializeField]
+    private string cardName;
+    public string CardName => cardName;
+
+    [SerializeField]
     private PlaceableEffect effectPrefab;
     public PlaceableEffect EffectPrefab => effectPrefab;
 

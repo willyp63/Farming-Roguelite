@@ -39,6 +39,11 @@ public class Placeable : MonoBehaviour
     private List<TileType> allowedTileTypes;
     public List<TileType> AllowedTileTypes => allowedTileTypes;
 
+    [SerializeField]
+    [TextArea(4, 8)]
+    private string text;
+    public string Text => text;
+
     private GridTile gridtile;
     public GridTile GridTile => gridtile;
 
@@ -103,5 +108,40 @@ public class Placeable : MonoBehaviour
     public void ResetMovementFlag()
     {
         hasMovedToday = false;
+    }
+
+    public string GetTooltipText()
+    {
+        SeasonInfo seasonInfo = SeasonManager.GetSeasonInfo(season);
+
+        List<string> lines = new List<string>
+        {
+            $"<size=28><color=#{ColorUtility.ToHtmlStringRGB(seasonInfo.color)}>{placeableName}</color></size>",
+            allowedTileTypes == null || allowedTileTypes.Count == 0
+                ? ""
+                : $"<size=20>Requires {FormatTileTypeList(allowedTileTypes)}</size>",
+            string.IsNullOrEmpty(text) ? "" : $"\n<size=20>{text}</size>",
+        };
+
+        return string.Join("\n", lines.Where(line => !string.IsNullOrEmpty(line)));
+    }
+
+    private string FormatTileTypeList(List<TileType> types)
+    {
+        if (types == null || types.Count == 0)
+            return "";
+        if (types.Count == 1)
+            return FormatTileTypeString(types[0]);
+
+        var typeStrings = types.Select(FormatTileTypeString).ToList();
+        return string.Join(", ", typeStrings.Take(typeStrings.Count - 1))
+            + " or "
+            + typeStrings.Last();
+    }
+
+    private string FormatTileTypeString(TileType tileType)
+    {
+        TileInfo tile = TileManager.GetTileInfo(tileType);
+        return $"<color=#{ColorUtility.ToHtmlStringRGB(tile.TileColor)}>{tile.TileName}</color>";
     }
 }

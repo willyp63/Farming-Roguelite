@@ -137,6 +137,7 @@ MonoBehaviour:
   isPermanent: 1
   isMovable: 0
   allowedTileTypes: 
+  text: 
 --- !u!210 &3797264127352364242
 SortingGroup:
   m_ObjectHideFlags: 0

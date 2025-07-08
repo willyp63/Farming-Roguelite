@@ -55,6 +55,7 @@ MonoBehaviour:
   isPermanent: 1
   isMovable: 1
   allowedTileTypes: 01000000
+  text: +10 points
 --- !u!114 &-8442559103271085971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,7 +120,7 @@ MonoBehaviour:
     tileTypes: 
     placeableTypes: 
     onlyMatchNewTile: 0
-  toTile: {fileID: 11400000, guid: 36796a3139bb993428dff2c0e4aca941, type: 2}
+  toTileType: 0
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0

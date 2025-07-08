@@ -55,6 +55,7 @@ MonoBehaviour:
   isPermanent: 1
   isMovable: 0
   allowedTileTypes: 
+  text: 
 --- !u!210 &8763523131220027710
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -5,17 +5,8 @@ using UnityEngine;
 public abstract class Card : ScriptableObject
 {
     [SerializeField]
-    private string cardName;
-    public string CardName => cardName;
-
-    [SerializeField]
     private Sprite image;
     public Sprite Image => image;
-
-    [SerializeField]
-    [TextArea(4, 8)]
-    private string text;
-    public string Text => text;
 
     [SerializeField]
     private int energyCost = 0;

@@ -103,6 +103,7 @@ public class GridUIManager : Singleton<GridUIManager>
         // Subscribe to grid changes to update movable placeable highlights and season UI
         GridManager.Instance.OnGridChanged.AddListener(UpdateTileHighlights);
         GridManager.Instance.OnGridChanged.AddListener(UpdateAllSeasonUI);
+        GridManager.Instance.OnGridChanged.AddListener(UpdateAllTileTooltips);
         UpdateTileHighlights();
         UpdateAllSeasonUI();
     }
@@ -323,6 +324,15 @@ public class GridUIManager : Singleton<GridUIManager>
             {
                 tileUI.SetHighlight(false, Color.white);
             }
+        }
+    }
+
+    private void UpdateAllTileTooltips()
+    {
+        foreach (var kvp in tileUIElements)
+        {
+            GridTileUI tileUI = kvp.Value;
+            tileUI.UpdateTooltip();
         }
     }
 

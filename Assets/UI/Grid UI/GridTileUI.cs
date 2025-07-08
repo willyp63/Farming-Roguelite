@@ -34,6 +34,8 @@ public class GridTileUI
     [SerializeField]
     private float dragScale = 1.2f;
 
+    private TooltipTrigger tooltipTrigger;
+
     // Tile data
     private Vector2Int position;
     private GridTile tile;
@@ -72,6 +74,17 @@ public class GridTileUI
         tile = gridTile;
         SetHighlight(false, Color.white);
         SetHover(false);
+
+        tooltipTrigger = GetComponent<TooltipTrigger>();
+        UpdateTooltip();
+    }
+
+    public void UpdateTooltip()
+    {
+        if (tile.PlacedObject != null)
+            tooltipTrigger.SetTooltipText(tile.PlacedObject.GetTooltipText());
+        else
+            tooltipTrigger.SetTooltipText("");
     }
 
     public void SetHighlight(bool isHighlighted, Color color)

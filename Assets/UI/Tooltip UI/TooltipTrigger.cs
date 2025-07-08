@@ -3,7 +3,6 @@ using UnityEngine.EventSystems;
 
 public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [Header("Tooltip Content")]
     [TextArea(3, 10)]
     public string tooltipText = "Default tooltip text";
 
@@ -13,7 +12,9 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField]
     private float tooltipOffset = 100f;
 
-    [Header("Settings")]
+    [SerializeField]
+    private bool isWorldPosition = false;
+
     public float showDelay = 0.5f;
 
     private bool isHovering = false;
@@ -43,7 +44,8 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                     tooltipText,
                     transform.position,
                     tooltipOffset,
-                    tooltipDirection
+                    tooltipDirection,
+                    isWorldPosition
                 );
                 hoverTimer = 0f; // Reset to prevent multiple calls
             }

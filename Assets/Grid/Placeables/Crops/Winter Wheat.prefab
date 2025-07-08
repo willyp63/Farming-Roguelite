@@ -735,6 +735,7 @@ MonoBehaviour:
   isPermanent: 1
   isMovable: 0
   allowedTileTypes: 020000000100000004000000
+  text: +10 points
 --- !u!114 &8141606273527163774
 MonoBehaviour:
   m_ObjectHideFlags: 0

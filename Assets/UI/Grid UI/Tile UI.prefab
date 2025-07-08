@@ -162,6 +162,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2019900299704027332}
   - component: {fileID: 2173955879922499111}
+  - component: {fileID: 4689142402893048511}
   m_Layer: 5
   m_Name: Tile UI
   m_TagString: Untagged
@@ -208,3 +209,20 @@ MonoBehaviour:
   highlightAlpha: 0.8
   hoverAlpha: 0.5
   dragScale: 1.2
+--- !u!114 &4689142402893048511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8586457013847390000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1298f747dc63d7842a496a8a58bab302, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipText: 
+  tooltipDirection: 0
+  tooltipOffset: 0.75
+  isWorldPosition: 1
+  showDelay: 0.5

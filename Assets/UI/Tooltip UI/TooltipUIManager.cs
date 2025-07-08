@@ -34,11 +34,15 @@ public class TooltipUIManager : Singleton<TooltipUIManager>
 
     public void ShowTooltip(
         string content,
-        Vector3 screenPosition,
-        float offset = 100,
-        TooltipDirection direction = TooltipDirection.Above
+        Vector3 position,
+        float offset,
+        TooltipDirection direction,
+        bool isWorldPosition = false
     )
     {
+        if (string.IsNullOrEmpty(content))
+            return;
+
         if (tooltipObject == null || tooltipText == null || canvas == null)
             return;
 
@@ -81,10 +85,29 @@ public class TooltipUIManager : Singleton<TooltipUIManager>
                 break;
         }
 
-        Vector3 targetPosition = screenPosition + offsetVector;
+        Vector3 targetPosition = position + offsetVector;
 
-        // Set the tooltip position
-        tooltipObject.transform.position = targetPosition;
+        // Convert world position to screen position if needed
+        if (isWorldPosition)
+        {
+            // Convert world position to screen position
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(targetPosition);
+
+            // Convert screen position to canvas position
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvas.transform as RectTransform,
+                screenPosition,
+                canvas.worldCamera,
+                out Vector2 localPoint
+            );
+
+            tooltipObject.transform.localPosition = localPoint;
+        }
+        else
+        {
+            // Set the tooltip position directly (existing behavior)
+            tooltipObject.transform.position = targetPosition;
+        }
 
         // Set tooltip text content
         tooltipText.text = content;
