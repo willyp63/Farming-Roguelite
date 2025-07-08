@@ -735,13 +735,7 @@ MonoBehaviour:
   isPermanent: 1
   isMovable: 0
   allowedTileTypes: 0200000001000000
-  text: 'The tooltip will now work correctly whether you''re passing in world coordinates
-    (like a GameObject''s world position) or screen coordinates (like mouse position).
-
-
-    The
-    tooltip will now work correctly whether you''re passing in world coordinates
-    (like a GameObject''s world position) or screen coordinates (like mouse position).'
+  text: +10 points
 --- !u!114 &8141606273527163774
 MonoBehaviour:
   m_ObjectHideFlags: 0

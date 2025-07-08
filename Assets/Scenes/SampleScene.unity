@@ -2664,8 +2664,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -130, y: 240}
-  m_SizeDelta: {x: 180, y: 180}
+  m_AnchoredPosition: {x: -120, y: 230}
+  m_SizeDelta: {x: 160, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &779809924
 MonoBehaviour:
@@ -5307,6 +5307,14 @@ PrefabInstance:
       propertyPath: upperCanvas
       value: 
       objectReference: {fileID: 509940952}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: tileUIPrefab
+      value: 
+      objectReference: {fileID: 8224945813650795137, guid: 6ca4ef8734ff36b47ab1969418e0a777, type: 3}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: seasonUIPrefab
+      value: 
+      objectReference: {fileID: 1384910427377399973, guid: dbe325792462f3d4aa84a19de372f7f2, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5384,6 +5392,10 @@ PrefabInstance:
       propertyPath: energyText
       value: 
       objectReference: {fileID: 1538410694}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: cardUIPrefab
+      value: 
+      objectReference: {fileID: 969915796872489072, guid: f7dc9726952842e498bea32d6ab6023e, type: 3}
     - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
       propertyPath: cardContainer
       value: 
