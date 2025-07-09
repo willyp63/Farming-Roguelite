@@ -23,6 +23,7 @@ public class GridTile : MonoBehaviour
     private TileInfo tile;
 
     private Placeable placedObject;
+    private ShakeBehavior shakeBehavior;
 
     // Properties
     public int X => x;
@@ -35,6 +36,8 @@ public class GridTile : MonoBehaviour
     {
         x = xPos;
         y = yPos;
+
+        shakeBehavior = GetComponent<ShakeBehavior>();
 
         SetTile(tile);
     }
@@ -61,28 +64,12 @@ public class GridTile : MonoBehaviour
         placedObject = null;
     }
 
-    public void Shake(float duration = 0.3f, float intensity = 0.1f)
+    public void Shake()
     {
-        StartCoroutine(ShakeCoroutine(duration, intensity));
-    }
-
-    private IEnumerator ShakeCoroutine(float duration, float intensity)
-    {
-        Vector3 originalPosition = transform.localPosition;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
+        if (shakeBehavior != null)
         {
-            float xOffset = Mathf.Sin(elapsed * 50f) * intensity;
-            float yOffset = Mathf.Cos(elapsed * 30f) * intensity * 0.5f;
-
-            transform.localPosition = originalPosition + new Vector3(xOffset, yOffset, 0f);
-
-            elapsed += Time.deltaTime;
-            yield return null;
+            shakeBehavior.Shake();
         }
-
-        transform.localPosition = originalPosition;
     }
 
     private void UpdateVisual()

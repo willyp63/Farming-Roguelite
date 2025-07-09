@@ -151,21 +151,35 @@ public class UIManager : Singleton<UIManager>
 
     private void OnScoreChanged(int newPoints, int newMultiplier)
     {
-        if (roundScoreText != null)
+        UpdateScoreTextElement(roundScoreText, RoundManager.Instance.RoundScore.ToString(), "0");
+        UpdateScoreTextElement(
+            lineScoreText,
+            RoundManager.Instance.LineScore > 0 ? RoundManager.Instance.LineScore.ToString() : ""
+        );
+        UpdateScoreTextElement(
+            lineMultipliersText,
+            $"<color=#048BF0>{newPoints}</color> x <color=#F54840>{newMultiplier}</color>",
+            $"<color=#048BF0>0</color> x <color=#F54840>0</color>"
+        );
+    }
+
+    private void UpdateScoreTextElement(
+        TextMeshProUGUI textElement,
+        string newText,
+        string doNotShakeOn = ""
+    )
+    {
+        if (textElement == null)
+            return;
+
+        if (textElement.text != newText && newText != doNotShakeOn)
         {
-            roundScoreText.text = RoundManager.Instance.RoundScore.ToString();
+            ShakeBehavior shake = textElement.GetComponent<ShakeBehavior>();
+            if (shake != null)
+                shake.Shake();
         }
 
-        if (lineScoreText != null)
-        {
-            lineScoreText.text = RoundManager.Instance.TotalScore.ToString();
-        }
-
-        if (lineMultipliersText != null)
-        {
-            lineMultipliersText.text =
-                $"<color=#048BF0>{newPoints}</color> x <color=#F54840>{newMultiplier}</color>";
-        }
+        textElement.text = newText;
     }
 
     private void OnDayChanged(int newDay)

@@ -92,12 +92,21 @@ public class GridManager : Singleton<GridManager>
         List<ScoringLine> scoringLines = GridScoringManager.Instance.GetScoringLines();
         foreach (ScoringLine scoringLine in scoringLines)
         {
-            RoundManager.Instance.AddPoints(10 * scoringLine.tiles.Count);
-            RoundManager.Instance.AddMulti(1 * scoringLine.tiles.Count);
+            int totalPoints = 10 * scoringLine.tiles.Count;
+            int totalMulti = 1 * scoringLine.tiles.Count;
+
+            RoundManager.Instance.AddPoints(totalPoints);
+            RoundManager.Instance.AddMulti(totalMulti);
+
+            Vector3 centerPoint = scoringLine.tiles[0].transform.position;
+            centerPoint += scoringLine.tiles[scoringLine.tiles.Count - 1].transform.position;
+            centerPoint /= 2;
+
+            FloatingTextManager.Instance.SpawnPointsText(totalPoints, totalMulti, centerPoint);
 
             foreach (GridTile tile in scoringLine.tiles)
             {
-                tile.Shake(0.33f, 0.05f);
+                tile.Shake();
             }
 
             yield return new WaitForSeconds(0.66f);
@@ -114,18 +123,19 @@ public class GridManager : Singleton<GridManager>
 
                     FloatingTextManager.Instance.SpawnPointsText(
                         tile.PlacedObject.PointScore,
-                        tile.transform.position
-                    );
-                    FloatingTextManager.Instance.SpawnMultiText(
                         tile.PlacedObject.MultiScore,
                         tile.transform.position
                     );
                 }
 
-                tile.Shake(0.33f, 0.05f);
+                tile.Shake();
 
                 yield return new WaitForSeconds(0.66f);
             }
+
+            RoundManager.Instance.CalculateScore();
+
+            yield return new WaitForSeconds(0.66f);
 
             RoundManager.Instance.CommitScore();
 

@@ -29,6 +29,7 @@ public class RoundManager : Singleton<RoundManager>
 
     // Game state
     private int roundScore;
+    private int lineScore;
     private int pointScore;
     private int multiScore;
 
@@ -36,9 +37,9 @@ public class RoundManager : Singleton<RoundManager>
     private int currentDay;
 
     public int RoundScore => roundScore;
+    public int LineScore => lineScore;
     public int PointScore => pointScore;
     public int MultiScore => multiScore;
-    public int TotalScore => pointScore * multiScore;
     public int RequiredScore => requiredScore;
     public int CurrentDay => currentDay;
     public int TotalDays => numberOfDays;
@@ -46,6 +47,7 @@ public class RoundManager : Singleton<RoundManager>
     public void StartRound()
     {
         roundScore = 0;
+        lineScore = 0;
         pointScore = 0;
         multiScore = 0;
 
@@ -65,11 +67,6 @@ public class RoundManager : Singleton<RoundManager>
         Debug.Log($"New round started.");
     }
 
-    public bool IsRoundComplete()
-    {
-        return TotalScore >= requiredScore;
-    }
-
     public void ResetPlayedCards()
     {
         numCardsPlayed = 0;
@@ -86,16 +83,8 @@ public class RoundManager : Singleton<RoundManager>
         // Trigger end of day effects and clear non-permanent placeables
         yield return GridManager.Instance.EndOfTurnEnumerator();
 
-        // Check if round is complete
-        if (IsRoundComplete())
-        {
-            Debug.Log("Round complete!");
-        }
-        // Check if round is failed
-        else if (currentDay >= numberOfDays)
-        {
-            Debug.Log("Round failed!");
-        }
+        // TODO: Check if round is complete
+        // TODO: Check if round is failed
 
         numCardsPlayed = 0;
         CardManager.Instance.DrawCards(cardsDrawnPerDay);
@@ -131,9 +120,17 @@ public class RoundManager : Singleton<RoundManager>
         OnScoreChange?.Invoke(pointScore, multiScore);
     }
 
+    public void CalculateScore()
+    {
+        lineScore = pointScore * multiScore;
+
+        OnScoreChange?.Invoke(pointScore, multiScore);
+    }
+
     public void CommitScore()
     {
-        roundScore += TotalScore;
+        roundScore += lineScore;
+        lineScore = 0;
         pointScore = 0;
         multiScore = 0;
 
