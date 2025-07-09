@@ -76,6 +76,16 @@ public class GridManager : Singleton<GridManager>
 
     public IEnumerator EndOfTurnEnumerator()
     {
+        foreach (GridTile tile in grid)
+        {
+            if (tile.PlacedObject != null)
+            {
+                tile.PlacedObject.OnEndOfTurn();
+            }
+        }
+
+        yield return new WaitForSeconds(0.66f);
+
         List<ScoringLine> scoringLines = GridScoringManager.Instance.GetScoringLines();
         foreach (ScoringLine scoringLine in scoringLines)
         {
