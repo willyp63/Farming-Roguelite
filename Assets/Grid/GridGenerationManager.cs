@@ -126,7 +126,8 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
             {
                 GridManager.Instance.PlaceObject(
                     new Vector2Int(initialPlaceable.x, initialPlaceable.y),
-                    initialPlaceable.placeable
+                    initialPlaceable.placeable,
+                    true
                 );
             }
         }
@@ -199,7 +200,7 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
                 ];
 
                 // Place the placeable
-                GridManager.Instance.PlaceObject(position, step.placeablePrefab);
+                GridManager.Instance.PlaceObject(position, step.placeablePrefab, true);
                 placedCount++;
             }
 

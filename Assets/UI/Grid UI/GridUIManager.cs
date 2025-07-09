@@ -76,9 +76,6 @@ public class GridUIManager : Singleton<GridUIManager>
     [NonSerialized]
     public UnityEvent<Vector2Int> OnTileHovered = new();
 
-    [NonSerialized]
-    public UnityEvent<Vector2Int, Card> OnCardPlayedOnTile = new();
-
     private void Start()
     {
         // Subscribe to card drag events
@@ -149,21 +146,7 @@ public class GridUIManager : Singleton<GridUIManager>
             GridTile tile = currentHoveredTile.Tile;
             Card card = cardUI.GetCard();
 
-            if (
-                IsValidPlacement(tile.Position, card)
-                && PlayerManager.Instance.HasEnoughEnergy(card.EnergyCost)
-            )
-            {
-                // Play card
-                card.PlayCard(tile);
-
-                if (card.EnergyCost > 0)
-                    PlayerManager.Instance.SpendEnergy(card.EnergyCost);
-
-                CardManager.Instance.DiscardCard(card);
-
-                OnCardPlayedOnTile?.Invoke(tile.Position, card);
-            }
+            RoundManager.Instance.TryPlayCard(card, tile);
         }
 
         ExitPlacementMode();
@@ -172,8 +155,8 @@ public class GridUIManager : Singleton<GridUIManager>
 
     private void HandlePlaceableDragStarted(Vector2Int position, Placeable placeable)
     {
-        // Only allow dragging if placeable hasn't moved today
-        if (placeable.HasMovedToday)
+        // Only allow dragging if placeable can move
+        if (!placeable.CanMove)
         {
             Debug.Log($"Cannot move {placeable.PlaceableName}: already moved today");
             return;
@@ -341,10 +324,8 @@ public class GridUIManager : Singleton<GridUIManager>
             GridTileUI tileUI = kvp.Value;
 
             Placeable placeable = GridManager.Instance.GetPlaceableAtPosition(position);
-            bool hasMovablePlaceable =
-                placeable != null && placeable.IsMovable && !placeable.HasMovedToday;
 
-            if (hasMovablePlaceable)
+            if (placeable != null && placeable.CanMove)
             {
                 tileUI.SetHighlight(true, movablePlaceableColor);
             }

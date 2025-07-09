@@ -138,10 +138,10 @@ public class GridTileUI
         Placeable placedObject = tile.PlacedObject;
 
         // Only allow dragging if there's a movable placeable on this tile
-        if (placedObject == null || !placedObject.IsMovable || placedObject.HasMovedToday)
+        if (placedObject == null || !placedObject.CanMove)
         {
             Debug.Log(
-                $"Cannot drag: placeable={placedObject}, isMovable={placedObject?.IsMovable}"
+                $"Cannot drag: placeable={placedObject}, isMovable={placedObject?.IsMovable}, isCommitted={placedObject?.IsCommitted}"
             );
             return;
         }
@@ -161,7 +161,7 @@ public class GridTileUI
     {
         Placeable placedObject = tile.PlacedObject;
 
-        if (isDragging && placedObject != null && placedObject.IsMovable)
+        if (isDragging && placedObject != null && placedObject.CanMove)
         {
             Vector3 worldPosition = Camera.main.ScreenToWorldPoint(eventData.position);
             Debug.Log($"Dragging {placedObject.PlaceableName} to position {worldPosition}");

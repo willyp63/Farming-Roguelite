@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,6 +18,9 @@ public class RoundManager : Singleton<RoundManager>
     [SerializeField]
     private int numberOfDays = 3;
 
+    [SerializeField]
+    private int maxCardsPlayedPerDay = 5;
+
     [NonSerialized]
     public UnityEvent<int, int> OnScoreChange = new();
 
@@ -29,6 +31,8 @@ public class RoundManager : Singleton<RoundManager>
     private int roundScore;
     private int pointScore;
     private int multiScore;
+
+    private int numCardsPlayed = 0;
     private int currentDay;
 
     public int RoundScore => roundScore;
@@ -44,6 +48,8 @@ public class RoundManager : Singleton<RoundManager>
         roundScore = 0;
         pointScore = 0;
         multiScore = 0;
+
+        numCardsPlayed = 0;
         currentDay = 1;
 
         // Clear grid and generate a new one
@@ -62,6 +68,12 @@ public class RoundManager : Singleton<RoundManager>
     public bool IsRoundComplete()
     {
         return TotalScore >= requiredScore;
+    }
+
+    public void ResetPlayedCards()
+    {
+        numCardsPlayed = 0;
+        GridManager.Instance.ResetUncommittedPlaceables();
     }
 
     public void GoToNextDay()
@@ -85,13 +97,22 @@ public class RoundManager : Singleton<RoundManager>
             Debug.Log("Round failed!");
         }
 
-        // Reset energy & draw cards for the next day
-        PlayerManager.Instance.ResetEnergy();
+        numCardsPlayed = 0;
         CardManager.Instance.DrawCards(cardsDrawnPerDay);
 
         // Increment day and trigger event
         currentDay++;
         OnDayChange?.Invoke(currentDay);
+    }
+
+    public void TryPlayCard(Card card, GridTile tile)
+    {
+        if (card.IsValidPlacement(tile) && numCardsPlayed < maxCardsPlayedPerDay)
+        {
+            card.PlayCard(tile);
+            CardManager.Instance.RemoveCardFromHand(card);
+            numCardsPlayed++;
+        }
     }
 
     public void AddPoints(int amount, float multiplier = 1)

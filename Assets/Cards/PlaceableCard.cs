@@ -13,6 +13,11 @@ public class PlaceableCard : Card
     public override void PlayCard(GridTile tile)
     {
         GridManager.Instance.PlaceObject(tile.Position, placeablePrefab);
+        Placeable placeable = GridManager
+            .Instance
+            .Grid[tile.Position.x, tile.Position.y]
+            .PlacedObject;
+        placeable.SetCard(this);
     }
 
     public override bool IsValidPlacement(GridTile tile)

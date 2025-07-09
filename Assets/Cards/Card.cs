@@ -8,10 +8,6 @@ public abstract class Card : ScriptableObject
     private Sprite image;
     public Sprite Image => image;
 
-    [SerializeField]
-    private int energyCost = 0;
-    public int EnergyCost => energyCost;
-
     public abstract void PlayCard(GridTile tile);
 
     public abstract bool IsValidPlacement(GridTile tile);

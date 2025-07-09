@@ -121,6 +121,18 @@ public class CardManager : Singleton<CardManager>
         return drawnCards;
     }
 
+    public void AddCardToHand(Card card)
+    {
+        hand.Add(card);
+        OnCardAddedToHand?.Invoke(card);
+    }
+
+    public void RemoveCardFromHand(Card card)
+    {
+        hand.Remove(card);
+        OnCardRemovedFromHand?.Invoke(card);
+    }
+
     public bool DiscardCard(Card card)
     {
         if (hand.Contains(card))
@@ -134,6 +146,12 @@ public class CardManager : Singleton<CardManager>
             return true;
         }
         return false;
+    }
+
+    public void AddCardToDiscard(Card card)
+    {
+        discard.Add(card);
+        OnDiscardCountChanged?.Invoke(discard.Count);
     }
 
     public Card DiscardCardAt(int index)

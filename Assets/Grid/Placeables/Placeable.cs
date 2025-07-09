@@ -81,9 +81,12 @@ public class Placeable : MonoBehaviour
 
     private List<PlaceableEffect> effects = new List<PlaceableEffect>();
 
-    // Movement tracking
-    private bool hasMovedToday = true;
-    public bool HasMovedToday => hasMovedToday;
+    private Card card;
+    public Card Card => card;
+
+    private bool isCommitted = false;
+    public bool IsCommitted => isCommitted;
+    public bool CanMove => !isCommitted || isMovable;
 
     private bool hasBeenScored = false;
     public bool HasBeenScored => hasBeenScored;
@@ -119,14 +122,14 @@ public class Placeable : MonoBehaviour
         }
     }
 
-    public void MarkAsMoved()
+    public void SetCard(Card card)
     {
-        hasMovedToday = true;
+        this.card = card;
     }
 
-    public void ResetMovementFlag()
+    public void MarkAsCommitted()
     {
-        hasMovedToday = false;
+        isCommitted = true;
     }
 
     public void MarkAsScored()

@@ -80,11 +80,14 @@ public class GridManager : Singleton<GridManager>
         {
             if (tile.PlacedObject != null)
             {
+                tile.PlacedObject.MarkAsCommitted();
                 tile.PlacedObject.OnEndOfTurn();
             }
         }
 
-        yield return new WaitForSeconds(0.66f);
+        OnGridChanged?.Invoke();
+
+        yield return new WaitForSeconds(0.33f);
 
         List<ScoringLine> scoringLines = GridScoringManager.Instance.GetScoringLines();
         foreach (ScoringLine scoringLine in scoringLines)
@@ -131,14 +134,6 @@ public class GridManager : Singleton<GridManager>
 
         ClearScoredTiles();
 
-        foreach (GridTile tile in grid)
-        {
-            if (tile.PlacedObject != null)
-            {
-                tile.PlacedObject.ResetMovementFlag();
-            }
-        }
-
         OnGridChanged?.Invoke();
     }
 
@@ -181,7 +176,11 @@ public class GridManager : Singleton<GridManager>
         return tile?.PlacedObject;
     }
 
-    public void PlaceObject(Vector2Int position, Placeable placeablePrefab)
+    public void PlaceObject(
+        Vector2Int position,
+        Placeable placeablePrefab,
+        bool isCommitted = false
+    )
     {
         if (!IsValidPosition(position.x, position.y))
         {
@@ -207,6 +206,8 @@ public class GridManager : Singleton<GridManager>
         }
 
         placeable.Initialize(tile);
+        if (isCommitted)
+            placeable.MarkAsCommitted();
         tile.SetPlacedObject(placeable);
         placeable.transform.localPosition = Vector3.zero;
 
@@ -244,12 +245,8 @@ public class GridManager : Singleton<GridManager>
 
         Placeable placeable = fromTile.PlacedObject;
 
-        // Check if placeable is movable
-        if (!placeable.IsMovable)
-            return false;
-
-        // Check if placeable has already moved today
-        if (placeable.HasMovedToday)
+        // Check if placeable can move
+        if (!placeable.CanMove)
             return false;
 
         // Check if destination tile is empty
@@ -269,9 +266,6 @@ public class GridManager : Singleton<GridManager>
         toTile.SetPlacedObject(placeable);
         placeable.transform.SetParent(toTile.transform);
         placeable.transform.localPosition = Vector3.zero;
-
-        // Mark as moved for today
-        placeable.MarkAsMoved();
 
         OnGridChanged?.Invoke();
         return true;
@@ -368,6 +362,28 @@ public class GridManager : Singleton<GridManager>
         );
     }
 
+    public void ResetUncommittedPlaceables()
+    {
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                GridTile tile = grid[x, y];
+                Placeable placeable = tile.PlacedObject;
+
+                if (placeable != null && !placeable.IsCommitted)
+                {
+                    if (placeable.Card != null)
+                    {
+                        CardManager.Instance.AddCardToHand(placeable.Card);
+                    }
+
+                    RemoveObject(new Vector2Int(x, y));
+                }
+            }
+        }
+    }
+
     public void ClearScoredTiles(bool clearPermanents = false)
     {
         for (int x = 0; x < gridWidth; x++)
@@ -382,6 +398,11 @@ public class GridManager : Singleton<GridManager>
                     && (clearPermanents || !tile.PlacedObject.IsPermanent)
                 )
                 {
+                    if (tile.PlacedObject.Card != null)
+                    {
+                        CardManager.Instance.AddCardToDiscard(tile.PlacedObject.Card);
+                    }
+
                     RemoveObject(new Vector2Int(x, y));
                 }
             }

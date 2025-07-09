@@ -28,9 +28,6 @@ public class UIManager : Singleton<UIManager>
     private TextMeshProUGUI moneyText;
 
     [SerializeField]
-    private TextMeshProUGUI energyText;
-
-    [SerializeField]
     private TextMeshProUGUI deckCountText;
 
     [SerializeField]
@@ -39,6 +36,9 @@ public class UIManager : Singleton<UIManager>
     [Header("Buttons")]
     [SerializeField]
     private Button endTurnButton;
+
+    [SerializeField]
+    private Button resetButton;
 
     [Header("Card UI")]
     [SerializeField]
@@ -59,7 +59,6 @@ public class UIManager : Singleton<UIManager>
     public void Start()
     {
         // Subscribe to player manager events
-        PlayerManager.Instance.OnEnergyChanged.AddListener(OnEnergyChanged);
         PlayerManager.Instance.OnMoneyChanged.AddListener(OnMoneyChanged);
 
         // Subscribe to hand manager events
@@ -82,7 +81,6 @@ public class UIManager : Singleton<UIManager>
 
         // Initialize Text elements
         OnMoneyChanged(PlayerManager.Instance.CurrentMoney);
-        OnEnergyChanged(PlayerManager.Instance.CurrentEnergy);
         OnDeckCountChanged(CardManager.Instance.Deck.Count);
         OnDiscardCountChanged(CardManager.Instance.Discard.Count);
         OnScoreChanged(RoundManager.Instance.PointScore, RoundManager.Instance.MultiScore);
@@ -91,6 +89,11 @@ public class UIManager : Singleton<UIManager>
         if (endTurnButton != null)
         {
             endTurnButton.onClick.AddListener(OnEndTurnButtonClicked);
+        }
+
+        if (resetButton != null)
+        {
+            resetButton.onClick.AddListener(OnResetButtonClicked);
         }
     }
 
@@ -108,14 +111,6 @@ public class UIManager : Singleton<UIManager>
         {
             CardManager.Instance.OnCardAddedToHand.RemoveListener(OnCardAdded);
             CardManager.Instance.OnCardRemovedFromHand.RemoveListener(OnCardRemoved);
-        }
-    }
-
-    private void OnEnergyChanged(int newAmount)
-    {
-        if (energyText != null)
-        {
-            energyText.text = $"{newAmount}/{PlayerManager.Instance.CurrentMaxEnergy}";
         }
     }
 
@@ -269,5 +264,10 @@ public class UIManager : Singleton<UIManager>
     private void OnEndTurnButtonClicked()
     {
         RoundManager.Instance.GoToNextDay();
+    }
+
+    private void OnResetButtonClicked()
+    {
+        RoundManager.Instance.ResetPlayedCards();
     }
 }
