@@ -23,17 +23,7 @@ public class EffectCard : Card
 
     public override void PlayCard(GridTile tile)
     {
-        GameObject effectObject = Instantiate(effectPrefab.gameObject);
-        PlaceableEffect effect = effectObject.GetComponent<PlaceableEffect>();
-
-        if (effect.EffectTiming != PlaceableEffectTiming.OnPlace)
-        {
-            Debug.LogError("Card effect must having OnPlace timing!");
-        }
-
-        effect.OnPlace(tile);
-
-        Destroy(effect.gameObject);
+        // TODO: implement
     }
 
     public override bool IsValidPlacement(GridTile tile)

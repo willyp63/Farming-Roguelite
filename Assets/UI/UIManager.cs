@@ -16,10 +16,13 @@ public class UIManager : Singleton<UIManager>
     private TextMeshProUGUI requiredScoreText;
 
     [SerializeField]
-    private TextMeshProUGUI scoreMultipliersText;
+    private TextMeshProUGUI roundScoreText;
 
     [SerializeField]
-    private TextMeshProUGUI scoreText;
+    private TextMeshProUGUI lineMultipliersText;
+
+    [SerializeField]
+    private TextMeshProUGUI lineScoreText;
 
     [SerializeField]
     private TextMeshProUGUI moneyText;
@@ -153,15 +156,20 @@ public class UIManager : Singleton<UIManager>
 
     private void OnScoreChanged(int newPoints, int newMultiplier)
     {
-        if (scoreText != null)
+        if (roundScoreText != null)
         {
-            scoreText.text = RoundManager.Instance.TotalScore.ToString();
+            roundScoreText.text = RoundManager.Instance.RoundScore.ToString();
         }
 
-        if (scoreMultipliersText != null)
+        if (lineScoreText != null)
         {
-            scoreMultipliersText.text =
-                $"<color=#0000ff>{newPoints}</color> x <color=#ff0000>{newMultiplier}</color>";
+            lineScoreText.text = RoundManager.Instance.TotalScore.ToString();
+        }
+
+        if (lineMultipliersText != null)
+        {
+            lineMultipliersText.text =
+                $"<color=#048BF0>{newPoints}</color> x <color=#F54840>{newMultiplier}</color>";
         }
     }
 

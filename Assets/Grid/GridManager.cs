@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -64,7 +65,7 @@ public class GridManager : Singleton<GridManager>
 
     public void ResetGrid()
     {
-        ClearPlaceables(true);
+        ClearScoredTiles(true);
 
         TileInfo emptyTile = TileManager.GetTileInfo(TileType.Empty);
         foreach (GridTile tile in grid)
@@ -73,15 +74,52 @@ public class GridManager : Singleton<GridManager>
         }
     }
 
-    public void OnEndOfTurn()
+    public IEnumerator EndOfTurnEnumerator()
     {
-        foreach (GridTile tile in grid)
+        List<ScoringLine> scoringLines = GridScoringManager.Instance.GetScoringLines();
+        foreach (ScoringLine scoringLine in scoringLines)
         {
-            if (tile.PlacedObject != null)
-                tile.PlacedObject.OnEndOfTurn();
+            RoundManager.Instance.AddPoints(10 * scoringLine.tiles.Count);
+            RoundManager.Instance.AddMulti(1 * scoringLine.tiles.Count);
+
+            foreach (GridTile tile in scoringLine.tiles)
+            {
+                tile.Shake(0.33f, 0.05f);
+            }
+
+            yield return new WaitForSeconds(0.66f);
+
+            foreach (GridTile tile in scoringLine.tiles)
+            {
+                if (tile.PlacedObject != null)
+                {
+                    tile.PlacedObject.OnTriggered();
+                    tile.PlacedObject.MarkAsScored();
+
+                    RoundManager.Instance.AddPoints(tile.PlacedObject.PointScore);
+                    RoundManager.Instance.AddMulti(tile.PlacedObject.MultiScore);
+
+                    FloatingTextManager.Instance.SpawnPointsText(
+                        tile.PlacedObject.PointScore,
+                        tile.transform.position
+                    );
+                    FloatingTextManager.Instance.SpawnMultiText(
+                        tile.PlacedObject.MultiScore,
+                        tile.transform.position
+                    );
+                }
+
+                tile.Shake(0.33f, 0.05f);
+
+                yield return new WaitForSeconds(0.66f);
+            }
+
+            RoundManager.Instance.CommitScore();
+
+            yield return new WaitForSeconds(0.33f);
         }
 
-        ClearPlaceables();
+        ClearScoredTiles();
 
         foreach (GridTile tile in grid)
         {
@@ -162,18 +200,6 @@ public class GridManager : Singleton<GridManager>
         tile.SetPlacedObject(placeable);
         placeable.transform.localPosition = Vector3.zero;
 
-        // trigger on place effects
-        placeable.OnPlaced();
-
-        // trigger on effected tile placed effects for all other placeables
-        foreach (GridTile otherTile in grid)
-        {
-            if (otherTile == null || otherTile == tile || otherTile.PlacedObject == null)
-                continue;
-
-            otherTile.PlacedObject.OnNewPlaced(otherTile, tile);
-        }
-
         OnGridChanged?.Invoke();
     }
 
@@ -186,7 +212,6 @@ public class GridManager : Singleton<GridManager>
         if (tile.PlacedObject == null)
             return;
 
-        tile.PlacedObject.OnRemoved();
         Destroy(tile.PlacedObject.gameObject);
         tile.ClearPlacedObject();
         OnGridChanged?.Invoke();
@@ -237,18 +262,6 @@ public class GridManager : Singleton<GridManager>
 
         // Mark as moved for today
         placeable.MarkAsMoved();
-
-        // Trigger on place effects for the new location
-        placeable.OnPlaced();
-
-        // Trigger on effected tile placed effects for all other placeables
-        foreach (GridTile otherTile in grid)
-        {
-            if (otherTile == null || otherTile == toTile || otherTile.PlacedObject == null)
-                continue;
-
-            otherTile.PlacedObject.OnNewPlaced(otherTile, toTile);
-        }
 
         OnGridChanged?.Invoke();
         return true;
@@ -345,7 +358,7 @@ public class GridManager : Singleton<GridManager>
         );
     }
 
-    public void ClearPlaceables(bool clearPermanents = false)
+    public void ClearScoredTiles(bool clearPermanents = false)
     {
         for (int x = 0; x < gridWidth; x++)
         {
@@ -355,6 +368,7 @@ public class GridManager : Singleton<GridManager>
 
                 if (
                     tile.PlacedObject != null
+                    && tile.PlacedObject.HasBeenScored
                     && (clearPermanents || !tile.PlacedObject.IsPermanent)
                 )
                 {

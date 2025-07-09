@@ -135,10 +135,12 @@ MonoBehaviour:
   placeableType: 4
   placeableFamily: 0
   season: 3
-  isPermanent: 1
+  isPermanent: 0
   isMovable: 0
   allowedTileTypes: 
-  text: +10 points
+  text: 
+  pointScore: 0
+  multiScore: 0
 --- !u!210 &3797264127352364242
 SortingGroup:
   m_ObjectHideFlags: 0

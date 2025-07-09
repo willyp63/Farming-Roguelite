@@ -682,8 +682,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9163254733278381642}
   - component: {fileID: 3017428051473517123}
-  - component: {fileID: 8141606273527163774}
-  - component: {fileID: 3911022601629908839}
   - component: {fileID: 7038447385482280336}
   - component: {fileID: 5217927720704310149}
   m_Layer: 0
@@ -733,63 +731,12 @@ MonoBehaviour:
   placeableType: 1
   placeableFamily: 2
   season: 1
-  isPermanent: 1
+  isPermanent: 0
   isMovable: 0
   allowedTileTypes: 02000000
   text: +10 points
---- !u!114 &8141606273527163774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7660112058467355491}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8f5700d801603345afd4f6c0ee58155, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectTiming: 3
-  requiredConditions: []
-  countMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  applyToMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  amount: 1
---- !u!114 &3911022601629908839
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7660112058467355491}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectTiming: 3
-  requiredConditions: []
-  countMatches:
-  - pattern: 1
-    tileTypes: 
-    placeableTypes: 01000000
-    onlyMatchNewTile: 0
-  applyToMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  pointAddition: 3
-  pointMultiplier: 1
-  multiAddition: 0
-  multiMultiplier: 1
+  pointScore: 10
+  multiScore: 0
 --- !u!210 &7038447385482280336
 SortingGroup:
   m_ObjectHideFlags: 0

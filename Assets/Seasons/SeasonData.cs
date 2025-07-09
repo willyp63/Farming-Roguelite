@@ -7,7 +7,7 @@ public enum SeasonType
     Summer,
     Autumn,
     Winter,
-    Neutral,
+    None,
 }
 
 [System.Serializable]

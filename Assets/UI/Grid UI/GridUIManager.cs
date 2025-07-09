@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
+
+[System.Serializable]
+public class ScoringLineColor
+{
+    public ScoringPattern scoringPattern;
+    public Color color;
+}
 
 public class GridUIManager : Singleton<GridUIManager>
 {
@@ -15,6 +23,22 @@ public class GridUIManager : Singleton<GridUIManager>
 
     [SerializeField]
     private Color movablePlaceableColor = Color.magenta;
+
+    [Header("Scoring Line Settings")]
+    [SerializeField]
+    private bool showScoringLines = true;
+
+    [SerializeField]
+    private List<ScoringLineColor> scoringLineColors = new();
+
+    [SerializeField]
+    private float scoringLineWidth = 0.05f;
+
+    [SerializeField]
+    private Sprite circleSprite;
+
+    [SerializeField]
+    private float scoringLineCircleSize = 0.1f;
 
     [Header("Grid Visual Elements")]
     [SerializeField]
@@ -44,6 +68,9 @@ public class GridUIManager : Singleton<GridUIManager>
     private Placeable currentDraggedPlaceable;
     private Vector2Int currentDraggedPlaceablePosition;
     private HashSet<Vector2Int> validMoveTiles;
+
+    // Scoring line state
+    private List<GameObject> currentScoringLines = new();
 
     // Events
     [NonSerialized]
@@ -104,6 +131,7 @@ public class GridUIManager : Singleton<GridUIManager>
         GridManager.Instance.OnGridChanged.AddListener(UpdateTileHighlights);
         GridManager.Instance.OnGridChanged.AddListener(UpdateAllSeasonUI);
         GridManager.Instance.OnGridChanged.AddListener(UpdateAllTileTooltips);
+        GridManager.Instance.OnGridChanged.AddListener(UpdateScoringLines);
         UpdateTileHighlights();
         UpdateAllSeasonUI();
     }
@@ -350,8 +378,7 @@ public class GridUIManager : Singleton<GridUIManager>
     private void UpdateSeasonUI(Vector2Int position, TileSeasonUI seasonUI)
     {
         GridTile tile = GridManager.Instance.GetTile(position);
-        SeasonType season =
-            tile.PlacedObject != null ? tile.PlacedObject.Season : SeasonType.Neutral;
+        SeasonType season = tile.PlacedObject != null ? tile.PlacedObject.Season : SeasonType.None;
         seasonUI.SetSeason(season);
     }
 
@@ -365,5 +392,115 @@ public class GridUIManager : Singleton<GridUIManager>
     private void HandleTileExited(Vector2Int position)
     {
         currentHoveredTile = null;
+    }
+
+    private void UpdateScoringLines()
+    {
+        if (!showScoringLines)
+            return;
+
+        // Clear all previous scoring lines
+        ClearScoringLines();
+
+        List<ScoringLine> scoringLines = GridScoringManager.Instance.GetScoringLines();
+        foreach (var scoringLine in scoringLines)
+        {
+            DrawScoringLine(scoringLine);
+        }
+    }
+
+    private void ClearScoringLines()
+    {
+        foreach (var line in currentScoringLines)
+        {
+            if (line != null)
+            {
+                DestroyImmediate(line);
+            }
+        }
+        currentScoringLines.Clear();
+    }
+
+    private void DrawScoringLine(ScoringLine scoringLine)
+    {
+        if (scoringLine.tiles == null || scoringLine.tiles.Count < 2)
+            return;
+
+        Color lineColor =
+            scoringLineColors
+                .Find(scoringLineColor => scoringLineColor.scoringPattern == scoringLine.pattern)
+                ?.color ?? Color.white;
+
+        // Calculate line position and rotation
+        Vector2 firstTilePos = scoringLine.tiles[0].transform.position;
+        Vector2 lastTilePos = scoringLine.tiles[scoringLine.tiles.Count - 1].transform.position;
+
+        // Convert world positions to canvas local positions
+        Vector2 firstCanvasPos = upperCanvas.InverseTransformPoint(firstTilePos);
+        Vector2 lastCanvasPos = upperCanvas.InverseTransformPoint(lastTilePos);
+
+        // Create a line GameObject with Image component
+        GameObject lineObject = new GameObject($"ScoringLine_{scoringLine.pattern}");
+        lineObject.transform.SetParent(upperCanvas, false);
+
+        Image lineImage = lineObject.AddComponent<Image>();
+        lineImage.color = lineColor;
+        lineImage.raycastTarget = false; // Don't block raycasts
+
+        // Calculate line properties
+        Vector2 direction = (lastCanvasPos - firstCanvasPos).normalized;
+        float distance = Vector2.Distance(firstCanvasPos, lastCanvasPos);
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // Set line position and rotation
+        lineObject.transform.localPosition = (firstCanvasPos + lastCanvasPos) / 2f;
+        lineObject.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+        // Set line size
+        RectTransform rectTransform = lineObject.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(distance, scoringLineWidth);
+
+        // Set pivot to center
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+        currentScoringLines.Add(lineObject);
+
+        // Create circle at start position
+        if (circleSprite != null)
+        {
+            GameObject startCircle = new GameObject($"ScoringLine_Start_{scoringLine.pattern}");
+            startCircle.transform.SetParent(upperCanvas, false);
+            startCircle.transform.localPosition = firstCanvasPos;
+
+            Image startCircleImage = startCircle.AddComponent<Image>();
+            startCircleImage.sprite = circleSprite;
+            startCircleImage.color = lineColor;
+            startCircleImage.raycastTarget = false;
+
+            RectTransform startCircleRect = startCircle.GetComponent<RectTransform>();
+            startCircleRect.sizeDelta = new Vector2(scoringLineCircleSize, scoringLineCircleSize);
+            startCircleRect.pivot = new Vector2(0.5f, 0.5f);
+
+            currentScoringLines.Add(startCircle);
+        }
+
+        // Create circle at end position
+        if (circleSprite != null)
+        {
+            GameObject endCircle = new GameObject($"ScoringLine_End_{scoringLine.pattern}");
+            endCircle.transform.SetParent(upperCanvas, false);
+            endCircle.transform.localPosition = lastCanvasPos;
+
+            Image endCircleImage = endCircle.AddComponent<Image>();
+            endCircleImage.sprite = circleSprite;
+            endCircleImage.color = lineColor;
+            endCircleImage.raycastTarget = false;
+
+            RectTransform endCircleRect = endCircle.GetComponent<RectTransform>();
+            endCircleRect.sizeDelta = new Vector2(scoringLineCircleSize, scoringLineCircleSize);
+            endCircleRect.pivot = new Vector2(0.5f, 0.5f);
+
+            currentScoringLines.Add(endCircle);
+        }
     }
 }

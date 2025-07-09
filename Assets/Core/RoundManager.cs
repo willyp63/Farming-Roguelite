@@ -26,10 +26,12 @@ public class RoundManager : Singleton<RoundManager>
     public UnityEvent<int> OnDayChange = new();
 
     // Game state
+    private int roundScore;
     private int pointScore;
     private int multiScore;
     private int currentDay;
 
+    public int RoundScore => roundScore;
     public int PointScore => pointScore;
     public int MultiScore => multiScore;
     public int TotalScore => pointScore * multiScore;
@@ -39,6 +41,7 @@ public class RoundManager : Singleton<RoundManager>
 
     public void StartRound()
     {
+        roundScore = 0;
         pointScore = 0;
         multiScore = 0;
         currentDay = 1;
@@ -69,8 +72,7 @@ public class RoundManager : Singleton<RoundManager>
     private IEnumerator NextDayEnumerator()
     {
         // Trigger end of day effects and clear non-permanent placeables
-        GridManager.Instance.OnEndOfTurn();
-        yield return new WaitForSeconds(1f);
+        yield return GridManager.Instance.EndOfTurnEnumerator();
 
         // Check if round is complete
         if (IsRoundComplete())
@@ -104,6 +106,15 @@ public class RoundManager : Singleton<RoundManager>
     {
         multiScore += amount;
         multiScore = (int)(multiScore * multiplier);
+
+        OnScoreChange?.Invoke(pointScore, multiScore);
+    }
+
+    public void CommitScore()
+    {
+        roundScore += TotalScore;
+        pointScore = 0;
+        multiScore = 0;
 
         OnScoreChange?.Invoke(pointScore, multiScore);
     }

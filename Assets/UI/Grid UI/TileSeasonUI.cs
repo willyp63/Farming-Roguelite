@@ -16,6 +16,6 @@ public class TileSeasonUI : MonoBehaviour
         backgroundImage.color = SeasonManager.GetSeasonInfo(season).color;
         seasonImage.sprite = SeasonManager.GetSeasonInfo(season).symbol;
 
-        gameObject.SetActive(season != SeasonType.Neutral);
+        gameObject.SetActive(season != SeasonType.None);
     }
 }

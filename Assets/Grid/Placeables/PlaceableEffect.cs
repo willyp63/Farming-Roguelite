@@ -4,9 +4,7 @@ using UnityEngine;
 
 public enum PlaceableEffectTiming
 {
-    OnPlace,
-    OnNewPlace,
-    OnRemove,
+    OnTriggered,
     OnEndOfTurn,
     OnEndOfRound,
 }
@@ -61,19 +59,9 @@ public abstract class PlaceableEffect : MonoBehaviour
         int count
     );
 
-    public void OnPlace(GridTile tile)
+    public void OnTriggered(GridTile tile)
     {
-        TryApplyEffect(tile, PlaceableEffectTiming.OnPlace);
-    }
-
-    public void OnNewPlace(GridTile tile, GridTile newTile)
-    {
-        TryApplyEffect(tile, PlaceableEffectTiming.OnNewPlace, newTile);
-    }
-
-    public void OnRemove(GridTile tile)
-    {
-        TryApplyEffect(tile, PlaceableEffectTiming.OnRemove);
+        TryApplyEffect(tile, PlaceableEffectTiming.OnTriggered);
     }
 
     public void OnEndOfTurn(GridTile tile)

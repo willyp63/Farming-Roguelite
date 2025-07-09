@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5368643174551003073}
   - component: {fileID: 3821817819579965074}
-  - component: {fileID: -8442559103271085971}
-  - component: {fileID: -1537029466497595087}
   - component: {fileID: 3555250421083542281}
   - component: {fileID: 4781789984781640467}
   m_Layer: 0
@@ -53,75 +51,12 @@ MonoBehaviour:
   placeableType: 2
   placeableFamily: 8
   season: 0
-  isPermanent: 1
+  isPermanent: 0
   isMovable: 1
   allowedTileTypes: 01000000
   text: +10 points
---- !u!114 &-8442559103271085971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 226535891704081314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectTiming: 3
-  requiredConditions:
-  - match:
-      pattern: 0
-      tileTypes: 01000000
-      placeableTypes: 
-      onlyMatchNewTile: 0
-    requiredNumberOfTiles: 1
-  countMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  applyToMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  pointAddition: 0
-  pointMultiplier: 1
-  multiAddition: 4
-  multiMultiplier: 1
---- !u!114 &-1537029466497595087
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 226535891704081314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0138685b156d9af4b804da194ed1ea09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectTiming: 3
-  requiredConditions:
-  - match:
-      pattern: 0
-      tileTypes: 01000000
-      placeableTypes: 
-      onlyMatchNewTile: 0
-    requiredNumberOfTiles: 1
-  countMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  applyToMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  toTileType: 0
+  pointScore: 10
+  multiScore: 0
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0

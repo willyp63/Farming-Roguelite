@@ -68,6 +68,14 @@ public class Placeable : MonoBehaviour
     private string text;
     public string Text => text;
 
+    [SerializeField]
+    private int pointScore = 0;
+    public int PointScore => pointScore;
+
+    [SerializeField]
+    private int multiScore = 0;
+    public int MultiScore => multiScore;
+
     private GridTile gridtile;
     public GridTile GridTile => gridtile;
 
@@ -77,6 +85,9 @@ public class Placeable : MonoBehaviour
     private bool hasMovedToday = true;
     public bool HasMovedToday => hasMovedToday;
 
+    private bool hasBeenScored = false;
+    public bool HasBeenScored => hasBeenScored;
+
     public void Initialize(GridTile tile)
     {
         gridtile = tile;
@@ -84,19 +95,11 @@ public class Placeable : MonoBehaviour
         effects = GetComponents<PlaceableEffect>().ToList();
     }
 
-    public void OnPlaced()
+    public void OnTriggered()
     {
         foreach (PlaceableEffect effect in effects)
         {
-            effect.OnPlace(GridTile);
-        }
-    }
-
-    public void OnRemoved()
-    {
-        foreach (PlaceableEffect effect in effects)
-        {
-            effect.OnRemove(GridTile);
+            effect.OnTriggered(GridTile);
         }
     }
 
@@ -116,14 +119,6 @@ public class Placeable : MonoBehaviour
         }
     }
 
-    public void OnNewPlaced(GridTile tile, GridTile placedTile)
-    {
-        foreach (PlaceableEffect effect in effects)
-        {
-            effect.OnNewPlace(tile, placedTile);
-        }
-    }
-
     public void MarkAsMoved()
     {
         hasMovedToday = true;
@@ -132,6 +127,26 @@ public class Placeable : MonoBehaviour
     public void ResetMovementFlag()
     {
         hasMovedToday = false;
+    }
+
+    public void MarkAsScored()
+    {
+        hasBeenScored = true;
+    }
+
+    public void ResetScoredFlag()
+    {
+        hasBeenScored = false;
+    }
+
+    public void AddPoints(int amount)
+    {
+        pointScore += amount;
+    }
+
+    public void AddMulti(int amount)
+    {
+        multiScore += amount;
     }
 
     public string GetTooltipText()

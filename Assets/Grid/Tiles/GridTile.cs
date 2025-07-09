@@ -61,6 +61,30 @@ public class GridTile : MonoBehaviour
         placedObject = null;
     }
 
+    public void Shake(float duration = 0.3f, float intensity = 0.1f)
+    {
+        StartCoroutine(ShakeCoroutine(duration, intensity));
+    }
+
+    private IEnumerator ShakeCoroutine(float duration, float intensity)
+    {
+        Vector3 originalPosition = transform.localPosition;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float xOffset = Mathf.Sin(elapsed * 50f) * intensity;
+            float yOffset = Mathf.Cos(elapsed * 30f) * intensity * 0.5f;
+
+            transform.localPosition = originalPosition + new Vector3(xOffset, yOffset, 0f);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = originalPosition;
+    }
+
     private void UpdateVisual()
     {
         if (topImage == null || edgeImage == null)

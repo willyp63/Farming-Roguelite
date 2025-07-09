@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5368643174551003073}
   - component: {fileID: 2121496598191819596}
-  - component: {fileID: -3290458095466194308}
   - component: {fileID: 3555250421083542281}
   - component: {fileID: 4781789984781640467}
   m_Layer: 0
@@ -50,39 +49,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeableName: Well
   placeableType: 3
+  placeableFamily: 0
   season: 2
   isPermanent: 1
   isMovable: 0
   allowedTileTypes: 01000000020000000300000004000000
   text: +10 points
---- !u!114 &-3290458095466194308
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 226535891704081314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectTiming: 3
-  requiredConditions: []
-  countMatches:
-  - pattern: 3
-    tileTypes: 
-    placeableTypes: 01000000
-    onlyMatchNewTile: 1
-  applyToMatches:
-  - pattern: 0
-    tileTypes: 
-    placeableTypes: 
-    onlyMatchNewTile: 0
-  pointAddition: 1
-  pointMultiplier: 1
-  multiAddition: 0
-  multiMultiplier: 1
+  pointScore: 10
+  multiScore: 0
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0
