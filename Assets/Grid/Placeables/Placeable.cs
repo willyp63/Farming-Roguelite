@@ -70,11 +70,17 @@ public class Placeable : MonoBehaviour
 
     [SerializeField]
     private int pointScore = 0;
-    public int PointScore => pointScore;
+    public int PointScore => pointScore + pointScoreAddition;
+
+    private int pointScoreAddition = 0;
+    public int PointScoreAddition => pointScoreAddition;
 
     [SerializeField]
     private int multiScore = 0;
-    public int MultiScore => multiScore;
+    public int MultiScore => multiScore + multiScoreAddition;
+
+    private int multiScoreAddition = 0;
+    public int MultiScoreAddition => multiScoreAddition;
 
     private GridTile gridtile;
     public GridTile GridTile => gridtile;
@@ -86,6 +92,12 @@ public class Placeable : MonoBehaviour
 
     private Card card;
     public Card Card => card;
+
+    private Placeable spawnPlaceableOnMove;
+    public Placeable SpawnPlaceableOnMove => spawnPlaceableOnMove;
+
+    private bool hasSpawnedOnMove = false;
+    public bool HasSpawnedOnMove => hasSpawnedOnMove;
 
     private bool isCommitted = false;
     public bool IsCommitted => isCommitted;
@@ -148,12 +160,22 @@ public class Placeable : MonoBehaviour
 
     public void AddPoints(int amount)
     {
-        pointScore += amount;
+        pointScoreAddition += amount;
     }
 
     public void AddMulti(int amount)
     {
-        multiScore += amount;
+        multiScoreAddition += amount;
+    }
+
+    public void SetSpawnPlaceableOnMove(Placeable placeable)
+    {
+        spawnPlaceableOnMove = placeable;
+    }
+
+    public void SetHasSpawnedOnMove(bool hasSpawned)
+    {
+        hasSpawnedOnMove = hasSpawned;
     }
 
     public string GetTooltipText()

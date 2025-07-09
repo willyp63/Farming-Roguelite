@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TilePlaceableEffect : PlaceableEffect
+public class TransformPlaceableEffect : PlaceableEffect
 {
     [SerializeField]
-    private TileType toTileType;
+    private Placeable placeable;
 
     protected override void ApplyEffect(
         GridTile tile,
@@ -16,8 +16,11 @@ public class TilePlaceableEffect : PlaceableEffect
     {
         foreach (GridTile applyToTile in applyToTiles)
         {
-            TileInfo toTile = TileManager.GetTileInfo(toTileType);
-            applyToTile.SetTile(toTile);
+            if (applyToTile.PlacedObject == null)
+                continue;
+
+            GridManager.Instance.RemoveObject(applyToTile.Position);
+            GridManager.Instance.PlaceObject(applyToTile.Position, placeable, true);
         }
     }
 }

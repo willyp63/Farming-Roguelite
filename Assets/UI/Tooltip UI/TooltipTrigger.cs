@@ -20,8 +20,6 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private bool isHovering = false;
     private float hoverTimer = 0f;
 
-    private PlaceableFamily placeableFamily = PlaceableFamily.None;
-
     public void OnPointerEnter(PointerEventData eventData)
     {
         isHovering = true;
@@ -44,7 +42,6 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             {
                 TooltipUIManager.Instance.ShowTooltip(
                     tooltipText,
-                    placeableFamily,
                     transform.position,
                     tooltipOffset,
                     tooltipDirection,
@@ -59,10 +56,5 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void SetTooltipText(string newText)
     {
         tooltipText = newText;
-    }
-
-    public void SetPlaceableFamily(PlaceableFamily family)
-    {
-        placeableFamily = family;
     }
 }

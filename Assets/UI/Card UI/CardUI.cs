@@ -45,7 +45,6 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         cardImage.sprite = card.Image;
 
         tooltipTrigger.SetTooltipText(card.GetTooltipText());
-        tooltipTrigger.SetPlaceableFamily(card.GetPlaceableFamily());
 
         SeasonType season = card.GetSeason();
         Color seasonColor = SeasonManager.GetSeasonInfo(season).color;

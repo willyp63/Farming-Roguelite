@@ -87,6 +87,7 @@ public class GridManager : Singleton<GridManager>
             if (tile.PlacedObject != null)
             {
                 tile.PlacedObject.MarkAsCommitted();
+                tile.PlacedObject.SetHasSpawnedOnMove(false);
                 tile.PlacedObject.OnEndOfTurn();
             }
         }
@@ -276,6 +277,13 @@ public class GridManager : Singleton<GridManager>
         placeable.transform.SetParent(toTile.transform);
         placeable.transform.localPosition = Vector3.zero;
 
+        // Spawn the placeable on the move
+        if (placeable.SpawnPlaceableOnMove != null && !placeable.HasSpawnedOnMove)
+        {
+            PlaceObject(fromPosition, placeable.SpawnPlaceableOnMove, true);
+            placeable.SetHasSpawnedOnMove(true);
+        }
+
         UpdateScoringLines();
 
         OnGridChanged?.Invoke();
@@ -387,6 +395,8 @@ public class GridManager : Singleton<GridManager>
                 if (placeable == null)
                     continue;
 
+                placeable.SetHasSpawnedOnMove(false);
+
                 if (!placeable.IsCommitted)
                 {
                     if (placeable.Card != null)
@@ -406,6 +416,13 @@ public class GridManager : Singleton<GridManager>
 
         foreach (Placeable placeable in placeablesToMoveBack)
         {
+            Placeable spawnedPlaceable = placeable.StartOfDayGridTile.PlacedObject;
+            if (spawnedPlaceable != null)
+            {
+                Destroy(spawnedPlaceable.gameObject);
+                placeable.StartOfDayGridTile.ClearPlacedObject();
+            }
+
             placeable.GridTile.ClearPlacedObject();
             placeable.Initialize(placeable.StartOfDayGridTile);
             placeable.StartOfDayGridTile.SetPlacedObject(placeable);

@@ -84,12 +84,10 @@ public class GridTileUI
         if (tile.PlacedObject != null)
         {
             tooltipTrigger.SetTooltipText(tile.PlacedObject.GetTooltipText());
-            tooltipTrigger.SetPlaceableFamily(tile.PlacedObject.PlaceableFamily);
         }
         else
         {
             tooltipTrigger.SetTooltipText("");
-            tooltipTrigger.SetPlaceableFamily(PlaceableFamily.None);
         }
     }
 
