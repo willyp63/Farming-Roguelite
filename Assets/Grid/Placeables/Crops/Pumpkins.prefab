@@ -737,6 +737,8 @@ MonoBehaviour:
   text: +15 points
   pointScore: 15
   multiScore: 0
+  spawnPlaceableOnMove: {fileID: 0}
+  isCommitted: 0
 --- !u!210 &7038447385482280336
 SortingGroup:
   m_ObjectHideFlags: 0

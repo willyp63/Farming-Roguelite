@@ -12,6 +12,9 @@ public class GridManager : Singleton<GridManager>
     private Transform gridContainer;
 
     [SerializeField]
+    private Transform gridCopyContainer;
+
+    [SerializeField]
     private int gridWidth = 10;
 
     [SerializeField]
@@ -28,6 +31,7 @@ public class GridManager : Singleton<GridManager>
 
     // Grid data
     private GridTile[,] grid;
+    private GridTile[,] gridBackup;
     private bool isInitialized = false;
 
     private List<ScoringLine> scoringLines = new();
@@ -40,6 +44,7 @@ public class GridManager : Singleton<GridManager>
     public int GridWidth => gridWidth;
     public int GridHeight => gridHeight;
     public GridTile[,] Grid => grid;
+    public GridTile[,] GridBackup => gridBackup;
     public bool IsInitialized => isInitialized;
 
     // Events
@@ -381,60 +386,6 @@ public class GridManager : Singleton<GridManager>
         );
     }
 
-    public void ResetUncommittedPlaceables()
-    {
-        List<Placeable> placeablesToMoveBack = new();
-
-        for (int x = 0; x < gridWidth; x++)
-        {
-            for (int y = 0; y < gridHeight; y++)
-            {
-                GridTile tile = grid[x, y];
-                Placeable placeable = tile.PlacedObject;
-
-                if (placeable == null)
-                    continue;
-
-                placeable.SetHasSpawnedOnMove(false);
-
-                if (!placeable.IsCommitted)
-                {
-                    if (placeable.Card != null)
-                    {
-                        CardManager.Instance.AddCardToHand(placeable.Card);
-                    }
-
-                    Destroy(tile.PlacedObject.gameObject);
-                    tile.ClearPlacedObject();
-                }
-                else if (placeable.GridTile != placeable.StartOfDayGridTile)
-                {
-                    placeablesToMoveBack.Add(placeable);
-                }
-            }
-        }
-
-        foreach (Placeable placeable in placeablesToMoveBack)
-        {
-            Placeable spawnedPlaceable = placeable.StartOfDayGridTile.PlacedObject;
-            if (spawnedPlaceable != null)
-            {
-                Destroy(spawnedPlaceable.gameObject);
-                placeable.StartOfDayGridTile.ClearPlacedObject();
-            }
-
-            placeable.GridTile.ClearPlacedObject();
-            placeable.Initialize(placeable.StartOfDayGridTile);
-            placeable.StartOfDayGridTile.SetPlacedObject(placeable);
-            placeable.transform.SetParent(placeable.StartOfDayGridTile.transform);
-            placeable.transform.localPosition = Vector3.zero;
-        }
-
-        UpdateScoringLines();
-
-        OnGridChanged?.Invoke();
-    }
-
     public void ClearScoredTiles(bool clearPermanents = false)
     {
         for (int x = 0; x < gridWidth; x++)
@@ -461,6 +412,115 @@ public class GridManager : Singleton<GridManager>
         }
 
         OnGridChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Creates a backup of the current grid state in the gridCopyContainer
+    /// </summary>
+    public void CreateGridBackup()
+    {
+        if (!isInitialized)
+        {
+            Debug.LogWarning("Cannot create backup: Grid not initialized");
+            return;
+        }
+
+        // Clear existing backup
+        ClearGridBackup();
+
+        // Initialize backup grid
+        gridBackup = new GridTile[gridWidth, gridHeight];
+
+        // Create backup tiles
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                CreateBackupTile(x, y);
+            }
+        }
+
+        Debug.Log("Grid backup created successfully");
+    }
+
+    /// <summary>
+    /// Reverts the main grid back to the backup state
+    /// </summary>
+    public void RevertToBackup()
+    {
+        if (gridBackup == null)
+        {
+            Debug.LogWarning("Cannot revert: No backup exists");
+            return;
+        }
+
+        // Clear the main grid
+        foreach (GridTile tile in grid)
+        {
+            if (tile.PlacedObject != null)
+            {
+                Destroy(tile.PlacedObject.gameObject);
+                tile.ClearPlacedObject();
+            }
+        }
+
+        // Copy backup data to main grid
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                GridTile backupTile = gridBackup[x, y];
+                GridTile mainTile = grid[x, y];
+
+                // Copy tile type
+                mainTile.SetTile(backupTile.Tile);
+
+                // Copy placed object if it exists
+                if (backupTile.PlacedObject != null)
+                {
+                    Placeable backupPlaceable = backupTile.PlacedObject;
+                    GameObject placeableObject = Instantiate(
+                        backupPlaceable.gameObject,
+                        Vector3.zero,
+                        Quaternion.identity,
+                        mainTile.transform
+                    );
+                    Placeable placeable = placeableObject.GetComponent<Placeable>();
+
+                    if (placeable != null)
+                    {
+                        placeable.Initialize(mainTile);
+                        mainTile.SetPlacedObject(placeable);
+                        placeable.transform.localPosition = Vector3.zero;
+                    }
+                }
+            }
+        }
+
+        UpdateScoringLines();
+        OnGridChanged?.Invoke();
+
+        Debug.Log("Grid reverted to backup successfully");
+    }
+
+    /// <summary>
+    /// Clears the backup grid and destroys all backup tiles
+    /// </summary>
+    public void ClearGridBackup()
+    {
+        if (gridBackup == null)
+            return;
+
+        // Clear backup container
+        if (gridCopyContainer != null)
+        {
+            foreach (Transform child in gridCopyContainer)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        gridBackup = null;
     }
 
     private void UpdateScoringLines()
@@ -492,5 +552,58 @@ public class GridManager : Singleton<GridManager>
             new Vector2Int(position.x - 1, position.y + 1),
             new Vector2Int(position.x - 1, position.y - 1),
         };
+    }
+
+    private void CreateBackupTile(int x, int y)
+    {
+        if (!IsValidPosition(x, y) || gridBackup[x, y] != null)
+            return;
+
+        // Calculate world position
+        Vector3 worldPosition = GetWorldPosition(x, y);
+
+        // Instantiate the grid tile prefab in the backup container
+        GameObject tileObject = Instantiate(
+            gridTilePrefab,
+            Vector3.zero,
+            Quaternion.identity,
+            gridCopyContainer
+        );
+        tileObject.transform.localPosition = worldPosition;
+        GridTile gridTile = tileObject.GetComponent<GridTile>();
+
+        if (gridTile != null)
+        {
+            // Copy the tile data from the main grid
+            GridTile mainTile = grid[x, y];
+            gridTile.Initialize(x, y, mainTile.Tile);
+
+            // Copy the placed object if it exists
+            if (mainTile.PlacedObject != null)
+            {
+                Placeable mainPlaceable = mainTile.PlacedObject;
+                GameObject placeableObject = Instantiate(
+                    mainPlaceable.gameObject,
+                    Vector3.zero,
+                    Quaternion.identity,
+                    gridTile.transform
+                );
+                Placeable placeable = placeableObject.GetComponent<Placeable>();
+
+                if (placeable != null)
+                {
+                    placeable.Initialize(gridTile);
+                    gridTile.SetPlacedObject(placeable);
+                    placeable.transform.localPosition = Vector3.zero;
+                }
+            }
+
+            gridBackup[x, y] = gridTile;
+        }
+        else
+        {
+            Debug.LogError("GridTile component not found on prefab!");
+            Destroy(tileObject);
+        }
     }
 }

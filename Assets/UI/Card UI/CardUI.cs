@@ -74,6 +74,11 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (!RoundManager.Instance.CanPlayCards)
+        {
+            return;
+        }
+
         isDragging = true;
         originalPosition = transform.position;
 
@@ -94,13 +99,16 @@ public class CardUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        isDragging = false;
-        transform.position = originalPosition;
-        transform.localScale = Vector3.one;
+        if (isDragging)
+        {
+            isDragging = false;
+            transform.position = originalPosition;
+            transform.localScale = Vector3.one;
 
-        // Re-enable raycast blocking
-        canvasGroup.blocksRaycasts = true;
+            // Re-enable raycast blocking
+            canvasGroup.blocksRaycasts = true;
 
-        OnCardDragEnded?.Invoke(this);
+            OnCardDragEnded?.Invoke(this);
+        }
     }
 }

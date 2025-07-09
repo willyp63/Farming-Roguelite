@@ -70,6 +70,7 @@ public class UIManager : Singleton<UIManager>
         // Subscribe to hand manager events
         CardManager.Instance.OnCardAddedToHand.AddListener(OnCardAdded);
         CardManager.Instance.OnCardRemovedFromHand.AddListener(OnCardRemoved);
+        CardManager.Instance.OnHandChanged.AddListener(OnHandChanged);
 
         // Subscribe to deck/discard events
         CardManager.Instance.OnDeckCountChanged.AddListener(OnDeckCountChanged);
@@ -140,6 +141,11 @@ public class UIManager : Singleton<UIManager>
     private void OnCardRemoved(Card card)
     {
         RemoveCardUI(card);
+    }
+
+    private void OnHandChanged(List<Card> newHand)
+    {
+        UpdateHandDisplay();
     }
 
     private void OnDeckCountChanged(int newCount)

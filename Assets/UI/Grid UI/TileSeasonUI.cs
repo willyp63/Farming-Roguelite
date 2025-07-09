@@ -6,6 +6,12 @@ using UnityEngine.UI;
 public class TileSeasonUI : MonoBehaviour
 {
     [SerializeField]
+    private Image highlightBorderImage;
+
+    [SerializeField]
+    private Image highlightImage;
+
+    [SerializeField]
     private Image backgroundImage;
 
     [SerializeField]
@@ -17,5 +23,12 @@ public class TileSeasonUI : MonoBehaviour
         seasonImage.sprite = SeasonManager.GetSeasonInfo(season).symbol;
 
         gameObject.SetActive(season != SeasonType.None);
+    }
+
+    public void SetHighlight(bool isHighlighted, Color color)
+    {
+        highlightImage.gameObject.SetActive(isHighlighted);
+        highlightBorderImage.gameObject.SetActive(isHighlighted);
+        highlightImage.color = color;
     }
 }

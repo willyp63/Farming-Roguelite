@@ -2278,6 +2278,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1598881004}
+  - {fileID: 1986107344}
   - {fileID: 421988196}
   - {fileID: 1674915434}
   m_Father: {fileID: 0}
@@ -7303,6 +7304,37 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1986107343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1986107344}
+  m_Layer: 0
+  m_Name: Grid Backup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1986107344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986107343}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -50, y: 0.15, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 561405883}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2040519329
 GameObject:
   m_ObjectHideFlags: 0
@@ -7739,14 +7771,14 @@ PrefabInstance:
     - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
       propertyPath: tileUIPrefab
       value: 
-      objectReference: {fileID: 8224945813650795137, guid: 6ca4ef8734ff36b47ab1969418e0a777, type: 3}
+      objectReference: {fileID: 7659280217739409300, guid: 6ca4ef8734ff36b47ab1969418e0a777, type: 3}
     - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
       propertyPath: seasonUIPrefab
       value: 
-      objectReference: {fileID: 1384910427377399973, guid: dbe325792462f3d4aa84a19de372f7f2, type: 3}
+      objectReference: {fileID: 9096994485771850039, guid: dbe325792462f3d4aa84a19de372f7f2, type: 3}
     - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
       propertyPath: scoringLineWidth
-      value: 0.05
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
       propertyPath: showScoringLines
@@ -7770,14 +7802,46 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
       propertyPath: scoringLineCircleSize
-      value: 0.05
+      value: 0.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: validPlacementColor.b
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: validPlacementColor.g
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: validPlacementColor.r
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: invalidPlacementColor.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
       propertyPath: movablePlaceableColor.g
-      value: 0.28627452
+      value: 0.28627455
       objectReference: {fileID: 0}
     - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
       propertyPath: movablePlaceableColor.r
+      value: 0.5803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: scoringLineOutlineWidth
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: uncommittedPlaceableColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: uncommittedPlaceableColor.g
+      value: 0.28627452
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
+      propertyPath: uncommittedPlaceableColor.r
       value: 0.5803922
       objectReference: {fileID: 0}
     - target: {fileID: 6883325247359516688, guid: 010942de8b6cbfd4bb5eff72e6bb8ec8, type: 3}
@@ -8020,7 +8084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.size
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[1].card
@@ -8041,9 +8105,13 @@ PrefabInstance:
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[5].card
       value: 
-      objectReference: {fileID: 11400000, guid: a26798a2772b5f044a51072ddd433181, type: 2}
+      objectReference: {fileID: 11400000, guid: 5a07c79f73541aa4fb59c5cce23a9ccf, type: 2}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[6].card
+      value: 
+      objectReference: {fileID: 11400000, guid: a26798a2772b5f044a51072ddd433181, type: 2}
+    - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
+      propertyPath: startingDeck.Array.data[7].card
       value: 
       objectReference: {fileID: 11400000, guid: 032230003267f8b46811a0da7efcb40d, type: 2}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
@@ -8052,7 +8120,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[1].quantity
-      value: 99
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[2].quantity
@@ -8060,7 +8128,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[3].quantity
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[4].quantity
@@ -8068,11 +8136,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[5].quantity
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
       propertyPath: startingDeck.Array.data[6].quantity
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9138604651115603781, guid: 3b9459d908c933045aa28eb8821de388, type: 3}
+      propertyPath: startingDeck.Array.data[7].quantity
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8879,7 +8951,11 @@ PrefabInstance:
     - target: {fileID: 5894231442061888764, guid: ca24ea658a60fe3428a04e4fe0603c91, type: 3}
       propertyPath: gridTilePrefab
       value: 
-      objectReference: {fileID: 4613128625660153809, guid: 4bc364cc7b6beaf4db596f02b507d4a0, type: 3}
+      objectReference: {fileID: 2681206687050146098, guid: 4bc364cc7b6beaf4db596f02b507d4a0, type: 3}
+    - target: {fileID: 5894231442061888764, guid: ca24ea658a60fe3428a04e4fe0603c91, type: 3}
+      propertyPath: gridCopyContainer
+      value: 
+      objectReference: {fileID: 1986107344}
     - target: {fileID: 6128424090696079400, guid: ca24ea658a60fe3428a04e4fe0603c91, type: 3}
       propertyPath: m_Name
       value: Grid Manager

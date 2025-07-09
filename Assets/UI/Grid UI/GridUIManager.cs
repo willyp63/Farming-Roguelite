@@ -12,9 +12,6 @@ public class GridUIManager : Singleton<GridUIManager>
     private Color validPlacementColor = Color.green;
 
     [SerializeField]
-    private Color invalidPlacementColor = Color.red;
-
-    [SerializeField]
     private Color movablePlaceableColor = Color.magenta;
 
     [Header("Scoring Line Settings")]
@@ -121,11 +118,12 @@ public class GridUIManager : Singleton<GridUIManager>
         }
 
         // Subscribe to grid changes to update movable placeable highlights and season UI
-        GridManager.Instance.OnGridChanged.AddListener(UpdateTileHighlights);
+        GridManager.Instance.OnGridChanged.AddListener(UpdateMovableHighlights);
         GridManager.Instance.OnGridChanged.AddListener(UpdateAllSeasonUI);
         GridManager.Instance.OnGridChanged.AddListener(UpdateAllTileTooltips);
         GridManager.Instance.OnGridChanged.AddListener(UpdateScoringLines);
-        UpdateTileHighlights();
+        RoundManager.Instance.OnCanPlayCardsChange.AddListener(UpdateMovableHighlights);
+        UpdateMovableHighlights();
         UpdateAllSeasonUI();
     }
 
@@ -210,7 +208,7 @@ public class GridUIManager : Singleton<GridUIManager>
             }
             else
             {
-                tileUI.SetHighlight(true, invalidPlacementColor);
+                tileUI.SetHighlight(false, Color.white);
             }
         }
     }
@@ -220,8 +218,11 @@ public class GridUIManager : Singleton<GridUIManager>
         isInPlacementMode = false;
         validPlacementTiles.Clear();
 
-        // Clear all tile highlights and restore movable placeable highlights
-        UpdateTileHighlights();
+        foreach (var kvp in tileUIElements)
+        {
+            GridTileUI tileUI = kvp.Value;
+            tileUI.SetHighlight(false, Color.white);
+        }
     }
 
     private void EnterPlaceableMoveMode(Placeable placeable)
@@ -241,7 +242,7 @@ public class GridUIManager : Singleton<GridUIManager>
             }
             else
             {
-                tileUI.SetHighlight(true, invalidPlacementColor);
+                tileUI.SetHighlight(false, Color.white);
             }
         }
     }
@@ -251,8 +252,11 @@ public class GridUIManager : Singleton<GridUIManager>
         isInPlaceableMoveMode = false;
         validMoveTiles.Clear();
 
-        // Clear all tile highlights and restore movable placeable highlights
-        UpdateTileHighlights();
+        foreach (var kvp in tileUIElements)
+        {
+            GridTileUI tileUI = kvp.Value;
+            tileUI.SetHighlight(false, Color.white);
+        }
     }
 
     private HashSet<Vector2Int> GetValidMoveTiles(Placeable placeable)
@@ -312,23 +316,22 @@ public class GridUIManager : Singleton<GridUIManager>
         return card.IsValidPlacement(tile);
     }
 
-    private void UpdateTileHighlights()
+    private void UpdateMovableHighlights()
     {
-        foreach (var kvp in tileUIElements)
+        foreach (var kvp in seasonUIElements)
         {
             Vector2Int position = kvp.Key;
-            GridTileUI tileUI = kvp.Value;
+            TileSeasonUI seasonUI = kvp.Value;
 
             Placeable placeable = GridManager.Instance.GetPlaceableAtPosition(position);
 
-            if (placeable != null && placeable.CanMove)
+            if (!RoundManager.Instance.CanPlayCards || placeable == null)
             {
-                tileUI.SetHighlight(true, movablePlaceableColor);
+                seasonUI.SetHighlight(false, Color.white);
+                continue;
             }
-            else
-            {
-                tileUI.SetHighlight(false, Color.white);
-            }
+
+            seasonUI.SetHighlight(placeable.CanMove, movablePlaceableColor);
         }
     }
 
@@ -537,5 +540,10 @@ public class GridUIManager : Singleton<GridUIManager>
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
 
         currentScoringLines.Add(lineObject);
+    }
+
+    public TileSeasonUI GetTileSeasonUI(Vector2Int position)
+    {
+        return seasonUIElements[position];
     }
 }

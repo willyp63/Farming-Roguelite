@@ -93,10 +93,8 @@ public class GridTileUI
 
     public void SetHighlight(bool isHighlighted, Color color)
     {
-        if (isHighlighted)
-            highlightImage.color = new Color(color.r, color.g, color.b, highlightAlpha);
-        else
-            highlightImage.color = new Color(0f, 0f, 0f, 0f);
+        highlightImage.color = new Color(color.r, color.g, color.b, highlightAlpha);
+        highlightImage.gameObject.SetActive(isHighlighted);
     }
 
     private void SetHover(bool isHovered)
@@ -134,6 +132,12 @@ public class GridTileUI
     public void OnBeginDrag(PointerEventData eventData)
     {
         Placeable placedObject = tile.PlacedObject;
+        TileSeasonUI seasonUI = GridUIManager.Instance.GetTileSeasonUI(position);
+
+        if (!RoundManager.Instance.CanPlayCards)
+        {
+            return;
+        }
 
         // Only allow dragging if there's a movable placeable on this tile
         if (placedObject == null || !placedObject.CanMove)
@@ -151,6 +155,7 @@ public class GridTileUI
 
         // Scale down slightly while dragging
         placedObject.transform.localScale = Vector3.one * dragScale;
+        seasonUI.transform.localScale = Vector3.one * dragScale;
 
         OnPlaceableDragStarted?.Invoke(position, placedObject);
     }
@@ -158,6 +163,7 @@ public class GridTileUI
     public void OnDrag(PointerEventData eventData)
     {
         Placeable placedObject = tile.PlacedObject;
+        TileSeasonUI seasonUI = GridUIManager.Instance.GetTileSeasonUI(position);
 
         if (isDragging && placedObject != null && placedObject.CanMove)
         {
@@ -167,6 +173,7 @@ public class GridTileUI
             Debug.Log($"Event position: {eventData.position}");
             worldPosition.z = 0;
             placedObject.transform.position = worldPosition;
+            seasonUI.transform.position = worldPosition;
         }
     }
 
@@ -176,6 +183,7 @@ public class GridTileUI
             return;
 
         Placeable placedObject = tile.PlacedObject;
+        TileSeasonUI seasonUI = GridUIManager.Instance.GetTileSeasonUI(position);
 
         Debug.Log($"Ending drag of {placedObject?.PlaceableName} from position {position}");
         isDragging = false;
@@ -185,6 +193,8 @@ public class GridTileUI
         {
             placedObject.transform.position = originalPosition;
             placedObject.transform.localScale = originalScale;
+            seasonUI.transform.position = originalPosition;
+            seasonUI.transform.localScale = Vector3.one;
         }
 
         OnPlaceableDragEnded?.Invoke(position, placedObject);

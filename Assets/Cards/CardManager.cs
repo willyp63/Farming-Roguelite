@@ -29,11 +29,16 @@ public class CardManager : Singleton<CardManager>
     public IReadOnlyList<Card> Deck => deck.AsReadOnly();
     public IReadOnlyList<Card> Discard => discard.AsReadOnly();
 
+    private List<Card> handBackup = new List<Card>();
+
     [NonSerialized]
     public UnityEvent<Card> OnCardAddedToHand = new();
 
     [NonSerialized]
     public UnityEvent<Card> OnCardRemovedFromHand = new();
+
+    [NonSerialized]
+    public UnityEvent<List<Card>> OnHandChanged = new();
 
     [NonSerialized]
     public UnityEvent<int> OnDeckCountChanged = new();
@@ -57,6 +62,7 @@ public class CardManager : Singleton<CardManager>
     {
         deck.Clear();
         hand.Clear();
+        handBackup.Clear();
         discard.Clear();
 
         foreach (CardQuantity cardQuantity in startingDeck)
@@ -131,6 +137,20 @@ public class CardManager : Singleton<CardManager>
     {
         hand.Remove(card);
         OnCardRemovedFromHand?.Invoke(card);
+    }
+
+    public void BackupHand()
+    {
+        handBackup.Clear();
+        handBackup.AddRange(hand);
+    }
+
+    public void RevertHand()
+    {
+        hand.Clear();
+        hand.AddRange(handBackup);
+
+        OnHandChanged?.Invoke(hand);
     }
 
     public bool DiscardCard(Card card)

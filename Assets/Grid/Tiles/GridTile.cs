@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class GridTile : MonoBehaviour
 {
@@ -8,7 +9,13 @@ public class GridTile : MonoBehaviour
     private SpriteRenderer topImage;
 
     [SerializeField]
+    private SpriteRenderer topImageOutline;
+
+    [SerializeField]
     private SpriteRenderer edgeImage;
+
+    [SerializeField]
+    private SpriteRenderer edgeImageOutline;
 
     [SerializeField]
     private const float edgeDarkness = 150f / 255f;
@@ -77,8 +84,11 @@ public class GridTile : MonoBehaviour
         if (topImage == null || edgeImage == null)
             return;
 
-        topImage.sortingOrder = Y * -1;
-        edgeImage.sortingOrder = Y * -1 - 1;
+        int rootSortingOrder = Y * -100;
+        topImageOutline.sortingOrder = rootSortingOrder + 3;
+        topImage.sortingOrder = rootSortingOrder + 2;
+        edgeImageOutline.sortingOrder = rootSortingOrder + 1;
+        edgeImage.sortingOrder = rootSortingOrder;
 
         topImage.sprite = tile.TileSprite;
         topImage.color = Color.white;

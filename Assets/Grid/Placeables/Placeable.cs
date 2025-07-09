@@ -70,17 +70,11 @@ public class Placeable : MonoBehaviour
 
     [SerializeField]
     private int pointScore = 0;
-    public int PointScore => pointScore + pointScoreAddition;
-
-    private int pointScoreAddition = 0;
-    public int PointScoreAddition => pointScoreAddition;
+    public int PointScore => pointScore;
 
     [SerializeField]
     private int multiScore = 0;
-    public int MultiScore => multiScore + multiScoreAddition;
-
-    private int multiScoreAddition = 0;
-    public int MultiScoreAddition => multiScoreAddition;
+    public int MultiScore => multiScore;
 
     private GridTile gridtile;
     public GridTile GridTile => gridtile;
@@ -93,12 +87,14 @@ public class Placeable : MonoBehaviour
     private Card card;
     public Card Card => card;
 
+    [SerializeField]
     private Placeable spawnPlaceableOnMove;
     public Placeable SpawnPlaceableOnMove => spawnPlaceableOnMove;
 
     private bool hasSpawnedOnMove = false;
     public bool HasSpawnedOnMove => hasSpawnedOnMove;
 
+    [SerializeField]
     private bool isCommitted = false;
     public bool IsCommitted => isCommitted;
     public bool CanMove => !isCommitted || isMovable;
@@ -160,12 +156,12 @@ public class Placeable : MonoBehaviour
 
     public void AddPoints(int amount)
     {
-        pointScoreAddition += amount;
+        pointScore += amount;
     }
 
     public void AddMulti(int amount)
     {
-        multiScoreAddition += amount;
+        multiScore += amount;
     }
 
     public void SetSpawnPlaceableOnMove(Placeable placeable)

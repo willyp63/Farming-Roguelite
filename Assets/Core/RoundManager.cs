@@ -30,6 +30,9 @@ public class RoundManager : Singleton<RoundManager>
     [NonSerialized]
     public UnityEvent<int> OnCardsPlayedChange = new();
 
+    [NonSerialized]
+    public UnityEvent OnCanPlayCardsChange = new();
+
     // Game state
     private int roundScore;
     private int lineScore;
@@ -38,6 +41,9 @@ public class RoundManager : Singleton<RoundManager>
 
     private int numCardsPlayed = 0;
     private int currentDay;
+
+    private bool canPlayCards = false;
+    public bool CanPlayCards => canPlayCards;
 
     public int RoundScore => roundScore;
     public int LineScore => lineScore;
@@ -56,17 +62,24 @@ public class RoundManager : Singleton<RoundManager>
         pointScore = 0;
         multiScore = 0;
 
+        canPlayCards = false;
         numCardsPlayed = 0;
         OnCardsPlayedChange?.Invoke(numCardsPlayed);
+        OnCanPlayCardsChange?.Invoke();
 
         currentDay = 1;
 
         // Clear grid and generate a new one
         GridGenerationManager.Instance.GenerateGrid();
+        GridManager.Instance.CreateGridBackup();
 
         // Reset deck and draw initial hand
         CardManager.Instance.Reset();
         CardManager.Instance.DrawCards(cardsDrawnOnFirstDay);
+        CardManager.Instance.BackupHand();
+
+        canPlayCards = true;
+        OnCanPlayCardsChange?.Invoke();
 
         OnScoreChange?.Invoke(pointScore, multiScore);
         OnDayChange?.Invoke(currentDay);
@@ -76,10 +89,11 @@ public class RoundManager : Singleton<RoundManager>
 
     public void ResetPlayedCards()
     {
+        CardManager.Instance.RevertHand();
+        GridManager.Instance.RevertToBackup();
+
         numCardsPlayed = 0;
         OnCardsPlayedChange?.Invoke(numCardsPlayed);
-
-        GridManager.Instance.ResetUncommittedPlaceables();
     }
 
     public void GoToNextDay()
@@ -89,6 +103,9 @@ public class RoundManager : Singleton<RoundManager>
 
     private IEnumerator NextDayEnumerator()
     {
+        canPlayCards = false;
+        OnCanPlayCardsChange?.Invoke();
+
         // Trigger end of day effects and clear non-permanent placeables
         yield return GridManager.Instance.EndOfTurnEnumerator();
 
@@ -99,6 +116,12 @@ public class RoundManager : Singleton<RoundManager>
         OnCardsPlayedChange?.Invoke(numCardsPlayed);
 
         CardManager.Instance.DrawCards(cardsDrawnPerDay);
+        CardManager.Instance.BackupHand();
+
+        GridManager.Instance.CreateGridBackup();
+
+        canPlayCards = true;
+        OnCanPlayCardsChange?.Invoke();
 
         // Increment day and trigger event
         currentDay++;
@@ -107,7 +130,7 @@ public class RoundManager : Singleton<RoundManager>
 
     public void TryPlayCard(Card card, GridTile tile)
     {
-        if (card.IsValidPlacement(tile) && numCardsPlayed < maxCardsPlayedPerDay)
+        if (card.IsValidPlacement(tile) && numCardsPlayed < maxCardsPlayedPerDay && canPlayCards)
         {
             card.PlayCard(tile);
             CardManager.Instance.RemoveCardFromHand(card);
