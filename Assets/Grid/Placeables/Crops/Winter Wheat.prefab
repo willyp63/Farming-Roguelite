@@ -733,7 +733,7 @@ MonoBehaviour:
   season: 3
   isPermanent: 0
   isMovable: 0
-  allowedTileTypes: 020000000100000004000000
+  allowedTileTypes: 0200000001000000
   text: +10 points
   pointScore: 10
   multiScore: 0

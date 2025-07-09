@@ -734,8 +734,8 @@ MonoBehaviour:
   isPermanent: 0
   isMovable: 0
   allowedTileTypes: 02000000
-  text: +10 points
-  pointScore: 10
+  text: +15 points
+  pointScore: 15
   multiScore: 0
 --- !u!210 &7038447385482280336
 SortingGroup:

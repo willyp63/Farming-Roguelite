@@ -27,6 +27,9 @@ public class RoundManager : Singleton<RoundManager>
     [NonSerialized]
     public UnityEvent<int> OnDayChange = new();
 
+    [NonSerialized]
+    public UnityEvent<int> OnCardsPlayedChange = new();
+
     // Game state
     private int roundScore;
     private int lineScore;
@@ -43,6 +46,8 @@ public class RoundManager : Singleton<RoundManager>
     public int RequiredScore => requiredScore;
     public int CurrentDay => currentDay;
     public int TotalDays => numberOfDays;
+    public int NumCardsPlayed => numCardsPlayed;
+    public int MaxCardsPlayedPerDay => maxCardsPlayedPerDay;
 
     public void StartRound()
     {
@@ -52,6 +57,8 @@ public class RoundManager : Singleton<RoundManager>
         multiScore = 0;
 
         numCardsPlayed = 0;
+        OnCardsPlayedChange?.Invoke(numCardsPlayed);
+
         currentDay = 1;
 
         // Clear grid and generate a new one
@@ -70,6 +77,8 @@ public class RoundManager : Singleton<RoundManager>
     public void ResetPlayedCards()
     {
         numCardsPlayed = 0;
+        OnCardsPlayedChange?.Invoke(numCardsPlayed);
+
         GridManager.Instance.ResetUncommittedPlaceables();
     }
 
@@ -87,6 +96,8 @@ public class RoundManager : Singleton<RoundManager>
         // TODO: Check if round is failed
 
         numCardsPlayed = 0;
+        OnCardsPlayedChange?.Invoke(numCardsPlayed);
+
         CardManager.Instance.DrawCards(cardsDrawnPerDay);
 
         // Increment day and trigger event
@@ -100,8 +111,16 @@ public class RoundManager : Singleton<RoundManager>
         {
             card.PlayCard(tile);
             CardManager.Instance.RemoveCardFromHand(card);
+
             numCardsPlayed++;
+            OnCardsPlayedChange?.Invoke(numCardsPlayed);
         }
+    }
+
+    public void SetPoints(int amount)
+    {
+        pointScore = amount;
+        OnScoreChange?.Invoke(pointScore, multiScore);
     }
 
     public void AddPoints(int amount, float multiplier = 1)
@@ -109,6 +128,12 @@ public class RoundManager : Singleton<RoundManager>
         pointScore += amount;
         pointScore = (int)(pointScore * multiplier);
 
+        OnScoreChange?.Invoke(pointScore, multiScore);
+    }
+
+    public void SetMulti(int amount)
+    {
+        multiScore = amount;
         OnScoreChange?.Invoke(pointScore, multiScore);
     }
 

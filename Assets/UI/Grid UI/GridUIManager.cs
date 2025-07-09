@@ -5,13 +5,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-[System.Serializable]
-public class ScoringLineColor
-{
-    public ScoringPattern scoringPattern;
-    public Color color;
-}
-
 public class GridUIManager : Singleton<GridUIManager>
 {
     [Header("Visual Settings")]
@@ -29,7 +22,7 @@ public class GridUIManager : Singleton<GridUIManager>
     private bool showScoringLines = true;
 
     [SerializeField]
-    private List<ScoringLineColor> scoringLineColors = new();
+    private Color scoringLineColor = Color.white;
 
     [SerializeField]
     private float scoringLineWidth = 0.05f;
@@ -39,6 +32,9 @@ public class GridUIManager : Singleton<GridUIManager>
 
     [SerializeField]
     private float scoringLineCircleSize = 0.1f;
+
+    [SerializeField]
+    private float scoringLineOutlineWidth = 0.02f;
 
     [Header("Grid Visual Elements")]
     [SerializeField]
@@ -383,8 +379,7 @@ public class GridUIManager : Singleton<GridUIManager>
         // Clear all previous scoring lines
         ClearScoringLines();
 
-        List<ScoringLine> scoringLines = GridScoringManager.Instance.GetScoringLines();
-        foreach (var scoringLine in scoringLines)
+        foreach (var scoringLine in GridManager.Instance.ScoringLines)
         {
             DrawScoringLine(scoringLine);
         }
@@ -407,11 +402,6 @@ public class GridUIManager : Singleton<GridUIManager>
         if (scoringLine.tiles == null || scoringLine.tiles.Count < 2)
             return;
 
-        Color lineColor =
-            scoringLineColors
-                .Find(scoringLineColor => scoringLineColor.scoringPattern == scoringLine.pattern)
-                ?.color ?? Color.white;
-
         // Calculate line position and rotation
         Vector2 firstTilePos = scoringLine.tiles[0].transform.position;
         Vector2 lastTilePos = scoringLine.tiles[scoringLine.tiles.Count - 1].transform.position;
@@ -420,42 +410,90 @@ public class GridUIManager : Singleton<GridUIManager>
         Vector2 firstCanvasPos = upperCanvas.InverseTransformPoint(firstTilePos);
         Vector2 lastCanvasPos = upperCanvas.InverseTransformPoint(lastTilePos);
 
-        // Create a line GameObject with Image component
-        GameObject lineObject = new GameObject($"ScoringLine_{scoringLine.pattern}");
-        lineObject.transform.SetParent(upperCanvas, false);
-
-        Image lineImage = lineObject.AddComponent<Image>();
-        lineImage.color = lineColor;
-        lineImage.raycastTarget = false; // Don't block raycasts
-
         // Calculate line properties
         Vector2 direction = (lastCanvasPos - firstCanvasPos).normalized;
         float distance = Vector2.Distance(firstCanvasPos, lastCanvasPos);
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Set line position and rotation
-        lineObject.transform.localPosition = (firstCanvasPos + lastCanvasPos) / 2f;
-        lineObject.transform.localRotation = Quaternion.Euler(0, 0, angle);
+        // Create black outline line first
+        GameObject outlineLineObject = new GameObject($"ScoringLine_Outline_{scoringLine.pattern}");
+        outlineLineObject.transform.SetParent(upperCanvas, false);
 
-        // Set line size
-        RectTransform rectTransform = lineObject.GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(distance, scoringLineWidth);
+        Image outlineLineImage = outlineLineObject.AddComponent<Image>();
+        outlineLineImage.color = Color.black;
+        outlineLineImage.raycastTarget = false;
 
-        // Set pivot to center
-        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        // Set outline line position and rotation
+        outlineLineObject.transform.localPosition = (firstCanvasPos + lastCanvasPos) / 2f;
+        outlineLineObject.transform.localRotation = Quaternion.Euler(0, 0, angle);
 
-        currentScoringLines.Add(lineObject);
+        // Set outline line size (slightly bigger for outline effect)
+        RectTransform outlineRectTransform = outlineLineObject.GetComponent<RectTransform>();
+        outlineRectTransform.sizeDelta = new Vector2(
+            distance,
+            scoringLineWidth + scoringLineOutlineWidth * 2
+        );
+        outlineRectTransform.pivot = new Vector2(0.5f, 0.5f);
 
-        // Create circle at start position
+        currentScoringLines.Add(outlineLineObject);
+
+        // Create black outline circles first
         if (circleSprite != null)
         {
+            // Start circle outline
+            GameObject startCircleOutline = new GameObject(
+                $"ScoringLine_Start_Outline_{scoringLine.pattern}"
+            );
+            startCircleOutline.transform.SetParent(upperCanvas, false);
+            startCircleOutline.transform.localPosition = firstCanvasPos;
+
+            Image startCircleOutlineImage = startCircleOutline.AddComponent<Image>();
+            startCircleOutlineImage.sprite = circleSprite;
+            startCircleOutlineImage.color = Color.black;
+            startCircleOutlineImage.raycastTarget = false;
+
+            RectTransform startCircleOutlineRect = startCircleOutline.GetComponent<RectTransform>();
+            startCircleOutlineRect.sizeDelta = new Vector2(
+                scoringLineCircleSize + scoringLineOutlineWidth * 2,
+                scoringLineCircleSize + scoringLineOutlineWidth * 2
+            );
+            startCircleOutlineRect.pivot = new Vector2(0.5f, 0.5f);
+
+            currentScoringLines.Add(startCircleOutline);
+
+            // End circle outline
+            GameObject endCircleOutline = new GameObject(
+                $"ScoringLine_End_Outline_{scoringLine.pattern}"
+            );
+            endCircleOutline.transform.SetParent(upperCanvas, false);
+            endCircleOutline.transform.localPosition = lastCanvasPos;
+
+            Image endCircleOutlineImage = endCircleOutline.AddComponent<Image>();
+            endCircleOutlineImage.sprite = circleSprite;
+            endCircleOutlineImage.color = Color.black;
+            endCircleOutlineImage.raycastTarget = false;
+
+            RectTransform endCircleOutlineRect = endCircleOutline.GetComponent<RectTransform>();
+            endCircleOutlineRect.sizeDelta = new Vector2(
+                scoringLineCircleSize + scoringLineOutlineWidth * 2,
+                scoringLineCircleSize + scoringLineOutlineWidth * 2
+            );
+            endCircleOutlineRect.pivot = new Vector2(0.5f, 0.5f);
+
+            currentScoringLines.Add(endCircleOutline);
+        }
+
+        // Create colored circles on top
+        if (circleSprite != null)
+        {
+            // Start circle
             GameObject startCircle = new GameObject($"ScoringLine_Start_{scoringLine.pattern}");
             startCircle.transform.SetParent(upperCanvas, false);
             startCircle.transform.localPosition = firstCanvasPos;
 
             Image startCircleImage = startCircle.AddComponent<Image>();
             startCircleImage.sprite = circleSprite;
-            startCircleImage.color = lineColor;
+            startCircleImage.color = scoringLineColor;
             startCircleImage.raycastTarget = false;
 
             RectTransform startCircleRect = startCircle.GetComponent<RectTransform>();
@@ -463,18 +501,15 @@ public class GridUIManager : Singleton<GridUIManager>
             startCircleRect.pivot = new Vector2(0.5f, 0.5f);
 
             currentScoringLines.Add(startCircle);
-        }
 
-        // Create circle at end position
-        if (circleSprite != null)
-        {
+            // End circle
             GameObject endCircle = new GameObject($"ScoringLine_End_{scoringLine.pattern}");
             endCircle.transform.SetParent(upperCanvas, false);
             endCircle.transform.localPosition = lastCanvasPos;
 
             Image endCircleImage = endCircle.AddComponent<Image>();
             endCircleImage.sprite = circleSprite;
-            endCircleImage.color = lineColor;
+            endCircleImage.color = scoringLineColor;
             endCircleImage.raycastTarget = false;
 
             RectTransform endCircleRect = endCircle.GetComponent<RectTransform>();
@@ -483,5 +518,24 @@ public class GridUIManager : Singleton<GridUIManager>
 
             currentScoringLines.Add(endCircle);
         }
+
+        // Create colored line on top
+        GameObject lineObject = new GameObject($"ScoringLine_{scoringLine.pattern}");
+        lineObject.transform.SetParent(upperCanvas, false);
+
+        Image lineImage = lineObject.AddComponent<Image>();
+        lineImage.color = scoringLineColor;
+        lineImage.raycastTarget = false;
+
+        // Set colored line position and rotation
+        lineObject.transform.localPosition = (firstCanvasPos + lastCanvasPos) / 2f;
+        lineObject.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+        // Set colored line size
+        RectTransform rectTransform = lineObject.GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(distance, scoringLineWidth);
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+        currentScoringLines.Add(lineObject);
     }
 }

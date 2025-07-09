@@ -14,6 +14,7 @@ public class TilePlaceableEffect : PlaceableEffect
         int count
     )
     {
+        Debug.Log($"Applying effect to {applyToTiles.Count} tiles");
         foreach (GridTile applyToTile in applyToTiles)
         {
             TileInfo toTile = TileManager.GetTileInfo(toTileType);

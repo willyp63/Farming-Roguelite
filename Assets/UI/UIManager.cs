@@ -19,6 +19,9 @@ public class UIManager : Singleton<UIManager>
     private TextMeshProUGUI roundScoreText;
 
     [SerializeField]
+    private TextMeshProUGUI lineLabelText;
+
+    [SerializeField]
     private TextMeshProUGUI lineMultipliersText;
 
     [SerializeField]
@@ -26,6 +29,9 @@ public class UIManager : Singleton<UIManager>
 
     [SerializeField]
     private TextMeshProUGUI moneyText;
+
+    [SerializeField]
+    private TextMeshProUGUI numCardsPlayedText;
 
     [SerializeField]
     private TextMeshProUGUI deckCountText;
@@ -72,6 +78,9 @@ public class UIManager : Singleton<UIManager>
         // Subscribe to score and day events
         RoundManager.Instance.OnScoreChange.AddListener(OnScoreChanged);
         RoundManager.Instance.OnDayChange.AddListener(OnDayChanged);
+
+        // Subscribe to round events
+        RoundManager.Instance.OnCardsPlayedChange.AddListener(OnCardsPlayedChange);
 
         // Initialize hand display
         UpdateHandDisplay();
@@ -151,6 +160,11 @@ public class UIManager : Singleton<UIManager>
 
     private void OnScoreChanged(int newPoints, int newMultiplier)
     {
+        lineLabelText.text =
+            GridManager.Instance.NumScoringTiles > 0
+                ? $"{GridManager.Instance.NumScoringTiles} tiles"
+                : "--";
+
         UpdateScoreTextElement(roundScoreText, RoundManager.Instance.RoundScore.ToString(), "0");
         UpdateScoreTextElement(
             lineScoreText,
@@ -188,6 +202,12 @@ public class UIManager : Singleton<UIManager>
         {
             dayText.text = $"Day {newDay} of {RoundManager.Instance.TotalDays}";
         }
+    }
+
+    private void OnCardsPlayedChange(int numCardsPlayed)
+    {
+        int maxCardsPlayedPerDay = RoundManager.Instance.MaxCardsPlayedPerDay;
+        numCardsPlayedText.text = $"{maxCardsPlayedPerDay - numCardsPlayed}/{maxCardsPlayedPerDay}";
     }
 
     private void UpdateHandDisplay()

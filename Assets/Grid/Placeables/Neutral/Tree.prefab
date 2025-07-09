@@ -56,9 +56,9 @@ MonoBehaviour:
   isPermanent: 0
   isMovable: 0
   allowedTileTypes: 
-  text: 
+  text: + 2 Multi
   pointScore: 0
-  multiScore: 0
+  multiScore: 2
 --- !u!210 &8763523131220027710
 SortingGroup:
   m_ObjectHideFlags: 0

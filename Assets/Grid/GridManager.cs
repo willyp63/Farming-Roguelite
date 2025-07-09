@@ -30,6 +30,12 @@ public class GridManager : Singleton<GridManager>
     private GridTile[,] grid;
     private bool isInitialized = false;
 
+    private List<ScoringLine> scoringLines = new();
+    public List<ScoringLine> ScoringLines => scoringLines;
+
+    private int numScoringTiles = 0;
+    public int NumScoringTiles => numScoringTiles;
+
     // Properties
     public int GridWidth => gridWidth;
     public int GridHeight => gridHeight;
@@ -89,27 +95,14 @@ public class GridManager : Singleton<GridManager>
 
         yield return new WaitForSeconds(0.33f);
 
-        List<ScoringLine> scoringLines = GridScoringManager.Instance.GetScoringLines();
         foreach (ScoringLine scoringLine in scoringLines)
         {
-            int totalPoints = 10 * scoringLine.tiles.Count;
-            int totalMulti = 1 * scoringLine.tiles.Count;
-
-            RoundManager.Instance.AddPoints(totalPoints);
-            RoundManager.Instance.AddMulti(totalMulti);
-
-            Vector3 centerPoint = scoringLine.tiles[0].transform.position;
-            centerPoint += scoringLine.tiles[scoringLine.tiles.Count - 1].transform.position;
-            centerPoint /= 2;
-
-            FloatingTextManager.Instance.SpawnPointsText(totalPoints, totalMulti, centerPoint);
-
             foreach (GridTile tile in scoringLine.tiles)
             {
                 tile.Shake();
             }
 
-            yield return new WaitForSeconds(0.66f);
+            yield return new WaitForSeconds(0.33f);
 
             foreach (GridTile tile in scoringLine.tiles)
             {
@@ -132,17 +125,18 @@ public class GridManager : Singleton<GridManager>
 
                 yield return new WaitForSeconds(0.66f);
             }
-
-            RoundManager.Instance.CalculateScore();
-
-            yield return new WaitForSeconds(0.66f);
-
-            RoundManager.Instance.CommitScore();
-
-            yield return new WaitForSeconds(0.33f);
         }
 
+        RoundManager.Instance.CalculateScore();
+
+        yield return new WaitForSeconds(0.66f);
+
+        RoundManager.Instance.CommitScore();
+
+        yield return new WaitForSeconds(0.33f);
+
         ClearScoredTiles();
+        scoringLines.Clear();
 
         OnGridChanged?.Invoke();
     }
@@ -221,6 +215,8 @@ public class GridManager : Singleton<GridManager>
         tile.SetPlacedObject(placeable);
         placeable.transform.localPosition = Vector3.zero;
 
+        UpdateScoringLines();
+
         OnGridChanged?.Invoke();
     }
 
@@ -235,6 +231,9 @@ public class GridManager : Singleton<GridManager>
 
         Destroy(tile.PlacedObject.gameObject);
         tile.ClearPlacedObject();
+
+        UpdateScoringLines();
+
         OnGridChanged?.Invoke();
     }
 
@@ -276,6 +275,8 @@ public class GridManager : Singleton<GridManager>
         toTile.SetPlacedObject(placeable);
         placeable.transform.SetParent(toTile.transform);
         placeable.transform.localPosition = Vector3.zero;
+
+        UpdateScoringLines();
 
         OnGridChanged?.Invoke();
         return true;
@@ -374,6 +375,8 @@ public class GridManager : Singleton<GridManager>
 
     public void ResetUncommittedPlaceables()
     {
+        List<Placeable> placeablesToMoveBack = new();
+
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
@@ -381,17 +384,38 @@ public class GridManager : Singleton<GridManager>
                 GridTile tile = grid[x, y];
                 Placeable placeable = tile.PlacedObject;
 
-                if (placeable != null && !placeable.IsCommitted)
+                if (placeable == null)
+                    continue;
+
+                if (!placeable.IsCommitted)
                 {
                     if (placeable.Card != null)
                     {
                         CardManager.Instance.AddCardToHand(placeable.Card);
                     }
 
-                    RemoveObject(new Vector2Int(x, y));
+                    Destroy(tile.PlacedObject.gameObject);
+                    tile.ClearPlacedObject();
+                }
+                else if (placeable.GridTile != placeable.StartOfDayGridTile)
+                {
+                    placeablesToMoveBack.Add(placeable);
                 }
             }
         }
+
+        foreach (Placeable placeable in placeablesToMoveBack)
+        {
+            placeable.GridTile.ClearPlacedObject();
+            placeable.Initialize(placeable.StartOfDayGridTile);
+            placeable.StartOfDayGridTile.SetPlacedObject(placeable);
+            placeable.transform.SetParent(placeable.StartOfDayGridTile.transform);
+            placeable.transform.localPosition = Vector3.zero;
+        }
+
+        UpdateScoringLines();
+
+        OnGridChanged?.Invoke();
     }
 
     public void ClearScoredTiles(bool clearPermanents = false)
@@ -413,10 +437,22 @@ public class GridManager : Singleton<GridManager>
                         CardManager.Instance.AddCardToDiscard(tile.PlacedObject.Card);
                     }
 
-                    RemoveObject(new Vector2Int(x, y));
+                    Destroy(tile.PlacedObject.gameObject);
+                    tile.ClearPlacedObject();
                 }
             }
         }
+
+        OnGridChanged?.Invoke();
+    }
+
+    private void UpdateScoringLines()
+    {
+        scoringLines = GridScoringManager.Instance.GetScoringLines();
+        numScoringTiles = scoringLines.Sum(line => line.tiles.Count);
+
+        RoundManager.Instance.SetPoints(numScoringTiles * 10);
+        RoundManager.Instance.SetMulti(numScoringTiles * 2);
     }
 
     public static List<Vector2Int> GetOrthogonalPositions(Vector2Int position)

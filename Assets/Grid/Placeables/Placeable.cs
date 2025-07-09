@@ -79,6 +79,9 @@ public class Placeable : MonoBehaviour
     private GridTile gridtile;
     public GridTile GridTile => gridtile;
 
+    private GridTile startOfDayGridTile;
+    public GridTile StartOfDayGridTile => startOfDayGridTile;
+
     private List<PlaceableEffect> effects = new List<PlaceableEffect>();
 
     private Card card;
@@ -129,6 +132,7 @@ public class Placeable : MonoBehaviour
 
     public void MarkAsCommitted()
     {
+        startOfDayGridTile = gridtile;
         isCommitted = true;
     }
 

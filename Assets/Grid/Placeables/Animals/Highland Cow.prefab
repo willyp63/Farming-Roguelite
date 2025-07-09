@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3555250421083542281}
   - component: {fileID: 4781789984781640467}
   m_Layer: 0
-  m_Name: Cow
+  m_Name: Highland Cow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,10 +48,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b91d816673ad515428de3de1bad83f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placeableName: Cow
+  placeableName: Highland Cow
   placeableType: 2
   placeableFamily: 8
-  season: 1
+  season: 3
   isPermanent: 0
   isMovable: 1
   allowedTileTypes: 01000000
@@ -177,7 +177,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1620199196, guid: 95f36d84bd1d2c346b34aba50cefaad7, type: 3}
+  m_Sprite: {fileID: 1571229559, guid: 546607cf6d61a0c4cab6073265305677, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
