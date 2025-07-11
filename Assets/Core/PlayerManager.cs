@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerManager : Singleton<PlayerManager>
 {
     [Header("Player Settings")]
+    [SerializeField]
+    private List<GridTileData> tiles = new();
+    public List<GridTileData> Tiles => tiles;
+
     [SerializeField]
     private int startingMoney = 100;
     public int StartingMoney => startingMoney;
@@ -13,7 +18,7 @@ public class PlayerManager : Singleton<PlayerManager>
     public int CurrentMoney => currentMoney;
 
     [NonSerialized]
-    public UnityEvent<int> OnMoneyChanged = new();
+    public UnityEvent OnMoneyChanged = new();
 
     protected override void Awake()
     {
@@ -32,7 +37,7 @@ public class PlayerManager : Singleton<PlayerManager>
         }
 
         currentMoney += amount;
-        OnMoneyChanged?.Invoke(currentMoney);
+        OnMoneyChanged?.Invoke();
 
         return true;
     }
@@ -52,7 +57,7 @@ public class PlayerManager : Singleton<PlayerManager>
         }
 
         currentMoney -= amount;
-        OnMoneyChanged?.Invoke(currentMoney);
+        OnMoneyChanged?.Invoke();
 
         return true;
     }
@@ -66,7 +71,7 @@ public class PlayerManager : Singleton<PlayerManager>
         }
 
         currentMoney = amount;
-        OnMoneyChanged?.Invoke(currentMoney);
+        OnMoneyChanged?.Invoke();
     }
 
     public bool HasEnoughMoney(int amount)

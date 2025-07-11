@@ -3,11 +3,12 @@ using UnityEngine;
 
 public enum SeasonType
 {
+    None,
     Spring,
     Summer,
     Autumn,
     Winter,
-    None,
+    Death,
     Wild,
 }
 
@@ -17,7 +18,8 @@ public class SeasonInfo
     public SeasonType season;
     public string name;
     public Color color;
-    public Sprite symbol;
+    public Sprite symbolSprite;
+    public Sprite tileFrameSprite;
 }
 
 [CreateAssetMenu(fileName = "SeasonData", menuName = "Farming Roguelike/Season Data")]
