@@ -7,16 +7,10 @@ public class RoundManager : Singleton<RoundManager>
 {
     [Header("Game Settings")]
     [SerializeField]
-    private int drawUpTo = 8;
-
-    [SerializeField]
     private int requiredScore = 100;
 
     [SerializeField]
     private int numberOfDays = 3;
-
-    [SerializeField]
-    private int maxCardsPlayedPerDay = 5;
 
     [NonSerialized]
     public UnityEvent<int, int> OnScoreChange = new();
@@ -24,21 +18,13 @@ public class RoundManager : Singleton<RoundManager>
     [NonSerialized]
     public UnityEvent<int> OnDayChange = new();
 
-    [NonSerialized]
-    public UnityEvent<int> OnCardsPlayedChange = new();
-
-    [NonSerialized]
-    public UnityEvent OnCanPlayCardsChange = new();
-
     // Game state
     private int pointScore;
     private int multiScore;
-
-    private int numCardsPlayed = 0;
     private int currentDay;
 
-    private bool canPlayCards = false;
-    public bool CanPlayCards => canPlayCards;
+    private bool canMakeMove = false;
+    public bool CanMakeMove => canMakeMove;
 
     public int PointScore => pointScore;
     public int MultiScore => multiScore;
@@ -46,48 +32,25 @@ public class RoundManager : Singleton<RoundManager>
     public int RequiredScore => requiredScore;
     public int CurrentDay => currentDay;
     public int TotalDays => numberOfDays;
-    public int NumCardsPlayed => numCardsPlayed;
-    public int MaxCardsPlayedPerDay => maxCardsPlayedPerDay;
 
     public void StartRound()
     {
         pointScore = 0;
         multiScore = 0;
 
-        canPlayCards = false;
-        numCardsPlayed = 0;
-        OnCardsPlayedChange?.Invoke(numCardsPlayed);
-        OnCanPlayCardsChange?.Invoke();
-
+        canMakeMove = false;
         currentDay = 1;
 
         // Clear grid and generate a new one
         GridGenerationManager.Instance.GenerateGrid();
         GridManager.Instance.CreateGridBackup();
 
-        GridScoringManager.Instance.AreAllLinesScorable();
-
-        // Reset deck and draw initial hand
-        CardManager.Instance.Reset();
-        CardManager.Instance.DrawUpTo(drawUpTo);
-        CardManager.Instance.Backup();
-
-        canPlayCards = true;
-        OnCanPlayCardsChange?.Invoke();
+        canMakeMove = true;
 
         OnScoreChange?.Invoke(pointScore, multiScore);
         OnDayChange?.Invoke(currentDay);
 
         Debug.Log($"New round started.");
-    }
-
-    public void ResetPlayedCards()
-    {
-        CardManager.Instance.Revert();
-        GridManager.Instance.RevertToBackup();
-
-        numCardsPlayed = 0;
-        OnCardsPlayedChange?.Invoke(numCardsPlayed);
     }
 
     public void GoToNextDay()
@@ -97,8 +60,7 @@ public class RoundManager : Singleton<RoundManager>
 
     private IEnumerator NextDayEnumerator()
     {
-        canPlayCards = false;
-        OnCanPlayCardsChange?.Invoke();
+        canMakeMove = false;
 
         // Trigger end of day effects and clear non-permanent placeables
         yield return GridManager.Instance.EndOfTurnEnumerator();
@@ -112,32 +74,18 @@ public class RoundManager : Singleton<RoundManager>
 
         yield return GridManager.Instance.StartOfTurnEnumerator();
 
-        numCardsPlayed = 0;
-        OnCardsPlayedChange?.Invoke(numCardsPlayed);
-
-        CardManager.Instance.DrawUpTo(drawUpTo);
-        CardManager.Instance.Backup();
-
         GridManager.Instance.CreateGridBackup();
 
-        canPlayCards = true;
-        OnCanPlayCardsChange?.Invoke();
+        canMakeMove = true;
 
         // Increment day and trigger event
         currentDay++;
         OnDayChange?.Invoke(currentDay);
     }
 
-    public void TryPlayCard(Card card, GridTile tile)
+    public void ResetRound()
     {
-        if (card.IsValidPlacement(tile) && numCardsPlayed < maxCardsPlayedPerDay && canPlayCards)
-        {
-            card.PlayCard(tile);
-            CardManager.Instance.RemoveCardFromHand(card);
-
-            numCardsPlayed++;
-            OnCardsPlayedChange?.Invoke(numCardsPlayed);
-        }
+        // TODO
     }
 
     public void SetPoints(int amount)

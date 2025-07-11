@@ -419,11 +419,6 @@ public class GridManager : Singleton<GridManager>
                     && (clearPermanents || !tile.PlacedObject.IsPermanent)
                 )
                 {
-                    if (tile.PlacedObject.Card != null)
-                    {
-                        CardManager.Instance.AddCardToDiscard(tile.PlacedObject.Card);
-                    }
-
                     Destroy(tile.PlacedObject.gameObject);
                     tile.ClearPlacedObject();
                 }

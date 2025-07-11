@@ -53,7 +53,6 @@ public class GridUIManager : Singleton<GridUIManager>
     private Dictionary<Vector2Int, GridTileUI> tileUIElements = new();
     private Dictionary<Vector2Int, TileSeasonUI> seasonUIElements = new();
     private GridTileUI currentHoveredTile;
-    private CardUI currentDraggedCard;
 
     // Placement state
     private bool isInPlacementMode;
@@ -71,13 +70,6 @@ public class GridUIManager : Singleton<GridUIManager>
     // Events
     [NonSerialized]
     public UnityEvent<Vector2Int> OnTileHovered = new();
-
-    private void Start()
-    {
-        // Subscribe to card drag events
-        UIManager.Instance.OnCardDragStarted.AddListener(HandleCardDragStarted);
-        UIManager.Instance.OnCardDragEnded.AddListener(HandleCardDragEnded);
-    }
 
     public void InitializeGridUI()
     {
@@ -125,35 +117,8 @@ public class GridUIManager : Singleton<GridUIManager>
         GridManager.Instance.OnGridChanged.AddListener(UpdateAllSeasonUI);
         GridManager.Instance.OnGridChanged.AddListener(UpdateAllTileTooltips);
         GridManager.Instance.OnGridChanged.AddListener(UpdateScoringLines);
-        RoundManager.Instance.OnCanPlayCardsChange.AddListener(UpdateMovableHighlights);
         UpdateMovableHighlights();
         UpdateAllSeasonUI();
-    }
-
-    private void HandleCardDragStarted(CardUI cardUI)
-    {
-        currentDraggedCard = cardUI;
-        EnterPlacementMode(cardUI.GetCard());
-    }
-
-    private void HandleCardDragEnded(CardUI cardUI)
-    {
-        if (currentHoveredTile != null)
-        {
-            GridTile tile = currentHoveredTile.Tile;
-            Card card = cardUI.GetCard();
-
-            RoundManager.Instance.TryPlayCard(card, tile);
-        }
-        else
-        {
-            Card card = cardUI.GetCard();
-
-            CardManager.Instance.DiscardCard(card);
-        }
-
-        ExitPlacementMode();
-        currentDraggedCard = null;
     }
 
     private void HandlePlaceableDragStarted(Vector2Int position, Placeable placeable)
@@ -198,40 +163,6 @@ public class GridUIManager : Singleton<GridUIManager>
 
         ExitPlaceableMoveMode();
         currentDraggedPlaceable = null;
-    }
-
-    private void EnterPlacementMode(Card card)
-    {
-        isInPlacementMode = true;
-        validPlacementTiles = GetValidPlacementTiles(card);
-
-        // Update visual state of all tiles
-        foreach (var kvp in tileUIElements)
-        {
-            Vector2Int position = kvp.Key;
-            GridTileUI tileUI = kvp.Value;
-
-            if (validPlacementTiles.Contains(position))
-            {
-                tileUI.SetHighlight(true, validPlacementColor);
-            }
-            else
-            {
-                tileUI.SetHighlight(false, Color.white);
-            }
-        }
-    }
-
-    private void ExitPlacementMode()
-    {
-        isInPlacementMode = false;
-        validPlacementTiles.Clear();
-
-        foreach (var kvp in tileUIElements)
-        {
-            GridTileUI tileUI = kvp.Value;
-            tileUI.SetHighlight(false, Color.white);
-        }
     }
 
     private void EnterPlaceableMoveMode(Placeable placeable)
@@ -302,29 +233,6 @@ public class GridUIManager : Singleton<GridUIManager>
         return true;
     }
 
-    private HashSet<Vector2Int> GetValidPlacementTiles(Card card)
-    {
-        HashSet<Vector2Int> validTiles = new HashSet<Vector2Int>();
-
-        foreach (var kvp in tileUIElements)
-        {
-            Vector2Int position = kvp.Key;
-            if (IsValidPlacement(position, card))
-            {
-                validTiles.Add(position);
-            }
-        }
-
-        return validTiles;
-    }
-
-    private bool IsValidPlacement(Vector2Int position, Card card)
-    {
-        // Check card-specific placement rules
-        GridTile tile = GridManager.Instance.GetTile(position);
-        return card.IsValidPlacement(tile);
-    }
-
     private void UpdateMovableHighlights()
     {
         foreach (var kvp in seasonUIElements)
@@ -334,7 +242,7 @@ public class GridUIManager : Singleton<GridUIManager>
 
             Placeable placeable = GridManager.Instance.GetPlaceableAtPosition(position);
 
-            if (!RoundManager.Instance.CanPlayCards || placeable == null)
+            if (!RoundManager.Instance.CanMakeMove || placeable == null)
             {
                 seasonUI.SetHighlight(false, Color.white);
                 continue;

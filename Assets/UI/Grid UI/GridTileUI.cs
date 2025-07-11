@@ -134,7 +134,7 @@ public class GridTileUI
         Placeable placedObject = tile.PlacedObject;
         TileSeasonUI seasonUI = GridUIManager.Instance.GetTileSeasonUI(position);
 
-        if (!RoundManager.Instance.CanPlayCards)
+        if (!RoundManager.Instance.CanMakeMove)
         {
             return;
         }

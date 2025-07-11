@@ -84,9 +84,6 @@ public class Placeable : MonoBehaviour
 
     private List<PlaceableEffect> effects = new List<PlaceableEffect>();
 
-    private Card card;
-    public Card Card => card;
-
     [SerializeField]
     private Placeable spawnPlaceableOnMove;
     public Placeable SpawnPlaceableOnMove => spawnPlaceableOnMove;
@@ -139,11 +136,6 @@ public class Placeable : MonoBehaviour
         {
             effect.OnEndOfRound(GridTile);
         }
-    }
-
-    public void SetCard(Card card)
-    {
-        this.card = card;
     }
 
     public void MarkAsCommitted()
