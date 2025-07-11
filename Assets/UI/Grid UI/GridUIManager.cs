@@ -44,6 +44,9 @@ public class GridUIManager : Singleton<GridUIManager>
     private Transform lowerCanvas;
 
     [SerializeField]
+    private Transform middleCanvas;
+
+    [SerializeField]
     private Transform upperCanvas;
 
     // Grid state
@@ -141,6 +144,12 @@ public class GridUIManager : Singleton<GridUIManager>
             Card card = cardUI.GetCard();
 
             RoundManager.Instance.TryPlayCard(card, tile);
+        }
+        else
+        {
+            Card card = cardUI.GetCard();
+
+            CardManager.Instance.DiscardCard(card);
         }
 
         ExitPlacementMode();
@@ -358,7 +367,9 @@ public class GridUIManager : Singleton<GridUIManager>
     private void UpdateSeasonUI(Vector2Int position, TileSeasonUI seasonUI)
     {
         GridTile tile = GridManager.Instance.GetTile(position);
-        SeasonType season = tile.PlacedObject != null ? tile.PlacedObject.Season : SeasonType.None;
+        Placeable placeable = tile.PlacedObject;
+
+        SeasonType season = placeable != null ? placeable.Season : SeasonType.None;
         seasonUI.SetSeason(season);
     }
 
@@ -410,8 +421,8 @@ public class GridUIManager : Singleton<GridUIManager>
         Vector2 lastTilePos = scoringLine.tiles[scoringLine.tiles.Count - 1].transform.position;
 
         // Convert world positions to canvas local positions
-        Vector2 firstCanvasPos = upperCanvas.InverseTransformPoint(firstTilePos);
-        Vector2 lastCanvasPos = upperCanvas.InverseTransformPoint(lastTilePos);
+        Vector2 firstCanvasPos = middleCanvas.InverseTransformPoint(firstTilePos);
+        Vector2 lastCanvasPos = middleCanvas.InverseTransformPoint(lastTilePos);
 
         // Calculate line properties
         Vector2 direction = (lastCanvasPos - firstCanvasPos).normalized;
@@ -420,7 +431,7 @@ public class GridUIManager : Singleton<GridUIManager>
 
         // Create black outline line first
         GameObject outlineLineObject = new GameObject($"ScoringLine_Outline_{scoringLine.pattern}");
-        outlineLineObject.transform.SetParent(upperCanvas, false);
+        outlineLineObject.transform.SetParent(middleCanvas, false);
 
         Image outlineLineImage = outlineLineObject.AddComponent<Image>();
         outlineLineImage.color = Color.black;
@@ -447,7 +458,7 @@ public class GridUIManager : Singleton<GridUIManager>
             GameObject startCircleOutline = new GameObject(
                 $"ScoringLine_Start_Outline_{scoringLine.pattern}"
             );
-            startCircleOutline.transform.SetParent(upperCanvas, false);
+            startCircleOutline.transform.SetParent(middleCanvas, false);
             startCircleOutline.transform.localPosition = firstCanvasPos;
 
             Image startCircleOutlineImage = startCircleOutline.AddComponent<Image>();
@@ -468,7 +479,7 @@ public class GridUIManager : Singleton<GridUIManager>
             GameObject endCircleOutline = new GameObject(
                 $"ScoringLine_End_Outline_{scoringLine.pattern}"
             );
-            endCircleOutline.transform.SetParent(upperCanvas, false);
+            endCircleOutline.transform.SetParent(middleCanvas, false);
             endCircleOutline.transform.localPosition = lastCanvasPos;
 
             Image endCircleOutlineImage = endCircleOutline.AddComponent<Image>();
@@ -491,7 +502,7 @@ public class GridUIManager : Singleton<GridUIManager>
         {
             // Start circle
             GameObject startCircle = new GameObject($"ScoringLine_Start_{scoringLine.pattern}");
-            startCircle.transform.SetParent(upperCanvas, false);
+            startCircle.transform.SetParent(middleCanvas, false);
             startCircle.transform.localPosition = firstCanvasPos;
 
             Image startCircleImage = startCircle.AddComponent<Image>();
@@ -507,7 +518,7 @@ public class GridUIManager : Singleton<GridUIManager>
 
             // End circle
             GameObject endCircle = new GameObject($"ScoringLine_End_{scoringLine.pattern}");
-            endCircle.transform.SetParent(upperCanvas, false);
+            endCircle.transform.SetParent(middleCanvas, false);
             endCircle.transform.localPosition = lastCanvasPos;
 
             Image endCircleImage = endCircle.AddComponent<Image>();
@@ -524,7 +535,7 @@ public class GridUIManager : Singleton<GridUIManager>
 
         // Create colored line on top
         GameObject lineObject = new GameObject($"ScoringLine_{scoringLine.pattern}");
-        lineObject.transform.SetParent(upperCanvas, false);
+        lineObject.transform.SetParent(middleCanvas, false);
 
         Image lineImage = lineObject.AddComponent<Image>();
         lineImage.color = scoringLineColor;

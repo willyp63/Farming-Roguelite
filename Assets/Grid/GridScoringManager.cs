@@ -28,6 +28,14 @@ public class GridScoringManager : Singleton<GridScoringManager>
     [SerializeField]
     private int minRunLength = 3;
 
+    [SerializeField]
+    private int minAlternatingLength = 4;
+
+    [SerializeField]
+    private int minSequenceLength = 4;
+
+    public int MinLineLength => Mathf.Min(minRunLength, minAlternatingLength, minSequenceLength);
+
     private List<List<Vector2Int>> allLines;
 
     private void GenerateAllLines()
@@ -70,7 +78,7 @@ public class GridScoringManager : Singleton<GridScoringManager>
                 x++;
                 y++;
             }
-            if (line.Count >= minRunLength)
+            if (line.Count >= MinLineLength)
             {
                 allLines.Add(line);
             }
@@ -87,7 +95,7 @@ public class GridScoringManager : Singleton<GridScoringManager>
                 x++;
                 y++;
             }
-            if (line.Count >= minRunLength)
+            if (line.Count >= MinLineLength)
             {
                 allLines.Add(line);
             }
@@ -105,7 +113,7 @@ public class GridScoringManager : Singleton<GridScoringManager>
                 x--;
                 y++;
             }
-            if (line.Count >= minRunLength)
+            if (line.Count >= MinLineLength)
             {
                 allLines.Add(line);
             }
@@ -122,7 +130,7 @@ public class GridScoringManager : Singleton<GridScoringManager>
                 x--;
                 y++;
             }
-            if (line.Count >= minRunLength)
+            if (line.Count >= MinLineLength)
             {
                 allLines.Add(line);
             }
@@ -167,6 +175,60 @@ public class GridScoringManager : Singleton<GridScoringManager>
         return scoringLines;
     }
 
+    public List<List<Vector2Int>> GetAllLinesForPosition(Vector2Int position)
+    {
+        if (allLines == null)
+            GenerateAllLines();
+
+        return allLines.Where(line => line.Contains(position)).ToList();
+    }
+
+    public bool AreAllLinesScorable()
+    {
+        if (allLines == null)
+            GenerateAllLines();
+
+        var unScorableLines = allLines.Where(line => !IsLineScorable(line)).ToList();
+        Debug.Log($"Unscorable lines: {unScorableLines.Count}");
+        foreach (var line in unScorableLines)
+        {
+            Debug.Log($"Unscorable line: {string.Join(", ", line)}");
+        }
+        return unScorableLines.Count == 0;
+    }
+
+    public bool IsLineScorable(List<Vector2Int> positions)
+    {
+        var tiles = GetTilesFromPositions(positions);
+
+        // If the line is too short, it's not possible to score
+        if (tiles.Count < MinLineLength)
+            return false;
+
+        // Check if full SeasonRun is possible
+        var seasonRun = CheckSeasonRun(tiles, true);
+        if (seasonRun != null && seasonRun.tiles.Count >= tiles.Count)
+        {
+            return true;
+        }
+
+        // Check if full SeasonAlternating is possible
+        var seasonAlternating = CheckSeasonAlternating(tiles, true);
+        if (seasonAlternating != null && seasonAlternating.tiles.Count >= tiles.Count)
+        {
+            return true;
+        }
+
+        // Check if full SeasonSequence is possible
+        var seasonSequence = CheckSeasonSequence(tiles, true);
+        if (seasonSequence != null && seasonSequence.tiles.Count >= tiles.Count)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private List<GridTile> GetTilesFromPositions(List<Vector2Int> positions)
     {
         List<GridTile> tiles = new List<GridTile>();
@@ -182,7 +244,12 @@ public class GridScoringManager : Singleton<GridScoringManager>
         return tile.PlacedObject?.Season ?? SeasonType.None;
     }
 
-    private ScoringLine CheckSeasonRun(List<GridTile> tiles)
+    private bool IsWild(SeasonType season, bool emptyTilesAreWild)
+    {
+        return (emptyTilesAreWild && season == SeasonType.None) || season == SeasonType.Wild;
+    }
+
+    private ScoringLine CheckSeasonRun(List<GridTile> tiles, bool emptyTilesAreWild = false)
     {
         if (tiles.Count < minRunLength)
             return null;
@@ -190,7 +257,17 @@ public class GridScoringManager : Singleton<GridScoringManager>
         var runs = FindConsecutiveRuns(
             tiles,
             GetSeasonType,
-            values => values.All(v => v != SeasonType.None && v == values[0])
+            values =>
+            {
+                if (!emptyTilesAreWild && values.Any(v => v == SeasonType.None))
+                    return false;
+
+                if (values.All(v => IsWild(v, emptyTilesAreWild)))
+                    return true;
+
+                SeasonType firstNonWild = values.First(v => !IsWild(v, emptyTilesAreWild));
+                return values.All(v => IsWild(v, emptyTilesAreWild) || v == firstNonWild);
+            }
         );
         var longestRun = runs.OrderByDescending(run => run.Count).FirstOrDefault();
 
@@ -202,15 +279,19 @@ public class GridScoringManager : Singleton<GridScoringManager>
         return null;
     }
 
-    private ScoringLine CheckSeasonAlternating(List<GridTile> tiles)
+    private ScoringLine CheckSeasonAlternating(List<GridTile> tiles, bool emptyTilesAreWild = false)
     {
-        if (tiles.Count < minRunLength)
+        if (tiles.Count < minAlternatingLength)
             return null;
 
-        var runs = FindConsecutiveRuns(tiles, GetSeasonType, IsValidSeasonAlternating);
+        var runs = FindConsecutiveRuns(
+            tiles,
+            GetSeasonType,
+            values => IsValidSeasonAlternating(values, emptyTilesAreWild)
+        );
         var longestRun = runs.OrderByDescending(run => run.Count).FirstOrDefault();
 
-        if (longestRun != null && longestRun.Count >= minRunLength)
+        if (longestRun != null && longestRun.Count >= minAlternatingLength)
         {
             return new ScoringLine(ScoringPattern.SeasonAlternating, longestRun);
         }
@@ -218,16 +299,16 @@ public class GridScoringManager : Singleton<GridScoringManager>
         return null;
     }
 
-    private ScoringLine CheckSeasonSequence(List<GridTile> tiles)
+    private ScoringLine CheckSeasonSequence(List<GridTile> tiles, bool emptyTilesAreWild = false)
     {
-        if (tiles.Count < minRunLength)
+        if (tiles.Count < minSequenceLength)
             return null;
 
         // Check for forward sequence (Spring -> Summer -> Autumn -> Winter -> Spring...)
         var forwardRuns = FindConsecutiveRuns(
             tiles,
             GetSeasonType,
-            values => IsValidSeasonSequence(values, true)
+            values => IsValidSeasonSequence(values, true, emptyTilesAreWild)
         );
         var longestForwardRun = forwardRuns.OrderByDescending(run => run.Count).FirstOrDefault();
 
@@ -235,7 +316,7 @@ public class GridScoringManager : Singleton<GridScoringManager>
         var backwardRuns = FindConsecutiveRuns(
             tiles,
             GetSeasonType,
-            values => IsValidSeasonSequence(values, false)
+            values => IsValidSeasonSequence(values, false, emptyTilesAreWild)
         );
         var longestBackwardRun = backwardRuns.OrderByDescending(run => run.Count).FirstOrDefault();
 
@@ -249,7 +330,7 @@ public class GridScoringManager : Singleton<GridScoringManager>
             longestRun = longestBackwardRun;
         }
 
-        if (longestRun != null && longestRun.Count >= minRunLength)
+        if (longestRun != null && longestRun.Count >= minSequenceLength)
         {
             return new ScoringLine(ScoringPattern.SeasonSequence, longestRun);
         }
@@ -257,51 +338,76 @@ public class GridScoringManager : Singleton<GridScoringManager>
         return null;
     }
 
-    private bool IsValidSeasonAlternating(List<SeasonType> values)
+    private bool IsValidSeasonAlternating(List<SeasonType> values, bool emptyTilesAreWild = false)
     {
+        if (!emptyTilesAreWild && values.Any(v => v == SeasonType.None))
+            return false;
+
+        // Any 1 length is valid
         if (values.Count <= 1)
             return true;
 
-        if (values[0] == values[1])
-            return false;
+        // 2 length
+        if (values.Count == 2)
+        {
+            // If either tile is wild, the run is valid
+            if (IsWild(values[0], emptyTilesAreWild) || IsWild(values[1], emptyTilesAreWild))
+                return true;
+
+            // If both tiles are not wild, then they must be different
+            return values[0] != values[1];
+        }
+
+        // 3+ length
+        var firstEvenItem = values
+            .Select((v, index) => new { Value = v, Index = index })
+            .FirstOrDefault(item => !IsWild(item.Value, emptyTilesAreWild) && item.Index % 2 == 0);
+        SeasonType firstEvenNonWild = firstEvenItem == null ? SeasonType.None : firstEvenItem.Value;
+
+        var firstOddItem = values
+            .Select((v, index) => new { Value = v, Index = index })
+            .FirstOrDefault(item => !IsWild(item.Value, emptyTilesAreWild) && item.Index % 2 == 1);
+        SeasonType firstOddNonWild = firstOddItem == null ? SeasonType.None : firstOddItem.Value;
 
         return values
             .Select((v, index) => new { Value = v, Index = index })
             .All(item =>
             {
-                if (item.Value == SeasonType.None)
-                    return false;
+                if (IsWild(item.Value, emptyTilesAreWild))
+                    return true;
 
-                return item.Index % 2 == 0 ? item.Value == values[0] : item.Value == values[1];
+                return item.Index % 2 == 0
+                    ? item.Value == firstEvenNonWild
+                    : item.Value == firstOddNonWild;
             });
     }
 
-    private bool IsValidSeasonSequence(List<SeasonType> values, bool isForward)
+    private bool IsValidSeasonSequence(
+        List<SeasonType> values,
+        bool isForward,
+        bool emptyTilesAreWild = false
+    )
     {
-        if (values == null || values.Count == 0)
+        if (!emptyTilesAreWild && values.Any(v => v == SeasonType.None))
             return false;
 
-        // Filter out None values
-        var validSeasons = values.Where(v => v != SeasonType.None).ToList();
-        if (validSeasons.Count != values.Count)
-            return false;
+        if (values.All(v => IsWild(v, emptyTilesAreWild)))
+            return true;
 
-        // Check if the sequence follows the specified order with looping
-        for (int i = 1; i < validSeasons.Count; i++)
-        {
-            var currentSeason = validSeasons[i];
-            var previousSeason = validSeasons[i - 1];
+        SeasonType firstNonWild = values.First(v => !IsWild(v, emptyTilesAreWild));
+        return values
+            .Select((v, index) => new { Value = v, Index = index })
+            .All(item =>
+            {
+                if (IsWild(item.Value, emptyTilesAreWild))
+                    return true;
 
-            // Calculate expected next season (with looping)
-            var expectedNextSeason = isForward
-                ? (SeasonType)(((int)previousSeason + 1) % 4)
-                : (SeasonType)(((int)previousSeason - 1 + 4) % 4);
+                SeasonType expectedSeason = isForward
+                    ? (SeasonType)(((int)firstNonWild + item.Index) % 4)
+                    : (SeasonType)(((int)firstNonWild - item.Index + (item.Index * 4)) % 4);
 
-            if (currentSeason != expectedNextSeason)
-                return false;
-        }
-
-        return true;
+                return item.Value == expectedSeason;
+            });
     }
 
     private List<List<GridTile>> FindConsecutiveRuns<T>(

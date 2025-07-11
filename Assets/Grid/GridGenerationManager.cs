@@ -82,6 +82,9 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
     private List<PlaceableGenerationStep> placeableGenerationSteps =
         new List<PlaceableGenerationStep>();
 
+    [SerializeField]
+    private bool makeAllLinesScorable = false;
+
     public void GenerateGrid()
     {
         GridManager.Instance.ResetGrid();
@@ -201,6 +204,28 @@ public class GridGenerationManager : Singleton<GridGenerationManager>
 
                 // Place the placeable
                 GridManager.Instance.PlaceObject(position, step.placeablePrefab, true);
+
+                if (makeAllLinesScorable)
+                {
+                    var placeableScoringLines = GridScoringManager.Instance.GetAllLinesForPosition(
+                        position
+                    );
+                    bool areAllLinesScorable = true;
+                    foreach (var line in placeableScoringLines)
+                    {
+                        if (!GridScoringManager.Instance.IsLineScorable(line))
+                        {
+                            areAllLinesScorable = false;
+                            break;
+                        }
+                    }
+                    if (!areAllLinesScorable)
+                    {
+                        GridManager.Instance.RemoveObject(position);
+                        continue;
+                    }
+                }
+
                 placedCount++;
             }
 

@@ -30,6 +30,8 @@ public class CardManager : Singleton<CardManager>
     public IReadOnlyList<Card> Discard => discard.AsReadOnly();
 
     private List<Card> handBackup = new List<Card>();
+    private List<Card> deckBackup = new List<Card>();
+    private List<Card> discardBackup = new List<Card>();
 
     [NonSerialized]
     public UnityEvent<Card> OnCardAddedToHand = new();
@@ -107,6 +109,11 @@ public class CardManager : Singleton<CardManager>
         return drawnCard;
     }
 
+    public void DrawUpTo(int drawUpTo)
+    {
+        DrawCards(Mathf.Max(drawUpTo - HandSize, 0));
+    }
+
     public List<Card> DrawCards(int count)
     {
         List<Card> drawnCards = new List<Card>();
@@ -139,18 +146,28 @@ public class CardManager : Singleton<CardManager>
         OnCardRemovedFromHand?.Invoke(card);
     }
 
-    public void BackupHand()
+    public void Backup()
     {
         handBackup.Clear();
         handBackup.AddRange(hand);
+        deckBackup.Clear();
+        deckBackup.AddRange(deck);
+        discardBackup.Clear();
+        discardBackup.AddRange(discard);
     }
 
-    public void RevertHand()
+    public void Revert()
     {
         hand.Clear();
         hand.AddRange(handBackup);
+        deck.Clear();
+        deck.AddRange(deckBackup);
+        discard.Clear();
+        discard.AddRange(discardBackup);
 
         OnHandChanged?.Invoke(hand);
+        OnDeckCountChanged?.Invoke(deck.Count);
+        OnDiscardCountChanged?.Invoke(discard.Count);
     }
 
     public bool DiscardCard(Card card)

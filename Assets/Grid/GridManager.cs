@@ -27,6 +27,9 @@ public class GridManager : Singleton<GridManager>
     private float padding = 0.125f;
 
     [SerializeField]
+    private float topRowOffset = 0.33f;
+
+    [SerializeField]
     private GameObject gridTilePrefab;
 
     // Grid data
@@ -85,6 +88,21 @@ public class GridManager : Singleton<GridManager>
         }
     }
 
+    public IEnumerator StartOfTurnEnumerator()
+    {
+        foreach (GridTile tile in grid)
+        {
+            if (tile.PlacedObject != null)
+            {
+                tile.PlacedObject.OnStartOfTurn();
+            }
+        }
+
+        OnGridChanged?.Invoke();
+
+        yield return new WaitForSeconds(0.33f);
+    }
+
     public IEnumerator EndOfTurnEnumerator()
     {
         foreach (GridTile tile in grid)
@@ -132,12 +150,6 @@ public class GridManager : Singleton<GridManager>
                 yield return new WaitForSeconds(0.66f);
             }
         }
-
-        RoundManager.Instance.CalculateScore();
-
-        yield return new WaitForSeconds(0.66f);
-
-        RoundManager.Instance.CommitScore();
 
         yield return new WaitForSeconds(0.33f);
 
@@ -379,11 +391,18 @@ public class GridManager : Singleton<GridManager>
     {
         float gridWidthSize = gridWidth * (tileSize + padding);
         float gridHeightSize = gridHeight * (tileSize + padding);
-        return new Vector3(
+        Vector3 result = new Vector3(
             x * (tileSize + padding) - gridWidthSize / 2 + tileSize / 2 + padding / 2,
             y * (tileSize + padding) - gridHeightSize / 2 + tileSize / 2 + padding / 2,
             0f
         );
+
+        if (y >= gridHeight - 1)
+        {
+            result.y += topRowOffset;
+        }
+
+        return result;
     }
 
     public void ClearScoredTiles(bool clearPermanents = false)

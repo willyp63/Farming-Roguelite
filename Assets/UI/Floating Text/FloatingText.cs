@@ -15,24 +15,46 @@ public class FloatingText : MonoBehaviour
     [SerializeField]
     private AnimationCurve fadeCurve;
 
+    [SerializeField]
+    private float positionRandomness = 0.5f;
+
+    [SerializeField]
+    private float directionRandomness = 0.3f;
+
     private float timer;
     private Vector3 startPosition;
+    private Vector3 randomOffset;
+    private Vector3 riseDirection;
 
     public void Initialize(string text, Vector3 worldPosition, Color color)
     {
         textComponent.text = text;
         textComponent.color = color;
 
-        transform.position = worldPosition;
-        startPosition = worldPosition;
+        // Add random offset to initial position
+        randomOffset = new Vector3(
+            Random.Range(-positionRandomness, positionRandomness),
+            Random.Range(-positionRandomness, positionRandomness),
+            0f
+        );
+
+        // Create random rise direction (mostly upward with some horizontal variation)
+        riseDirection = new Vector3(
+            Random.Range(-directionRandomness, directionRandomness),
+            1f,
+            0f
+        ).normalized;
+
+        transform.position = worldPosition + randomOffset;
+        startPosition = transform.position;
     }
 
     void Update()
     {
         timer += Time.deltaTime;
 
-        // Move upward
-        transform.position = startPosition + Vector3.up * (riseSpeed * timer);
+        // Move in random direction
+        transform.position = startPosition + riseDirection * (riseSpeed * timer);
 
         // Fade out
         float alpha = fadeCurve.Evaluate(timer / lifetime);

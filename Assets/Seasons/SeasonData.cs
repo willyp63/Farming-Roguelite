@@ -8,6 +8,7 @@ public enum SeasonType
     Autumn,
     Winter,
     None,
+    Wild,
 }
 
 [System.Serializable]

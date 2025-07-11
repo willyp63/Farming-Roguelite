@@ -125,6 +125,14 @@ public class Placeable : MonoBehaviour
         }
     }
 
+    public void OnStartOfTurn()
+    {
+        foreach (PlaceableEffect effect in effects)
+        {
+            effect.OnStartOfTurn(GridTile);
+        }
+    }
+
     public void OnEndOfRound()
     {
         foreach (PlaceableEffect effect in effects)
@@ -183,7 +191,9 @@ public class Placeable : MonoBehaviour
             $"<size=28><color=#{ColorUtility.ToHtmlStringRGB(seasonInfo.color)}>{placeableName}</color></size>",
             allowedTileTypes == null || allowedTileTypes.Count == 0
                 ? ""
-                : $"<size=20>{FormatTileTypeList(allowedTileTypes)}</size>",
+                : $"<size=20>Requires: {FormatTileTypeList(allowedTileTypes)}</size>",
+            pointScore > 0 ? $"<size=20><color=#048BF0>+{pointScore} points</color></size>" : "",
+            multiScore > 0 ? $"<size=20><color=#F54840>+{multiScore} multi</color></size>" : "",
             string.IsNullOrEmpty(text) ? "" : $"\n<size=20>{text}</size>",
         };
 

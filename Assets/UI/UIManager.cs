@@ -16,9 +16,6 @@ public class UIManager : Singleton<UIManager>
     private TextMeshProUGUI requiredScoreText;
 
     [SerializeField]
-    private TextMeshProUGUI roundScoreText;
-
-    [SerializeField]
     private TextMeshProUGUI lineLabelText;
 
     [SerializeField]
@@ -95,6 +92,7 @@ public class UIManager : Singleton<UIManager>
         OnDiscardCountChanged(CardManager.Instance.Discard.Count);
         OnScoreChanged(RoundManager.Instance.PointScore, RoundManager.Instance.MultiScore);
         OnDayChanged(RoundManager.Instance.CurrentDay);
+        OnCardsPlayedChange(RoundManager.Instance.NumCardsPlayed);
 
         if (endTurnButton != null)
         {
@@ -168,14 +166,10 @@ public class UIManager : Singleton<UIManager>
     {
         lineLabelText.text =
             GridManager.Instance.NumScoringTiles > 0
-                ? $"{GridManager.Instance.NumScoringTiles} tiles"
-                : "--";
+                ? $"Current score ({GridManager.Instance.NumScoringTiles} tiles):"
+                : "Current score:";
 
-        UpdateScoreTextElement(roundScoreText, RoundManager.Instance.RoundScore.ToString(), "0");
-        UpdateScoreTextElement(
-            lineScoreText,
-            RoundManager.Instance.LineScore > 0 ? RoundManager.Instance.LineScore.ToString() : ""
-        );
+        UpdateScoreTextElement(lineScoreText, RoundManager.Instance.TotalScore.ToString(), "0");
         UpdateScoreTextElement(
             lineMultipliersText,
             $"<color=#048BF0>{newPoints}</color> x <color=#F54840>{newMultiplier}</color>",
@@ -206,7 +200,7 @@ public class UIManager : Singleton<UIManager>
     {
         if (dayText != null)
         {
-            dayText.text = $"Day {newDay} of {RoundManager.Instance.TotalDays}";
+            dayText.text = $"Week {newDay} of {RoundManager.Instance.TotalDays}";
         }
     }
 

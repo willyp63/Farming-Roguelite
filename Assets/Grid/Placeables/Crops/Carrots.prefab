@@ -733,9 +733,9 @@ MonoBehaviour:
   season: 0
   isPermanent: 0
   isMovable: 0
-  allowedTileTypes: 0200000004000000
-  text: +10 points
-  pointScore: 10
+  allowedTileTypes: 02000000
+  text: 
+  pointScore: 20
   multiScore: 0
   spawnPlaceableOnMove: {fileID: 0}
   isCommitted: 0

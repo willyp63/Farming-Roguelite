@@ -54,8 +54,8 @@ MonoBehaviour:
   isPermanent: 0
   isMovable: 0
   allowedTileTypes: 010000000200000004000000
-  text: +10 points
-  pointScore: 10
+  text: 
+  pointScore: 5
   multiScore: 0
   spawnPlaceableOnMove: {fileID: 0}
   isCommitted: 0

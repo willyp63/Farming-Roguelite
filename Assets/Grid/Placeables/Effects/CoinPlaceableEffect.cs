@@ -7,6 +7,9 @@ public class CoinPlaceableEffect : PlaceableEffect
     [SerializeField]
     private int amount;
 
+    [SerializeField]
+    private float chance = 1f;
+
     protected override void ApplyEffect(
         GridTile tile,
         GridTile newTile,
@@ -20,6 +23,9 @@ public class CoinPlaceableEffect : PlaceableEffect
 
         foreach (GridTile applyToTile in applyToTiles)
         {
+            if (Random.value > chance)
+                continue;
+
             GenerateCoins(applyToTile, totalAmount);
         }
     }

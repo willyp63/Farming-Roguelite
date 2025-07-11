@@ -7,10 +7,7 @@ public class RoundManager : Singleton<RoundManager>
 {
     [Header("Game Settings")]
     [SerializeField]
-    private int cardsDrawnOnFirstDay = 8;
-
-    [SerializeField]
-    private int cardsDrawnPerDay = 5;
+    private int drawUpTo = 8;
 
     [SerializeField]
     private int requiredScore = 100;
@@ -34,8 +31,6 @@ public class RoundManager : Singleton<RoundManager>
     public UnityEvent OnCanPlayCardsChange = new();
 
     // Game state
-    private int roundScore;
-    private int lineScore;
     private int pointScore;
     private int multiScore;
 
@@ -45,10 +40,9 @@ public class RoundManager : Singleton<RoundManager>
     private bool canPlayCards = false;
     public bool CanPlayCards => canPlayCards;
 
-    public int RoundScore => roundScore;
-    public int LineScore => lineScore;
     public int PointScore => pointScore;
     public int MultiScore => multiScore;
+    public int TotalScore => pointScore * multiScore;
     public int RequiredScore => requiredScore;
     public int CurrentDay => currentDay;
     public int TotalDays => numberOfDays;
@@ -57,8 +51,6 @@ public class RoundManager : Singleton<RoundManager>
 
     public void StartRound()
     {
-        roundScore = 0;
-        lineScore = 0;
         pointScore = 0;
         multiScore = 0;
 
@@ -73,10 +65,12 @@ public class RoundManager : Singleton<RoundManager>
         GridGenerationManager.Instance.GenerateGrid();
         GridManager.Instance.CreateGridBackup();
 
+        GridScoringManager.Instance.AreAllLinesScorable();
+
         // Reset deck and draw initial hand
         CardManager.Instance.Reset();
-        CardManager.Instance.DrawCards(cardsDrawnOnFirstDay);
-        CardManager.Instance.BackupHand();
+        CardManager.Instance.DrawUpTo(drawUpTo);
+        CardManager.Instance.Backup();
 
         canPlayCards = true;
         OnCanPlayCardsChange?.Invoke();
@@ -89,7 +83,7 @@ public class RoundManager : Singleton<RoundManager>
 
     public void ResetPlayedCards()
     {
-        CardManager.Instance.RevertHand();
+        CardManager.Instance.Revert();
         GridManager.Instance.RevertToBackup();
 
         numCardsPlayed = 0;
@@ -111,12 +105,18 @@ public class RoundManager : Singleton<RoundManager>
 
         // TODO: Check if round is complete
         // TODO: Check if round is failed
+        if (currentDay >= numberOfDays)
+        {
+            yield break;
+        }
+
+        yield return GridManager.Instance.StartOfTurnEnumerator();
 
         numCardsPlayed = 0;
         OnCardsPlayedChange?.Invoke(numCardsPlayed);
 
-        CardManager.Instance.DrawCards(cardsDrawnPerDay);
-        CardManager.Instance.BackupHand();
+        CardManager.Instance.DrawUpTo(drawUpTo);
+        CardManager.Instance.Backup();
 
         GridManager.Instance.CreateGridBackup();
 
@@ -164,23 +164,6 @@ public class RoundManager : Singleton<RoundManager>
     {
         multiScore += amount;
         multiScore = (int)(multiScore * multiplier);
-
-        OnScoreChange?.Invoke(pointScore, multiScore);
-    }
-
-    public void CalculateScore()
-    {
-        lineScore = pointScore * multiScore;
-
-        OnScoreChange?.Invoke(pointScore, multiScore);
-    }
-
-    public void CommitScore()
-    {
-        roundScore += lineScore;
-        lineScore = 0;
-        pointScore = 0;
-        multiScore = 0;
 
         OnScoreChange?.Invoke(pointScore, multiScore);
     }

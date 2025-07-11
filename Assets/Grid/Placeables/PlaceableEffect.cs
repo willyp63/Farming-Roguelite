@@ -6,6 +6,7 @@ public enum PlaceableEffectTiming
 {
     OnTriggered,
     OnEndOfTurn,
+    OnStartOfTurn,
     OnEndOfRound,
 }
 
@@ -67,6 +68,11 @@ public abstract class PlaceableEffect : MonoBehaviour
     public void OnEndOfTurn(GridTile tile)
     {
         TryApplyEffect(tile, PlaceableEffectTiming.OnEndOfTurn);
+    }
+
+    public void OnStartOfTurn(GridTile tile)
+    {
+        TryApplyEffect(tile, PlaceableEffectTiming.OnStartOfTurn);
     }
 
     public void OnEndOfRound(GridTile tile)

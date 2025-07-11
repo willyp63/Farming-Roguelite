@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c59565773fccebe46b26784808e79137
+guid: b663bf1258f262040a853575ab7a1344
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 64
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -115,8 +115,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 32
-        height: 32
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,8 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4b8a180f3f8b3854bbb0661c397c2af0
-      internalID: 1926852099
+      spriteID: 4adde4a463e7aee47b86ce46e595461d
+      internalID: 762253879
       vertices: []
       indices: 
       edges: []
@@ -134,10 +134,10 @@ TextureImporter:
       name: season_symbols_1
       rect:
         serializedVersion: 2
-        x: 32
+        x: 128
         y: 0
-        width: 32
-        height: 32
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,8 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4cc89211c559bd743afacbd8d061d006
-      internalID: 1203598754
+      spriteID: 8434fc6c1304a1b4fa1c5f66c12c0075
+      internalID: 2118872830
       vertices: []
       indices: 
       edges: []
@@ -155,10 +155,10 @@ TextureImporter:
       name: season_symbols_2
       rect:
         serializedVersion: 2
-        x: 64
+        x: 256
         y: 0
-        width: 32
-        height: 32
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,8 +166,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 512585d8eb3eea64ba794208d86732bc
-      internalID: 591382309
+      spriteID: b1580418c2e919b40a98c0a312ec43c2
+      internalID: -1079359574
       vertices: []
       indices: 
       edges: []
@@ -176,10 +176,10 @@ TextureImporter:
       name: season_symbols_3
       rect:
         serializedVersion: 2
-        x: 96
+        x: 384
         y: 0
-        width: 32
-        height: 32
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -187,8 +187,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 788fd1843998b6d4884e550a4a0249da
-      internalID: 758768260
+      spriteID: c0f8a5c2d7f96614f85f6d48d9063a7b
+      internalID: -1291622809
       vertices: []
       indices: 
       edges: []
@@ -204,10 +204,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      season_symbols_0: 1926852099
-      season_symbols_1: 1203598754
-      season_symbols_2: 591382309
-      season_symbols_3: 758768260
+      season_symbols_0: 762253879
+      season_symbols_1: 2118872830
+      season_symbols_2: -1079359574
+      season_symbols_3: -1291622809
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

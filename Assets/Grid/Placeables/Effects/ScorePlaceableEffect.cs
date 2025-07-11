@@ -32,7 +32,8 @@ public class ScorePlaceableEffect : PlaceableEffect
         if (placeable == null)
             return;
 
-        RoundManager.Instance.AddPoints(totalPointAddition);
+        placeable.AddPoints(totalPointAddition);
+        placeable.AddMulti(totalMultiAddition);
         FloatingTextManager.Instance.SpawnPointsText(
             totalPointAddition,
             totalMultiAddition,

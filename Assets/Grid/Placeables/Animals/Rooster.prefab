@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5368643174551003073}
   - component: {fileID: 3821817819579965074}
+  - component: {fileID: -3813891550484878352}
   - component: {fileID: 3555250421083542281}
   - component: {fileID: 4781789984781640467}
   m_Layer: 0
@@ -54,11 +55,37 @@ MonoBehaviour:
   isPermanent: 0
   isMovable: 1
   allowedTileTypes: 010000000200000004000000
-  text: +10 points
+  text: At the start of each day, give all animals +5 points
   pointScore: 10
   multiScore: 0
   spawnPlaceableOnMove: {fileID: 0}
   isCommitted: 0
+--- !u!114 &-3813891550484878352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226535891704081314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff3b8f98991a5da4083d6c42da889dd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectTiming: 2
+  requiredConditions: []
+  countMatches:
+  - pattern: 0
+    tileTypes: 
+    placeableTypes: 
+    onlyMatchNewTile: 0
+  applyToMatches:
+  - pattern: 6
+    tileTypes: 
+    placeableTypes: 02000000
+    onlyMatchNewTile: 0
+  pointAddition: 5
+  multiAddition: 0
 --- !u!210 &3555250421083542281
 SortingGroup:
   m_ObjectHideFlags: 0

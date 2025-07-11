@@ -19,15 +19,18 @@ public class FloatingTextManager : Singleton<FloatingTextManager>
 
     public void SpawnPointsText(int points, int multi, Vector3 position)
     {
-        if (points > 0 && multi > 0)
+        string pointsText = points > 0 ? $"+{points}" : points.ToString();
+        string multiText = multi > 0 ? $"+{multi}" : multi.ToString();
+
+        if (points != 0 && multi != 0)
             SpawnText(
-                $"<color=#{ColorUtility.ToHtmlStringRGB(pointsColor)}>+{points}</color>\n<color=#{ColorUtility.ToHtmlStringRGB(multiColor)}>+{multi}</color>",
+                $"<color=#{ColorUtility.ToHtmlStringRGB(pointsColor)}>{pointsText}</color>\n<color=#{ColorUtility.ToHtmlStringRGB(multiColor)}>{multiText}</color>",
                 position,
                 Color.white
             );
-        else if (points > 0)
-            SpawnText($"+{points}", position, pointsColor);
-        else if (multi > 0)
-            SpawnText($"+{multi}", position, multiColor);
+        else if (points != 0)
+            SpawnText(pointsText, position, pointsColor);
+        else if (multi != 0)
+            SpawnText(multiText, position, multiColor);
     }
 }
