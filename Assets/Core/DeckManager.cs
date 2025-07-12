@@ -1,12 +1,18 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 [System.Serializable]
-public class DeckEntry
+public class InitialTileQuantity
 {
-    public TileData tileData;
+    public SeasonType season;
+    public int quantity;
+}
+
+[System.Serializable]
+public class InitialUnitQuantity
+{
+    public SeasonType season;
+    public UnitData unit;
     public int quantity;
 }
 
@@ -14,27 +20,48 @@ public class DeckManager : Singleton<DeckManager>
 {
     [Header("Deck Settings")]
     [SerializeField]
-    private List<DeckEntry> deckEntries = new();
-    public List<DeckEntry> DeckEntries => deckEntries;
+    private List<InitialTileQuantity> initialTileQuantities;
+
+    [SerializeField]
+    private List<InitialUnitQuantity> initialUnitQuantities;
 
     private List<DeckTile> deckTiles = new();
     public List<DeckTile> DeckTiles => deckTiles;
 
-    protected override void Awake()
-    {
-        base.Awake();
-
-        ResetDeck();
-    }
-
     public void ResetDeck()
     {
         deckTiles.Clear();
-        foreach (var deckEntry in deckEntries)
+
+        foreach (var tileQuantity in initialTileQuantities)
         {
-            for (int i = 0; i < deckEntry.quantity; i++)
+            for (int i = 0; i < tileQuantity.quantity; i++)
             {
-                deckTiles.Add(new DeckTile(deckEntry.tileData));
+                deckTiles.Add(new DeckTile(tileQuantity.season));
+            }
+        }
+
+        foreach (var unitQuantity in initialUnitQuantities)
+        {
+            for (int i = 0; i < unitQuantity.quantity; i++)
+            {
+                // Find empty tile that matches unitQuantity.season
+                DeckTile matchingTile = deckTiles.Find(tile =>
+                    tile.Season == unitQuantity.season && tile.Unit == null
+                );
+
+                if (matchingTile != null)
+                {
+                    // Add unit to tile
+                    matchingTile.SetUnit(unitQuantity.unit);
+                    Debug.Log($"Added unit {unitQuantity.unit.name} to tile {matchingTile.Season}");
+                }
+                else
+                {
+                    Debug.LogWarning(
+                        $"No empty tile found for season {unitQuantity.season} to place unit {unitQuantity.unit.name}"
+                    );
+                    break;
+                }
             }
         }
     }

@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 4978714310837275047}
   - component: {fileID: 9011136024693795445}
   m_Layer: 0
-  m_Name: Object Container
+  m_Name: Unit Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -262,7 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   frameImage: {fileID: 3834797634430285571}
-  objectContainer: {fileID: 4978714310837275047}
+  unitContainer: {fileID: 4978714310837275047}
   x: 0
   y: 0
   pointScore: 0

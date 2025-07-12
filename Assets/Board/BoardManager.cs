@@ -129,7 +129,7 @@ public class BoardManager : Singleton<BoardManager>
         // Check each tile in the deck to see if it would create a match
         for (int i = 0; i < deckTiles.Count; i++)
         {
-            if (!WouldCreateMatch(x, y, deckTiles[i].tileData))
+            if (!WouldCreateMatch(x, y, deckTiles[i].Season))
             {
                 availableDeckTiles.Add(deckTiles[i]);
             }
@@ -150,7 +150,7 @@ public class BoardManager : Singleton<BoardManager>
         return drawnTile;
     }
 
-    private bool WouldCreateMatch(int x, int y, TileData tileData)
+    private bool WouldCreateMatch(int x, int y, SeasonType season)
     {
         // Check horizontal matches
         int horizontalCount = 1;
@@ -158,7 +158,7 @@ public class BoardManager : Singleton<BoardManager>
         // Check left
         for (int i = x - 1; i >= 0; i--)
         {
-            if (board[i, y] != null && board[i, y].TileData.Season == tileData.Season)
+            if (board[i, y] != null && board[i, y].Season == season)
                 horizontalCount++;
             else
                 break;
@@ -167,7 +167,7 @@ public class BoardManager : Singleton<BoardManager>
         // Check right
         for (int i = x + 1; i < boardWidth; i++)
         {
-            if (board[i, y] != null && board[i, y].TileData.Season == tileData.Season)
+            if (board[i, y] != null && board[i, y].Season == season)
                 horizontalCount++;
             else
                 break;
@@ -182,7 +182,7 @@ public class BoardManager : Singleton<BoardManager>
         // Check down
         for (int j = y - 1; j >= 0; j--)
         {
-            if (board[x, j] != null && board[x, j].TileData.Season == tileData.Season)
+            if (board[x, j] != null && board[x, j].Season == season)
                 verticalCount++;
             else
                 break;
@@ -191,7 +191,7 @@ public class BoardManager : Singleton<BoardManager>
         // Check up
         for (int j = y + 1; j < boardHeight; j++)
         {
-            if (board[x, j] != null && board[x, j].TileData.Season == tileData.Season)
+            if (board[x, j] != null && board[x, j].Season == season)
                 verticalCount++;
             else
                 break;
@@ -265,11 +265,8 @@ public class BoardManager : Singleton<BoardManager>
             {
                 if (board[x, y] != null && board[x + 1, y] != null && board[x + 2, y] != null)
                 {
-                    SeasonType season = board[x, y].TileData.Season;
-                    if (
-                        board[x + 1, y].TileData.Season == season
-                        && board[x + 2, y].TileData.Season == season
-                    )
+                    SeasonType season = board[x, y].Season;
+                    if (board[x + 1, y].Season == season && board[x + 2, y].Season == season)
                     {
                         List<BoardTile> match = new List<BoardTile>();
                         match.Add(board[x, y]);
@@ -279,7 +276,7 @@ public class BoardManager : Singleton<BoardManager>
                         // Check for longer matches
                         for (int i = x + 3; i < boardWidth; i++)
                         {
-                            if (board[i, y] != null && board[i, y].TileData.Season == season)
+                            if (board[i, y] != null && board[i, y].Season == season)
                             {
                                 match.Add(board[i, y]);
                             }
@@ -302,11 +299,8 @@ public class BoardManager : Singleton<BoardManager>
             {
                 if (board[x, y] != null && board[x, y + 1] != null && board[x, y + 2] != null)
                 {
-                    SeasonType season = board[x, y].TileData.Season;
-                    if (
-                        board[x, y + 1].TileData.Season == season
-                        && board[x, y + 2].TileData.Season == season
-                    )
+                    SeasonType season = board[x, y].Season;
+                    if (board[x, y + 1].Season == season && board[x, y + 2].Season == season)
                     {
                         List<BoardTile> match = new List<BoardTile>();
                         match.Add(board[x, y]);
@@ -316,7 +310,7 @@ public class BoardManager : Singleton<BoardManager>
                         // Check for longer matches
                         for (int j = y + 3; j < boardHeight; j++)
                         {
-                            if (board[x, j] != null && board[x, j].TileData.Season == season)
+                            if (board[x, j] != null && board[x, j].Season == season)
                             {
                                 match.Add(board[x, j]);
                             }

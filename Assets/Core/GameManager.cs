@@ -5,7 +5,7 @@ public class GameManager : Singleton<GameManager>
 {
     private void Start()
     {
-        // Start the first round
+        DeckManager.Instance.ResetDeck();
         RoundManager.Instance.StartRound();
     }
 }

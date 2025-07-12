@@ -94,7 +94,7 @@ public class RoundManager : Singleton<RoundManager>
                     // All tiles in a match should have the same season, so we can use the first one
                     if (matchSeason == SeasonType.None)
                     {
-                        matchSeason = tile.TileData.Season;
+                        matchSeason = tile.Season;
                     }
                 }
 

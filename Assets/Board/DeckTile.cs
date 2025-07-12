@@ -1,9 +1,23 @@
 public class DeckTile
 {
-    public TileData tileData;
+    private readonly SeasonType season;
+    public SeasonType Season => season;
 
-    public DeckTile(TileData tileData)
+    private DeckUnit unit = null;
+    public DeckUnit Unit => unit;
+
+    public DeckTile(SeasonType seasonType)
     {
-        this.tileData = tileData;
+        season = seasonType;
+    }
+
+    public void ClearUnit()
+    {
+        unit = null;
+    }
+
+    public void SetUnit(UnitData unitData)
+    {
+        unit = new DeckUnit(unitData);
     }
 }

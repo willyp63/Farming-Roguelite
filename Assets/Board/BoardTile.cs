@@ -7,7 +7,7 @@ public class BoardTile : MonoBehaviour
     private SpriteRenderer frameImage;
 
     [SerializeField]
-    private Transform objectContainer;
+    private Transform unitContainer;
 
     [SerializeField]
     private DeckTile deckTile;
@@ -34,7 +34,7 @@ public class BoardTile : MonoBehaviour
     public int X => x;
     public int Y => y;
     public DeckTile DeckTile => deckTile;
-    public TileData TileData => deckTile.tileData;
+    public SeasonType Season => deckTile.Season;
     public Vector2Int Position => new Vector2Int(x, y);
 
     public void Start()
@@ -55,8 +55,6 @@ public class BoardTile : MonoBehaviour
         SetPosition(xPos, yPos);
 
         this.deckTile = deckTile;
-        pointScore = deckTile.tileData.PointScore;
-        multiScore = deckTile.tileData.MultiScore;
 
         UpdateVisual();
     }
@@ -155,27 +153,25 @@ public class BoardTile : MonoBehaviour
 
     private void UpdateVisual()
     {
-        // Clear all objects in objectContainer
-        if (objectContainer != null)
+        // Clear all objects in unitContainer
+        if (unitContainer != null)
         {
-            for (int i = objectContainer.childCount - 1; i >= 0; i--)
+            for (int i = unitContainer.childCount - 1; i >= 0; i--)
             {
-                DestroyImmediate(objectContainer.GetChild(i).gameObject);
+                DestroyImmediate(unitContainer.GetChild(i).gameObject);
             }
         }
 
-        TileData tileData = deckTile.tileData;
-
-        // Instantiate tileData.objectPrefab into objectContainer
-        if (tileData != null && tileData.ObjectPrefab != null && objectContainer != null)
+        // Instantiate unit prefab
+        if (deckTile.Unit != null && deckTile.Unit.Data.UnitPrefab != null && unitContainer != null)
         {
-            Instantiate(tileData.ObjectPrefab, objectContainer);
+            Instantiate(deckTile.Unit.Data.UnitPrefab, unitContainer);
         }
 
         // Update frame sprite
-        if (frameImage != null && tileData != null)
+        if (frameImage != null)
         {
-            SeasonInfo seasonInfo = SeasonManager.GetSeasonInfo(tileData.Season);
+            SeasonInfo seasonInfo = SeasonManager.GetSeasonInfo(Season);
             if (seasonInfo != null)
             {
                 frameImage.color = seasonInfo.color;
