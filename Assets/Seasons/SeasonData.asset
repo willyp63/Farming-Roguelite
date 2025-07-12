@@ -16,30 +16,24 @@ MonoBehaviour:
   - season: 1
     name: Spring
     color: {r: 0.4, g: 0.6, b: 0.2, a: 1}
-    symbolSprite: {fileID: 1926852099, guid: c59565773fccebe46b26784808e79137, type: 3}
-    tileFrameSprite: {fileID: -1472961972, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
+    symbolSprite: {fileID: 1472990705, guid: c59565773fccebe46b26784808e79137, type: 3}
   - season: 2
     name: Summer
     color: {r: 0.8, g: 0.7, b: 0.1, a: 1}
-    symbolSprite: {fileID: 1203598754, guid: c59565773fccebe46b26784808e79137, type: 3}
-    tileFrameSprite: {fileID: -564778226, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
+    symbolSprite: {fileID: -1203045165, guid: c59565773fccebe46b26784808e79137, type: 3}
   - season: 3
     name: Autumn
     color: {r: 0.7, g: 0.3, b: 0.4, a: 1}
-    symbolSprite: {fileID: 591382309, guid: c59565773fccebe46b26784808e79137, type: 3}
-    tileFrameSprite: {fileID: -1994343144, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
+    symbolSprite: {fileID: -857014574, guid: c59565773fccebe46b26784808e79137, type: 3}
   - season: 4
     name: Winter
     color: {r: 0.3, g: 0.6, b: 0.8, a: 1}
-    symbolSprite: {fileID: 758768260, guid: c59565773fccebe46b26784808e79137, type: 3}
-    tileFrameSprite: {fileID: 1694199851, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
+    symbolSprite: {fileID: -620976929, guid: c59565773fccebe46b26784808e79137, type: 3}
   - season: 5
     name: Death
-    color: {r: 0.33, g: 0.33, b: 0.33, a: 1}
-    symbolSprite: {fileID: 0}
-    tileFrameSprite: {fileID: 1694199851, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
+    color: {r: 0.4, g: 0.4, b: 0.4, a: 1}
+    symbolSprite: {fileID: 1292147337, guid: c59565773fccebe46b26784808e79137, type: 3}
   - season: 6
-    name: Death
+    name: Wild
     color: {r: 1, g: 1, b: 1, a: 1}
     symbolSprite: {fileID: 0}
-    tileFrameSprite: {fileID: 1694199851, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}

@@ -50,13 +50,13 @@ public class BoardTile : MonoBehaviour
         }
     }
 
-    public void Initialize(int xPos, int yPos, DeckTile deckTileItem)
+    public void Initialize(int xPos, int yPos, DeckTile deckTile)
     {
         SetPosition(xPos, yPos);
 
-        deckTile = deckTileItem;
-        pointScore = deckTileItem.tileData.PointScore;
-        multiScore = deckTileItem.tileData.MultiScore;
+        this.deckTile = deckTile;
+        pointScore = deckTile.tileData.PointScore;
+        multiScore = deckTile.tileData.MultiScore;
 
         UpdateVisual();
     }

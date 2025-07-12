@@ -220,6 +220,7 @@ RectTransform:
   - {fileID: 548449186}
   - {fileID: 1217579731}
   - {fileID: 376705135}
+  - {fileID: 965368052}
   m_Father: {fileID: 642757102}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -943,7 +944,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 4.21875
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1785,6 +1786,78 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 894580732}
+  m_CullTransparentMesh: 1
+--- !u!1 &965368051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 965368052}
+  - component: {fileID: 965368054}
+  - component: {fileID: 965368053}
+  m_Layer: 5
+  m_Name: Energy Panel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &965368052
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965368051}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 78174169}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 230, y: 220}
+  m_SizeDelta: {x: 400, y: 400}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &965368053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965368051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 6
+  m_Spacing: 16
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
+--- !u!222 &965368054
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965368051}
   m_CullTransparentMesh: 1
 --- !u!1 &1032174876
 GameObject:
@@ -3341,6 +3414,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: energyBarPrefab
+      value: 
+      objectReference: {fileID: 5825361502092082848, guid: 0c9dfb8c733da9e4390d8716c6a21754, type: 3}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
       propertyPath: discardCountText
       value: 
       objectReference: {fileID: 0}
@@ -3348,6 +3425,10 @@ PrefabInstance:
       propertyPath: requiredScoreText
       value: 
       objectReference: {fileID: 2086788325}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: energyBarContainer
+      value: 
+      objectReference: {fileID: 965368052}
     - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
       propertyPath: numCardsPlayedText
       value: 
@@ -3358,6 +3439,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
       propertyPath: scoreMultipliersText
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: energyBars.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: energyBars.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: energyBars.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: energyBars.Array.data[2]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: energyBars.Array.data[3]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551528355132818138, guid: 7ec55109614636c4d8f9d698428eb2fd, type: 3}
+      propertyPath: energyBars.Array.data[4]
       value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -3780,6 +3885,14 @@ PrefabInstance:
     - target: {fileID: 6341065752236532008, guid: ff9007b5928f8774c83577a4555dcfd0, type: 3}
       propertyPath: m_Name
       value: Round Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7521208293292681469, guid: ff9007b5928f8774c83577a4555dcfd0, type: 3}
+      propertyPath: botMoveDelay
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7521208293292681469, guid: ff9007b5928f8774c83577a4555dcfd0, type: 3}
+      propertyPath: isBotPlaying
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7521208293292681469, guid: ff9007b5928f8774c83577a4555dcfd0, type: 3}
       propertyPath: numberOfDays

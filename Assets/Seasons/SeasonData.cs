@@ -19,7 +19,6 @@ public class SeasonInfo
     public string name;
     public Color color;
     public Sprite symbolSprite;
-    public Sprite tileFrameSprite;
 }
 
 [CreateAssetMenu(fileName = "SeasonData", menuName = "Farming Roguelike/Season Data")]

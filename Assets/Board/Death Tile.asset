@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Death Tile
   m_EditorClassIdentifier: 
   tileName: Death Tile
-  objectPrefab: {fileID: 0}
+  objectPrefab: {fileID: 5468548096946929137, guid: 334497c99d436a24f984420dfa2103ed, type: 3}
   type: 0
   season: 5
   pointScore: 0

@@ -648,6 +648,9 @@ public class BoardManager : Singleton<BoardManager>
             }
         }
 
+        if (validSwaps.Count == 0)
+            return new List<BoardTile>();
+
         var bestSwap = validSwaps.OrderByDescending(swap => swap.Item3).First();
         return new List<BoardTile> { bestSwap.Item1, bestSwap.Item2 };
     }
