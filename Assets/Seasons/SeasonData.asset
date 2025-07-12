@@ -30,7 +30,7 @@ MonoBehaviour:
     color: {r: 0.3, g: 0.6, b: 0.8, a: 1}
     symbolSprite: {fileID: -620976929, guid: c59565773fccebe46b26784808e79137, type: 3}
   - season: 5
-    name: Death
+    name: Dead
     color: {r: 0.4, g: 0.4, b: 0.4, a: 1}
     symbolSprite: {fileID: 1292147337, guid: c59565773fccebe46b26784808e79137, type: 3}
   - season: 6

@@ -8,7 +8,7 @@ public enum SeasonType
     Summer,
     Autumn,
     Winter,
-    Death,
+    Dead,
     Wild,
 }
 

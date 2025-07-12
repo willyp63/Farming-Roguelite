@@ -12,9 +12,6 @@ public class UIManager : Singleton<UIManager>
     private TextMeshProUGUI scoreText;
 
     [SerializeField]
-    private TextMeshProUGUI moneyText;
-
-    [SerializeField]
     private EnergyBarUI energyBarPrefab;
 
     [SerializeField]
@@ -33,8 +30,16 @@ public class UIManager : Singleton<UIManager>
 
     private void OnScoreChanged()
     {
-        requiredScoreText.text = RoundManager.Instance.RequiredScore.ToString();
-        scoreText.text = RoundManager.Instance.Score.ToString();
+        requiredScoreText.text =
+            $"<color=#{ColorUtility.ToHtmlStringRGB(FloatingTextManager.pointsColor)}>{RoundManager.Instance.RequiredScore}</color>";
+
+        scoreText.text =
+            $"<color=#{ColorUtility.ToHtmlStringRGB(FloatingTextManager.pointsColor)}>{RoundManager.Instance.Score}</color>";
+
+        if (RoundManager.Instance.Score > 0)
+        {
+            scoreText.GetComponent<ShakeBehavior>().Shake();
+        }
     }
 
     private void CreateEnergyBars()
@@ -68,7 +73,7 @@ public class UIManager : Singleton<UIManager>
             SeasonType.Summer,
             SeasonType.Autumn,
             SeasonType.Winter,
-            SeasonType.Death,
+            SeasonType.Dead,
         };
 
         // Create an energy bar for each season type
@@ -83,8 +88,6 @@ public class UIManager : Singleton<UIManager>
             // Set initial energy value
             int currentEnergy = EnergyManager.Instance.GetEnergy(seasonType);
             newEnergyBar.SetEnergy(currentEnergy);
-
-            Debug.Log($"Created energy bar for {seasonType} with {currentEnergy} energy");
         }
     }
 
@@ -96,7 +99,7 @@ public class UIManager : Singleton<UIManager>
             if (energyBar != null && energyBar.SeasonType == seasonType)
             {
                 energyBar.SetEnergy(newEnergy);
-                Debug.Log($"Updated energy bar for {seasonType} to {newEnergy}");
+                energyBar.Shake();
                 break;
             }
         }

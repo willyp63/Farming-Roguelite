@@ -261,33 +261,49 @@ public class BoardManager : Singleton<BoardManager>
         // Find horizontal matches
         for (int y = 0; y < boardHeight; y++)
         {
-            for (int x = 0; x < boardWidth - 2; x++)
+            int x = 0;
+            while (x < boardWidth - 2) // Need at least 3 tiles to form a match
             {
-                if (board[x, y] != null && board[x + 1, y] != null && board[x + 2, y] != null)
+                // Find the start of a potential match
+                if (board[x, y] != null)
                 {
                     SeasonType season = board[x, y].Season;
-                    if (board[x + 1, y].Season == season && board[x + 2, y].Season == season)
+                    int matchLength = 1;
+
+                    // Count how many consecutive tiles of the same season
+                    for (int i = x + 1; i < boardWidth; i++)
+                    {
+                        if (board[i, y] != null && board[i, y].Season == season)
+                        {
+                            matchLength++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    // If we found 3 or more matching tiles, add the match
+                    if (matchLength >= 3)
                     {
                         List<BoardTile> match = new List<BoardTile>();
-                        match.Add(board[x, y]);
-                        match.Add(board[x + 1, y]);
-                        match.Add(board[x + 2, y]);
-
-                        // Check for longer matches
-                        for (int i = x + 3; i < boardWidth; i++)
+                        for (int i = 0; i < matchLength; i++)
                         {
-                            if (board[i, y] != null && board[i, y].Season == season)
-                            {
-                                match.Add(board[i, y]);
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            match.Add(board[x + i, y]);
                         }
-
                         allMatches.Add(match);
+
+                        // Skip past this match to avoid overlapping
+                        x += matchLength;
                     }
+                    else
+                    {
+                        x++;
+                    }
+                }
+                else
+                {
+                    x++;
                 }
             }
         }
@@ -295,33 +311,49 @@ public class BoardManager : Singleton<BoardManager>
         // Find vertical matches
         for (int x = 0; x < boardWidth; x++)
         {
-            for (int y = 0; y < boardHeight - 2; y++)
+            int y = 0;
+            while (y < boardHeight - 2) // Need at least 3 tiles to form a match
             {
-                if (board[x, y] != null && board[x, y + 1] != null && board[x, y + 2] != null)
+                // Find the start of a potential match
+                if (board[x, y] != null)
                 {
                     SeasonType season = board[x, y].Season;
-                    if (board[x, y + 1].Season == season && board[x, y + 2].Season == season)
+                    int matchLength = 1;
+
+                    // Count how many consecutive tiles of the same season
+                    for (int j = y + 1; j < boardHeight; j++)
+                    {
+                        if (board[x, j] != null && board[x, j].Season == season)
+                        {
+                            matchLength++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    // If we found 3 or more matching tiles, add the match
+                    if (matchLength >= 3)
                     {
                         List<BoardTile> match = new List<BoardTile>();
-                        match.Add(board[x, y]);
-                        match.Add(board[x, y + 1]);
-                        match.Add(board[x, y + 2]);
-
-                        // Check for longer matches
-                        for (int j = y + 3; j < boardHeight; j++)
+                        for (int j = 0; j < matchLength; j++)
                         {
-                            if (board[x, j] != null && board[x, j].Season == season)
-                            {
-                                match.Add(board[x, j]);
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            match.Add(board[x, y + j]);
                         }
-
                         allMatches.Add(match);
+
+                        // Skip past this match to avoid overlapping
+                        y += matchLength;
                     }
+                    else
+                    {
+                        y++;
+                    }
+                }
+                else
+                {
+                    y++;
                 }
             }
         }
@@ -493,7 +525,7 @@ public class BoardManager : Singleton<BoardManager>
                         CreateTileAt(x, y, newDeckTile);
 
                         // Animate the spawn
-                        int spawnY = boardHeight + y + 1 - shortestColumnHeight;
+                        int spawnY = boardHeight + y - shortestColumnHeight;
                         Vector3 spawnPos = GetWorldPosition(x, spawnY);
                         Vector3 targetPos = GetWorldPosition(x, y);
                         board[x, y].transform.position = spawnPos;
@@ -607,9 +639,6 @@ public class BoardManager : Singleton<BoardManager>
         if (bestSwap.Count == 2)
         {
             currentHintCoroutine = StartCoroutine(AnimateHint(bestSwap[0], bestSwap[1]));
-            Debug.Log(
-                $"Showing hint for swap: {bestSwap[0].X}, {bestSwap[0].Y} -> {bestSwap[1].X}, {bestSwap[1].Y}"
-            );
         }
     }
 
@@ -738,6 +767,22 @@ public class BoardManager : Singleton<BoardManager>
         tileB.transform.localScale = originalScaleB;
 
         currentHintCoroutine = null;
+    }
+
+    public void EnableTooltips()
+    {
+        foreach (var tile in board)
+        {
+            tile.SetTooltipEnabled(true);
+        }
+    }
+
+    public void DisableTooltips()
+    {
+        foreach (var tile in board)
+        {
+            tile.SetTooltipEnabled(false);
+        }
     }
 
     public void StopHintAnimation()

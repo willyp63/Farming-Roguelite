@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d760af82fe43e7b49b7e1258cd071232, type: 3}
   m_Name: Summer Tree
   m_EditorClassIdentifier: 
+  unitName: Summer Tree
   unitPrefab: {fileID: 5468548096946929137, guid: 08e140135b5d3554fb5ce8ab740ade0c, type: 3}
+  text: A basic tree
   seasonTypes: 02000000
+  pointScore: 100

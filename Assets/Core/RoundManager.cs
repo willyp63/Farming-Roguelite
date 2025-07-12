@@ -60,7 +60,6 @@ public class RoundManager : Singleton<RoundManager>
         }
 
         var bestSwap = BoardManager.Instance.GetBestSwap();
-        Debug.Log($"Swap: {bestSwap[0].X}, {bestSwap[0].Y} -> {bestSwap[1].X}, {bestSwap[1].Y}");
     }
 
     public void OnTileSwapped()
@@ -80,8 +79,12 @@ public class RoundManager : Singleton<RoundManager>
         numMoves++;
 
         var matches = BoardManager.Instance.FindMatches();
+        int cascadeBonus = 0;
+
         while (matches.Count > 0)
         {
+            int totalScore = 0;
+
             // Score matches
             foreach (var match in matches)
             {
@@ -90,7 +93,7 @@ public class RoundManager : Singleton<RoundManager>
 
                 foreach (var tile in match)
                 {
-                    matchScore += tile.PointScore;
+                    matchScore += tile.DeckTile.PointScore;
                     // All tiles in a match should have the same season, so we can use the first one
                     if (matchSeason == SeasonType.None)
                     {
@@ -98,24 +101,23 @@ public class RoundManager : Singleton<RoundManager>
                     }
                 }
 
-                // Bonus for longer matches
-                if (match.Count > 3)
-                {
-                    matchScore *= match.Count - 2; // 4 tiles = 2x, 5 tiles = 3x, etc.
-                }
+                // Bonus for longer matches and cascade bonuses
+                int multiplier = match.Count - 2; // 4 tiles = 2x, 5 tiles = 3x, etc.
+                multiplier += cascadeBonus; // 1x for each cascade bonus
 
-                AddScore(matchScore);
+                totalScore += matchScore * multiplier;
+
+                // Show floating text for the score
+                ShowMatchScore(match, matchScore * multiplier, multiplier);
 
                 // Add energy for the match (1 energy per tile)
                 if (matchSeason != SeasonType.None)
                 {
                     EnergyManager.Instance.AddEnergy(matchSeason, match.Count);
-                    Debug.Log(
-                        $"Match of {match.Count} {matchSeason} tiles scored! Added {match.Count} energy to {matchSeason}."
-                    );
-                    EnergyManager.Instance.LogEnergyLevels();
                 }
             }
+
+            AddScore(totalScore);
 
             // Flatten matches into single list
             List<BoardTile> allMatchingTiles = new List<BoardTile>();
@@ -127,6 +129,7 @@ public class RoundManager : Singleton<RoundManager>
             yield return StartCoroutine(BoardManager.Instance.RemoveTiles(allMatchingTiles));
 
             matches = BoardManager.Instance.FindMatches();
+            cascadeBonus += 1;
         }
 
         isScoring = false;
@@ -162,21 +165,67 @@ public class RoundManager : Singleton<RoundManager>
 
             if (bestSwap.Count == 2)
             {
-                Debug.Log(
-                    $"Bot making move: {bestSwap[0].X}, {bestSwap[0].Y} -> {bestSwap[1].X}, {bestSwap[1].Y}"
-                );
                 BoardManager.Instance.TrySwapTiles(bestSwap[0], bestSwap[1]);
             }
             else
             {
                 Debug.Log("Bot found no valid moves!");
                 Debug.Log($"Bot has made {numMoves} moves.");
-                // Could implement game over logic here
+                // TODO: handle locked board state
             }
         }
         catch (Exception e)
         {
             Debug.LogError($"Error in bot move: {e.Message}");
         }
+    }
+
+    private void ShowMatchScore(List<BoardTile> match, int totalScore, int multiplier)
+    {
+        // Calculate the center position of all matched tiles
+        Vector3 centerPosition = Vector3.zero;
+        foreach (var tile in match)
+        {
+            centerPosition += tile.transform.position;
+        }
+        centerPosition /= match.Count;
+
+        // Get the season color for the text
+        Color textColor = Color.white; // Default color
+        if (match.Count > 0 && match[0].Season != SeasonType.None)
+        {
+            var seasonData = Resources.Load<SeasonData>("SeasonData");
+            if (seasonData != null)
+            {
+                var seasonInfo = seasonData.GetSeasonInfo(match[0].Season);
+                if (seasonInfo != null)
+                {
+                    textColor = seasonInfo.color;
+                }
+            }
+        }
+
+        // Create the score text with rich text formatting for different colors
+        string scoreText;
+        if (multiplier > 1)
+        {
+            // Convert colors to hex format for rich text
+            string pointsHex = ColorUtility.ToHtmlStringRGB(FloatingTextManager.pointsColor);
+            string multiplierHex = ColorUtility.ToHtmlStringRGB(
+                FloatingTextManager.multiplierColor
+            );
+
+            scoreText =
+                $"<color=#{pointsHex}>{totalScore:N0}</color><size=40><color=#{multiplierHex}> (x{multiplier})</color></size>";
+        }
+        else
+        {
+            // Just points, no multiplier
+            string pointsHex = ColorUtility.ToHtmlStringRGB(FloatingTextManager.pointsColor);
+            scoreText = $"<color=#{pointsHex}>{totalScore:N0}</color>";
+        }
+
+        // Spawn the floating text (use white color since we're using rich text)
+        FloatingTextManager.Instance.SpawnText(scoreText, centerPosition, Color.white);
     }
 }

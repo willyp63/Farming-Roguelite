@@ -32,7 +32,7 @@ public class EnergyManager : Singleton<EnergyManager>
         energyLevels[SeasonType.Summer] = startingEnergy;
         energyLevels[SeasonType.Autumn] = startingEnergy;
         energyLevels[SeasonType.Winter] = startingEnergy;
-        energyLevels[SeasonType.Death] = startingEnergy;
+        energyLevels[SeasonType.Dead] = startingEnergy;
     }
 
     public void AddEnergy(SeasonType seasonType, int amount)
@@ -49,10 +49,14 @@ public class EnergyManager : Singleton<EnergyManager>
             return;
         }
 
-        energyLevels[seasonType] += amount;
-        OnEnergyChanged?.Invoke(seasonType, energyLevels[seasonType]);
+        int currentEnergy = energyLevels[seasonType];
+        int newEnergy = Mathf.Min(currentEnergy + amount, maxEnergy);
+        energyLevels[seasonType] = newEnergy;
 
-        Debug.Log($"Added {amount} energy to {seasonType}. Total: {energyLevels[seasonType]}");
+        if (currentEnergy != newEnergy)
+        {
+            OnEnergyChanged?.Invoke(seasonType, energyLevels[seasonType]);
+        }
     }
 
     public void SetEnergy(SeasonType seasonType, int amount)
@@ -96,15 +100,6 @@ public class EnergyManager : Singleton<EnergyManager>
         {
             energyLevels[seasonType] = startingEnergy;
             OnEnergyChanged?.Invoke(seasonType, energyLevels[seasonType]);
-        }
-    }
-
-    public void LogEnergyLevels()
-    {
-        Debug.Log("Current Energy Levels:");
-        foreach (var kvp in energyLevels)
-        {
-            Debug.Log($"  {kvp.Key}: {kvp.Value}");
         }
     }
 }

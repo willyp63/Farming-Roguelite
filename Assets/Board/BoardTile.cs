@@ -18,14 +18,7 @@ public class BoardTile : MonoBehaviour
     [SerializeField]
     private int y;
 
-    [SerializeField]
-    private int pointScore = 0;
-    public int PointScore => pointScore;
-
-    [SerializeField]
-    private int multiScore = 0;
-    public int MultiScore => multiScore;
-
+    private TooltipTrigger tooltipTrigger;
     private ShakeBehavior shakeBehavior;
     private bool isDragging = false;
     private Vector3 dragStartPosition;
@@ -37,21 +30,11 @@ public class BoardTile : MonoBehaviour
     public SeasonType Season => deckTile.Season;
     public Vector2Int Position => new Vector2Int(x, y);
 
-    public void Start()
-    {
-        shakeBehavior = GetComponent<ShakeBehavior>();
-
-        // Ensure we have a collider for drag detection
-        if (GetComponent<BoxCollider2D>() == null)
-        {
-            BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
-            collider.size = new Vector2(1f, 1f); // Match tile size
-            collider.isTrigger = false;
-        }
-    }
-
     public void Initialize(int xPos, int yPos, DeckTile deckTile)
     {
+        shakeBehavior = GetComponent<ShakeBehavior>();
+        tooltipTrigger = GetComponent<TooltipTrigger>();
+
         SetPosition(xPos, yPos);
 
         this.deckTile = deckTile;
@@ -74,6 +57,14 @@ public class BoardTile : MonoBehaviour
         }
     }
 
+    public void SetTooltipEnabled(bool enabled)
+    {
+        if (tooltipTrigger != null)
+        {
+            tooltipTrigger.enabled = enabled;
+        }
+    }
+
     public void BringToFront()
     {
         GetComponent<SortingGroup>().sortingOrder = y * -10 + 1000;
@@ -88,6 +79,9 @@ public class BoardTile : MonoBehaviour
         dragStartPosition = transform.position;
 
         BringToFront();
+
+        BoardManager.Instance.DisableTooltips();
+        TooltipUIManager.Instance.HideTooltip();
     }
 
     void OnMouseDrag()
@@ -116,6 +110,8 @@ public class BoardTile : MonoBehaviour
 
         // Reset sorting order
         SetPosition(x, y);
+
+        BoardManager.Instance.EnableTooltips();
 
         if (targetTile != null && targetTile != this && IsAdjacent(targetTile))
         {
@@ -153,6 +149,11 @@ public class BoardTile : MonoBehaviour
 
     private void UpdateVisual()
     {
+        if (tooltipTrigger != null)
+        {
+            tooltipTrigger.SetTooltipText(deckTile.GetTooltipText());
+        }
+
         // Clear all objects in unitContainer
         if (unitContainer != null)
         {

@@ -53,7 +53,6 @@ public class DeckManager : Singleton<DeckManager>
                 {
                     // Add unit to tile
                     matchingTile.SetUnit(unitQuantity.unit);
-                    Debug.Log($"Added unit {unitQuantity.unit.name} to tile {matchingTile.Season}");
                 }
                 else
                 {

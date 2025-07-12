@@ -10,7 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d760af82fe43e7b49b7e1258cd071232, type: 3}
-  m_Name: Death Tree
+  m_Name: Spring Tree
   m_EditorClassIdentifier: 
-  unitPrefab: {fileID: 5468548096946929137, guid: 334497c99d436a24f984420dfa2103ed, type: 3}
-  seasonTypes: 05000000
+  unitName: Spring Tree
+  unitPrefab: {fileID: 5468548096946929137, guid: b302279fa31c3494f8528affebb18bb4, type: 3}
+  text: A basic tree
+  seasonTypes: 01000000
+  pointScore: 100
