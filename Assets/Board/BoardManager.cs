@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -34,6 +35,25 @@ public class BoardManager : Singleton<BoardManager>
 
     [SerializeField]
     private float spawnSpeed = 2f;
+
+    [Header("Hint Animation Settings")]
+    [SerializeField]
+    private float hintPulseSpeed = 2f;
+
+    [SerializeField]
+    private float hintPulseIntensity = 0.3f;
+
+    [SerializeField]
+    private float hintDuration = 3f;
+
+    [SerializeField]
+    private float autoHintDelay = 5f; // Time before showing hint automatically
+
+    [SerializeField]
+    private bool enableAutoHint = true;
+
+    private Coroutine currentHintCoroutine;
+    private Coroutine autoHintCoroutine;
 
     private BoardTile[,] board;
 
@@ -365,6 +385,12 @@ public class BoardManager : Singleton<BoardManager>
 
         if ((deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1))
         {
+            // Stop any current hint animation when player makes a move
+            StopHintAnimation();
+
+            // Reset auto-hint timer
+            ResetAutoHintTimer();
+
             isSwapping = true;
 
             // Swap tiles
@@ -515,8 +541,6 @@ public class BoardManager : Singleton<BoardManager>
         if (tile == null)
             yield break;
 
-        tile.BringToFront();
-
         // Store original scale, position and get renderers
         Vector3 originalScale = tile.transform.localScale;
         SpriteRenderer[] renderers = tile.GetComponentsInChildren<SpriteRenderer>();
@@ -575,5 +599,194 @@ public class BoardManager : Singleton<BoardManager>
             boardYPos * (tileSize + padding) - boardHeightSize / 2 + tileSize / 2 + padding / 2,
             0f
         );
+    }
+
+    public void ShowBestSwap()
+    {
+        // Stop any existing hint animation
+        if (currentHintCoroutine != null)
+        {
+            StopCoroutine(currentHintCoroutine);
+        }
+
+        var bestSwap = GetBestSwap();
+        if (bestSwap.Count == 2)
+        {
+            currentHintCoroutine = StartCoroutine(AnimateHint(bestSwap[0], bestSwap[1]));
+            Debug.Log(
+                $"Showing hint for swap: {bestSwap[0].X}, {bestSwap[0].Y} -> {bestSwap[1].X}, {bestSwap[1].Y}"
+            );
+        }
+    }
+
+    // Public method for testing hints manually
+    public void ShowHintNow()
+    {
+        ShowBestSwap();
+    }
+
+    public List<BoardTile> GetBestSwap()
+    {
+        List<(BoardTile, BoardTile, int)> validSwaps = new List<(BoardTile, BoardTile, int)>();
+        HashSet<string> swapKeys = new HashSet<string>();
+
+        // Check every tile on the board
+        for (int x = 0; x < boardWidth; x++)
+        {
+            for (int y = 0; y < boardHeight; y++)
+            {
+                if (board[x, y] == null)
+                    continue;
+
+                BoardTile currentTile = board[x, y];
+
+                // Check all 4 adjacent positions
+                CheckAdjacentSwap(currentTile, x + 1, y, validSwaps, swapKeys);
+                CheckAdjacentSwap(currentTile, x - 1, y, validSwaps, swapKeys);
+                CheckAdjacentSwap(currentTile, x, y + 1, validSwaps, swapKeys);
+                CheckAdjacentSwap(currentTile, x, y - 1, validSwaps, swapKeys);
+            }
+        }
+
+        var bestSwap = validSwaps.OrderByDescending(swap => swap.Item3).First();
+        return new List<BoardTile> { bestSwap.Item1, bestSwap.Item2 };
+    }
+
+    private void CheckAdjacentSwap(
+        BoardTile tileA,
+        int x,
+        int y,
+        List<(BoardTile, BoardTile, int)> validSwaps,
+        HashSet<string> swapKeys
+    )
+    {
+        // Check bounds
+        if (x < 0 || x >= boardWidth || y < 0 || y >= boardHeight)
+            return;
+
+        BoardTile tileB = board[x, y];
+        if (tileB == null)
+            return;
+
+        // Create a unique key for this swap pair to avoid duplicates
+        string swapKey = GetSwapKey(tileA, tileB);
+        if (swapKeys.Contains(swapKey))
+            return;
+        swapKeys.Add(swapKey);
+
+        // Temporarily swap the tiles in the board array
+        board[tileA.X, tileA.Y] = tileB;
+        board[tileB.X, tileB.Y] = tileA;
+
+        // Check if this swap creates any matches
+        var matches = FindMatches();
+
+        // Swap back
+        board[tileA.X, tileA.Y] = tileA;
+        board[tileB.X, tileB.Y] = tileB;
+
+        // If matches were found, add this swap to the valid swaps
+        if (matches.Count > 0)
+        {
+            validSwaps.Add((tileA, tileB, matches.Sum(match => match.Count)));
+        }
+    }
+
+    private string GetSwapKey(BoardTile tileA, BoardTile tileB)
+    {
+        // Create a consistent key regardless of the order of tiles
+        // Use the smaller coordinates first to ensure consistency
+        if (tileA.X < tileB.X || (tileA.X == tileB.X && tileA.Y < tileB.Y))
+        {
+            return $"{tileA.X},{tileA.Y}-{tileB.X},{tileB.Y}";
+        }
+        else
+        {
+            return $"{tileB.X},{tileB.Y}-{tileA.X},{tileA.Y}";
+        }
+    }
+
+    private IEnumerator AnimateHint(BoardTile tileA, BoardTile tileB)
+    {
+        if (tileA == null || tileB == null)
+            yield break;
+
+        // Store original scales
+        Vector3 originalScaleA = tileA.transform.localScale;
+        Vector3 originalScaleB = tileB.transform.localScale;
+
+        float elapsed = 0f;
+        float duration = hintDuration;
+
+        while (elapsed < duration)
+        {
+            float progress = elapsed / duration;
+
+            // Create a pulsing effect using sine wave
+            float pulseValue = Mathf.Sin(progress * Mathf.PI * 2 * hintPulseSpeed) * 0.5f + 0.5f;
+
+            // Scale effect: pulse between 1.0 and 1.0 + intensity
+            float scaleMultiplier = 1f + (pulseValue * hintPulseIntensity);
+
+            // Apply scale
+            tileA.transform.localScale = originalScaleA * scaleMultiplier;
+            tileB.transform.localScale = originalScaleB * scaleMultiplier;
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Reset to original state
+        tileA.transform.localScale = originalScaleA;
+        tileB.transform.localScale = originalScaleB;
+
+        currentHintCoroutine = null;
+    }
+
+    public void StopHintAnimation()
+    {
+        if (currentHintCoroutine != null)
+        {
+            StopCoroutine(currentHintCoroutine);
+            currentHintCoroutine = null;
+        }
+    }
+
+    public void StartAutoHint()
+    {
+        if (enableAutoHint && autoHintCoroutine == null)
+        {
+            autoHintCoroutine = StartCoroutine(AutoHintCoroutine());
+        }
+    }
+
+    public void StopAutoHint()
+    {
+        if (autoHintCoroutine != null)
+        {
+            StopCoroutine(autoHintCoroutine);
+            autoHintCoroutine = null;
+        }
+    }
+
+    public void ResetAutoHintTimer()
+    {
+        // Stop current auto-hint and restart it
+        StopAutoHint();
+        StartAutoHint();
+    }
+
+    private IEnumerator AutoHintCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(autoHintDelay);
+
+            // Only show hint if no swap is currently happening and the game allows moves
+            if (!isSwapping && RoundManager.Instance.CanMakeMove)
+            {
+                ShowBestSwap();
+            }
+        }
     }
 }

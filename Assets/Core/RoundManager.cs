@@ -42,10 +42,19 @@ public class RoundManager : Singleton<RoundManager>
 
         DeckManager.Instance.ShuffleDeck();
         BoardManager.Instance.GenerateBoard();
+
+        // Start auto-hint functionality
+        BoardManager.Instance.StartAutoHint();
+
+        var bestSwap = BoardManager.Instance.GetBestSwap();
+        Debug.Log($"Swap: {bestSwap[0].X}, {bestSwap[0].Y} -> {bestSwap[1].X}, {bestSwap[1].Y}");
     }
 
     public void OnTileSwapped()
     {
+        // Reset auto-hint timer when a successful move is made
+        BoardManager.Instance.ResetAutoHintTimer();
+
         StartCoroutine(ScoreBoard());
     }
 
