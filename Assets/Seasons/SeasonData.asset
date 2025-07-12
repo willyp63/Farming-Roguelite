@@ -13,23 +13,33 @@ MonoBehaviour:
   m_Name: SeasonData
   m_EditorClassIdentifier: 
   seasonInfos:
-  - season: 0
-    name: Spring
-    color: {r: 0.4, g: 0.6, b: 0.3, a: 1}
-    symbol: {fileID: 762253879, guid: b663bf1258f262040a853575ab7a1344, type: 3}
   - season: 1
-    name: Summer
-    color: {r: 0.8, g: 0.7, b: 0.2, a: 1}
-    symbol: {fileID: 2118872830, guid: b663bf1258f262040a853575ab7a1344, type: 3}
+    name: Spring
+    color: {r: 0.4, g: 0.6, b: 0.2, a: 1}
+    symbolSprite: {fileID: 1926852099, guid: c59565773fccebe46b26784808e79137, type: 3}
+    tileFrameSprite: {fileID: -1472961972, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
   - season: 2
-    name: Autumn
-    color: {r: 0.7, g: 0.4, b: 0.4, a: 1}
-    symbol: {fileID: -1079359574, guid: b663bf1258f262040a853575ab7a1344, type: 3}
+    name: Summer
+    color: {r: 0.8, g: 0.7, b: 0.1, a: 1}
+    symbolSprite: {fileID: 1203598754, guid: c59565773fccebe46b26784808e79137, type: 3}
+    tileFrameSprite: {fileID: -564778226, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
   - season: 3
-    name: Winter
-    color: {r: 0.4, g: 0.6, b: 0.8, a: 1}
-    symbol: {fileID: -1291622809, guid: b663bf1258f262040a853575ab7a1344, type: 3}
+    name: Autumn
+    color: {r: 0.7, g: 0.3, b: 0.4, a: 1}
+    symbolSprite: {fileID: 591382309, guid: c59565773fccebe46b26784808e79137, type: 3}
+    tileFrameSprite: {fileID: -1994343144, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
   - season: 4
-    name: 
-    color: {r: 0.55, g: 0.55, b: 0.55, a: 1}
-    symbol: {fileID: 0}
+    name: Winter
+    color: {r: 0.3, g: 0.6, b: 0.8, a: 1}
+    symbolSprite: {fileID: 758768260, guid: c59565773fccebe46b26784808e79137, type: 3}
+    tileFrameSprite: {fileID: 1694199851, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
+  - season: 5
+    name: Death
+    color: {r: 0.33, g: 0.33, b: 0.33, a: 1}
+    symbolSprite: {fileID: 0}
+    tileFrameSprite: {fileID: 1694199851, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}
+  - season: 6
+    name: Death
+    color: {r: 1, g: 1, b: 1, a: 1}
+    symbolSprite: {fileID: 0}
+    tileFrameSprite: {fileID: 1694199851, guid: 3b8c7a5bf952d37448148fc4980e0a4f, type: 3}

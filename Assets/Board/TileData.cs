@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum GridTileType
+public enum TileType
 {
     None,
     Crop,
@@ -8,8 +8,8 @@ public enum GridTileType
     Building,
 }
 
-[CreateAssetMenu(fileName = "GridTileData", menuName = "Farming Roguelike/Grid Tile Data")]
-public class GridTileData : ScriptableObject
+[CreateAssetMenu(fileName = "TileData", menuName = "Farming Roguelike/Tile Data")]
+public class TileData : ScriptableObject
 {
     [SerializeField]
     private string tileName;
@@ -20,8 +20,8 @@ public class GridTileData : ScriptableObject
     public GameObject ObjectPrefab => objectPrefab;
 
     [SerializeField]
-    private GridTileType type = GridTileType.None;
-    public GridTileType Type => type;
+    private TileType type = TileType.None;
+    public TileType Type => type;
 
     [SerializeField]
     private SeasonType season = SeasonType.None;

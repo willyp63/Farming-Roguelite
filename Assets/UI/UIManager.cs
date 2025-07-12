@@ -15,16 +15,9 @@ public class UIManager : Singleton<UIManager>
 
     public void Start()
     {
-        PlayerManager.Instance.OnMoneyChanged.AddListener(OnMoneyChanged);
         RoundManager.Instance.OnScoreChange.AddListener(OnScoreChanged);
 
-        OnMoneyChanged();
         OnScoreChanged();
-    }
-
-    private void OnMoneyChanged()
-    {
-        moneyText.text = $"${PlayerManager.Instance.CurrentMoney}";
     }
 
     private void OnScoreChanged()

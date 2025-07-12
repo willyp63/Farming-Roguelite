@@ -22,42 +22,71 @@ public class RoundManager : Singleton<RoundManager>
     public int NumMovesUsed => numMovesUsed;
     public int NumMovesLeft => maxNumMoves - numMovesUsed;
 
-    private bool canMakeMove = false;
-    public bool CanMakeMove => canMakeMove;
+    private bool isScoring = false;
+    public bool IsScoring => isScoring;
+
+    public bool CanMakeMove => !isScoring && !BoardManager.Instance.IsSwapping;
 
     [NonSerialized]
     public UnityEvent OnScoreChange = new();
+
+    private void Start()
+    {
+        BoardManager.Instance.OnTileSwapped.AddListener(OnTileSwapped);
+    }
 
     public void StartRound()
     {
         score = 0;
         numMovesUsed = 0;
-        canMakeMove = false;
 
-        GridManager.Instance.GenerateGrid(PlayerManager.Instance.Tiles);
-
-        canMakeMove = true;
-
-        Debug.Log($"New round started.");
+        DeckManager.Instance.ShuffleDeck();
+        BoardManager.Instance.GenerateBoard();
     }
 
-    public IEnumerator ScoreGrid()
+    public void OnTileSwapped()
     {
-        var matches = GridManager.Instance.FindMatches();
+        StartCoroutine(ScoreBoard());
+    }
+
+    public IEnumerator ScoreBoard()
+    {
+        isScoring = true;
+
+        var matches = BoardManager.Instance.FindMatches();
         while (matches.Count > 0)
         {
-            // TODO: score matches
+            // Score matches
+            foreach (var match in matches)
+            {
+                int matchScore = 0;
+                foreach (var tile in match)
+                {
+                    matchScore += tile.PointScore;
+                }
 
-            // TODO: flatten matches
-            List<GridTile> allMatchingTiles = new List<GridTile>();
+                // Bonus for longer matches
+                if (match.Count > 3)
+                {
+                    matchScore *= match.Count - 2; // 4 tiles = 2x, 5 tiles = 3x, etc.
+                }
 
-            yield return GridManager.Instance.RemoveTiles(
-                allMatchingTiles,
-                PlayerManager.Instance.Tiles
-            );
+                AddScore(matchScore);
+            }
 
-            matches = GridManager.Instance.FindMatches();
+            // Flatten matches into single list
+            List<BoardTile> allMatchingTiles = new List<BoardTile>();
+            foreach (var match in matches)
+            {
+                allMatchingTiles.AddRange(match);
+            }
+
+            yield return StartCoroutine(BoardManager.Instance.RemoveTiles(allMatchingTiles));
+
+            matches = BoardManager.Instance.FindMatches();
         }
+
+        isScoring = false;
     }
 
     public void AddScore(int amount)
