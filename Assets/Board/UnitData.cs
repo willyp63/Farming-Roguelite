@@ -11,6 +11,10 @@ public class UnitData : ScriptableObject
     public string UnitName => unitName;
 
     [SerializeField]
+    private Sprite image;
+    public Sprite Image => image;
+
+    [SerializeField]
     private GameObject unitPrefab;
     public GameObject UnitPrefab => unitPrefab;
 

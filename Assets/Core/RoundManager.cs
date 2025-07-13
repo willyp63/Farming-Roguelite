@@ -8,10 +8,6 @@ public class RoundManager : Singleton<RoundManager>
 {
     [Header("Game Settings")]
     [SerializeField]
-    private int requiredScore = 100;
-    public int RequiredScore => requiredScore;
-
-    [SerializeField]
     private bool isBotPlaying = false;
     public bool IsBotPlaying => isBotPlaying;
 
@@ -21,6 +17,9 @@ public class RoundManager : Singleton<RoundManager>
 
     private int numMoves = 0;
     public int NumMoves => numMoves;
+
+    private int requiredScore = 100;
+    public int RequiredScore => requiredScore;
 
     private int score = 0;
     public int Score => score;
@@ -33,16 +32,21 @@ public class RoundManager : Singleton<RoundManager>
     [NonSerialized]
     public UnityEvent OnScoreChange = new();
 
+    [NonSerialized]
+    public UnityEvent OnRoundEnd = new();
+
     private void Start()
     {
         BoardManager.Instance.OnTileSwapped.AddListener(OnTileSwapped);
     }
 
-    public void StartRound()
+    public void StartRound(int requiredScore)
     {
-        score = 0;
+        this.requiredScore = requiredScore;
+        SetScore(0);
 
         EnergyManager.Instance.ResetAllEnergy();
+        DeckManager.Instance.ResetDeck();
         DeckManager.Instance.ShuffleDeck();
         BoardManager.Instance.GenerateBoard();
 
@@ -58,8 +62,6 @@ public class RoundManager : Singleton<RoundManager>
             // Start bot gameplay
             MakeBotMove();
         }
-
-        var bestSwap = BoardManager.Instance.GetBestSwap();
     }
 
     public void OnTileSwapped()
@@ -133,6 +135,12 @@ public class RoundManager : Singleton<RoundManager>
         }
 
         isScoring = false;
+
+        if (score >= requiredScore)
+        {
+            OnRoundEnd?.Invoke();
+            yield break;
+        }
 
         // If bot is playing, continue with next move after scoring is complete
         if (isBotPlaying)

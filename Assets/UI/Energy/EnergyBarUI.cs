@@ -18,6 +18,7 @@ public class EnergyBarUI : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI energyText;
 
+    [SerializeField]
     private ShakeBehavior shakeBehavior;
 
     private int maxEnergy;
@@ -38,8 +39,6 @@ public class EnergyBarUI : MonoBehaviour
         barFillImage.color = seasonInfo.color;
         energyText.color = seasonInfo.color;
         symbolImage.sprite = seasonInfo.symbolSprite;
-
-        shakeBehavior = GetComponent<ShakeBehavior>();
     }
 
     public void SetEnergy(int energy)

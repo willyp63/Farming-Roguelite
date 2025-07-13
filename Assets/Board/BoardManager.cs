@@ -68,12 +68,22 @@ public class BoardManager : Singleton<BoardManager>
     [NonSerialized]
     public UnityEvent OnTileSwapped = new();
 
+    public void ShowBoard()
+    {
+        boardContainer.gameObject.SetActive(true);
+    }
+
+    public void HideBoard()
+    {
+        boardContainer.gameObject.SetActive(false);
+    }
+
     public void GenerateBoard()
     {
-        if (DeckManager.Instance.DeckTiles.Count < TotalNumTiles)
+        if (DeckManager.Instance.CurrentDeckTiles.Count < TotalNumTiles)
         {
             Debug.LogError(
-                $"Can not generate a {BoardWidth}x{BoardHeight} board with {DeckManager.Instance.DeckTiles.Count} tiles! (needs {TotalNumTiles})"
+                $"Can not generate a {BoardWidth}x{BoardHeight} board with {DeckManager.Instance.CurrentDeckTiles.Count} tiles! (needs {TotalNumTiles})"
             );
             return;
         }
@@ -123,7 +133,7 @@ public class BoardManager : Singleton<BoardManager>
 
     private DeckTile DrawTileAvoidingMatches(int x, int y)
     {
-        var deckTiles = DeckManager.Instance.DeckTiles;
+        var deckTiles = DeckManager.Instance.CurrentDeckTiles;
         List<DeckTile> availableDeckTiles = new List<DeckTile>();
 
         // Check each tile in the deck to see if it would create a match
@@ -205,10 +215,11 @@ public class BoardManager : Singleton<BoardManager>
         Vector3 worldPos = GetWorldPosition(x, y);
         BoardTile newTile = Instantiate(
             boardTilePrefab,
-            worldPos,
+            Vector3.zero,
             Quaternion.identity,
             boardContainer
         );
+        newTile.transform.localPosition = worldPos;
         newTile.Initialize(x, y, deckTile);
         board[x, y] = newTile;
     }

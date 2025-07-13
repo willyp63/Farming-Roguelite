@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Dead Tree
   m_EditorClassIdentifier: 
   unitName: Dead Tree
+  image: {fileID: 21300000, guid: feb07654a378f2c429e8116da0d868eb, type: 3}
   unitPrefab: {fileID: 5468548096946929137, guid: 334497c99d436a24f984420dfa2103ed, type: 3}
   text: A dead tree
   seasonTypes: 05000000
-  pointScore: 100
+  pointScore: 50

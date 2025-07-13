@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Summer Tree
   m_EditorClassIdentifier: 
   unitName: Summer Tree
+  image: {fileID: 21300000, guid: adeb6826ccea500479678bed72fb3956, type: 3}
   unitPrefab: {fileID: 5468548096946929137, guid: 08e140135b5d3554fb5ce8ab740ade0c, type: 3}
   text: A basic tree
   seasonTypes: 02000000

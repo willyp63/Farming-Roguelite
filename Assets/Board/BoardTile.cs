@@ -22,6 +22,8 @@ public class BoardTile : MonoBehaviour
     private ShakeBehavior shakeBehavior;
     private bool isDragging = false;
     private Vector3 dragStartPosition;
+    private bool isDraggable;
+    private bool isClickEnabled = false;
 
     // Properties
     public int X => x;
@@ -30,7 +32,7 @@ public class BoardTile : MonoBehaviour
     public SeasonType Season => deckTile.Season;
     public Vector2Int Position => new Vector2Int(x, y);
 
-    public void Initialize(int xPos, int yPos, DeckTile deckTile)
+    public void Initialize(int xPos, int yPos, DeckTile deckTile, bool isDraggable = true)
     {
         shakeBehavior = GetComponent<ShakeBehavior>();
         tooltipTrigger = GetComponent<TooltipTrigger>();
@@ -38,8 +40,14 @@ public class BoardTile : MonoBehaviour
         SetPosition(xPos, yPos);
 
         this.deckTile = deckTile;
+        this.isDraggable = isDraggable;
 
         UpdateVisual();
+    }
+
+    public void SetClickEnabled(bool enabled)
+    {
+        isClickEnabled = enabled;
     }
 
     public void SetPosition(int xPos, int yPos)
@@ -72,7 +80,14 @@ public class BoardTile : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (!RoundManager.Instance.CanMakeMove)
+        // Handle click for deck selection mode
+        if (isClickEnabled)
+        {
+            DeckBoardManager.Instance.OnTileClicked(this);
+            return;
+        }
+
+        if (!RoundManager.Instance.CanMakeMove || !isDraggable)
             return;
 
         isDragging = true;
@@ -147,7 +162,7 @@ public class BoardTile : MonoBehaviour
         return (deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1);
     }
 
-    private void UpdateVisual()
+    public void UpdateVisual()
     {
         if (tooltipTrigger != null)
         {

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Spring Tree
   m_EditorClassIdentifier: 
   unitName: Spring Tree
+  image: {fileID: 21300000, guid: 7575eef1eb86b2849bfad9c589720d80, type: 3}
   unitPrefab: {fileID: 5468548096946929137, guid: b302279fa31c3494f8528affebb18bb4, type: 3}
   text: A basic tree
   seasonTypes: 01000000

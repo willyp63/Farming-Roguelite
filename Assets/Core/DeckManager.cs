@@ -28,7 +28,10 @@ public class DeckManager : Singleton<DeckManager>
     private List<DeckTile> deckTiles = new();
     public List<DeckTile> DeckTiles => deckTiles;
 
-    public void ResetDeck()
+    private List<DeckTile> currentDeckTiles = new();
+    public List<DeckTile> CurrentDeckTiles => currentDeckTiles;
+
+    public void Initialize()
     {
         deckTiles.Clear();
 
@@ -63,40 +66,58 @@ public class DeckManager : Singleton<DeckManager>
                 }
             }
         }
+
+        deckTiles.Sort(
+            (a, b) =>
+            {
+                int seasonCompare = a.Season.CompareTo(b.Season);
+                if (seasonCompare != 0)
+                    return seasonCompare;
+                return a.IsEmpty.CompareTo(b.IsEmpty);
+            }
+        );
+
+        ResetDeck();
+    }
+
+    public void ResetDeck()
+    {
+        currentDeckTiles.Clear();
+        currentDeckTiles = new List<DeckTile>(deckTiles);
     }
 
     public void ShuffleDeck()
     {
         // Fisher-Yates shuffle algorithm
-        for (int i = deckTiles.Count - 1; i > 0; i--)
+        for (int i = currentDeckTiles.Count - 1; i > 0; i--)
         {
             int randomIndex = UnityEngine.Random.Range(0, i + 1);
-            DeckTile temp = deckTiles[i];
-            deckTiles[i] = deckTiles[randomIndex];
-            deckTiles[randomIndex] = temp;
+            DeckTile temp = currentDeckTiles[i];
+            currentDeckTiles[i] = currentDeckTiles[randomIndex];
+            currentDeckTiles[randomIndex] = temp;
         }
     }
 
     public void AddDeckTile(DeckTile deckTile)
     {
-        deckTiles.Add(deckTile);
+        currentDeckTiles.Add(deckTile);
     }
 
     public void RemoveDeckTile(DeckTile deckTile)
     {
-        deckTiles.Remove(deckTile);
+        currentDeckTiles.Remove(deckTile);
     }
 
     public DeckTile DrawTileFromTop()
     {
-        if (deckTiles.Count == 0)
+        if (currentDeckTiles.Count == 0)
         {
             Debug.LogWarning("Cannot draw tile from empty deck!");
             return null;
         }
 
-        DeckTile drawnTile = deckTiles[0];
-        deckTiles.RemoveAt(0);
+        DeckTile drawnTile = currentDeckTiles[0];
+        currentDeckTiles.RemoveAt(0);
         return drawnTile;
     }
 }

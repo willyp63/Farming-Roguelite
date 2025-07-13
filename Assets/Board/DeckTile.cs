@@ -7,6 +7,7 @@ public class DeckTile
 
     private DeckUnit unit = null;
     public DeckUnit Unit => unit;
+    public bool IsEmpty => unit == null;
 
     public int PointScore => unit == null ? UnitData.DEFAULT_POINT_SCORE : unit.PointScore;
 

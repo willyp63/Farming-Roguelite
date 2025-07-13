@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
-    [Header("Text Elements")]
     [SerializeField]
     private TextMeshProUGUI requiredScoreText;
 
@@ -17,6 +18,21 @@ public class UIManager : Singleton<UIManager>
     [SerializeField]
     private Transform energyBarContainer;
 
+    [SerializeField]
+    private GameObject chooseUnitPanel;
+
+    [SerializeField]
+    private List<UnitButtonUI> chooseUnitButtons;
+
+    [SerializeField]
+    private Button skipChoosingUnitButton;
+
+    [System.NonSerialized]
+    public UnityEvent<UnitData> onUnitSelected = new();
+
+    [System.NonSerialized]
+    public UnityEvent onSkipUnitSelection = new();
+
     private List<EnergyBarUI> energyBars = new List<EnergyBarUI>();
 
     public void Start()
@@ -26,6 +42,59 @@ public class UIManager : Singleton<UIManager>
 
         CreateEnergyBars();
         OnScoreChanged();
+    }
+
+    public void ShowChooseUnitUI()
+    {
+        // Get 3 random units from the UnitManager
+        List<UnitData> randomUnits = UnitManager.Instance.GetRandomUnits(3);
+
+        // Initialize the UnitButtons and show the panel
+        for (int i = 0; i < chooseUnitButtons.Count && i < randomUnits.Count; i++)
+        {
+            chooseUnitButtons[i].gameObject.SetActive(true);
+            chooseUnitButtons[i].Initialize(randomUnits[i]);
+            chooseUnitButtons[i].onPress.AddListener(OnUnitButtonPressed);
+        }
+
+        // Hide any unused buttons
+        for (int i = randomUnits.Count; i < chooseUnitButtons.Count; i++)
+        {
+            chooseUnitButtons[i].gameObject.SetActive(false);
+        }
+
+        // Setup skip button
+        skipChoosingUnitButton.onClick.RemoveAllListeners();
+        skipChoosingUnitButton.onClick.AddListener(OnSkipButtonPressed);
+
+        // Show the panel
+        chooseUnitPanel.SetActive(true);
+    }
+
+    public void HideChooseUnitUI()
+    {
+        chooseUnitPanel.SetActive(false);
+
+        // Remove listeners to prevent memory leaks
+        foreach (var button in chooseUnitButtons)
+        {
+            if (button != null)
+            {
+                button.onPress.RemoveAllListeners();
+            }
+        }
+    }
+
+    private void OnUnitButtonPressed(UnitData unitData)
+    {
+        HideChooseUnitUI();
+        onUnitSelected?.Invoke(unitData);
+    }
+
+    private void OnSkipButtonPressed()
+    {
+        HideChooseUnitUI();
+        onSkipUnitSelection?.Invoke();
     }
 
     private void OnScoreChanged()

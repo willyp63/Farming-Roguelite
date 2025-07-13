@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Autumn Tree
   m_EditorClassIdentifier: 
   unitName: Autumn Tree
+  image: {fileID: 21300000, guid: 47b2bf9815eeea64fbaa30d58d72da57, type: 3}
   unitPrefab: {fileID: 5468548096946929137, guid: a216ab369474359418489e91d02e8963, type: 3}
   text: A basic tree
   seasonTypes: 03000000

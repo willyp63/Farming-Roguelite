@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Winter Tree
   m_EditorClassIdentifier: 
   unitName: Winter Tree
+  image: {fileID: 21300000, guid: f34d5aec8602e334c8b62bfe2281c20d, type: 3}
   unitPrefab: {fileID: 5468548096946929137, guid: eb26748714db54848ad236924575c0b7, type: 3}
   text: A basic tree
   seasonTypes: 04000000
