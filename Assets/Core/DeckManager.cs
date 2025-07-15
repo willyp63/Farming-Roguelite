@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -27,6 +28,9 @@ public class DeckManager : Singleton<DeckManager>
 
     private List<DeckTile> deckTiles = new();
     public List<DeckTile> DeckTiles => deckTiles;
+
+    private List<DeckTile> deadDeckTiles = new();
+    public List<DeckTile> DeadDeckTiles => deadDeckTiles;
 
     private List<DeckTile> currentDeckTiles = new();
     public List<DeckTile> CurrentDeckTiles => currentDeckTiles;
@@ -67,6 +71,9 @@ public class DeckManager : Singleton<DeckManager>
             }
         }
 
+        deadDeckTiles = new List<DeckTile>(deckTiles.Where(tile => tile.Season == SeasonType.Dead));
+
+        deckTiles.RemoveAll(tile => tile.Season == SeasonType.Dead);
         deckTiles.Sort(
             (a, b) =>
             {
@@ -80,10 +87,18 @@ public class DeckManager : Singleton<DeckManager>
         ResetDeck();
     }
 
+    public List<DeckTile> GetFullDeck()
+    {
+        List<DeckTile> fullDeck = new List<DeckTile>(deckTiles);
+        fullDeck.AddRange(deadDeckTiles);
+        return fullDeck;
+    }
+
     public void ResetDeck()
     {
         currentDeckTiles.Clear();
-        currentDeckTiles = new List<DeckTile>(deckTiles);
+        currentDeckTiles.AddRange(deckTiles);
+        currentDeckTiles.AddRange(deadDeckTiles);
     }
 
     public void ShuffleDeck()

@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    [SerializeField]
+    private int requiredScore = 100000;
+
     private bool isShowingDeck = false;
 
     private int round = 0;
@@ -63,8 +66,7 @@ public class GameManager : Singleton<GameManager>
         DeckBoardManager.Instance.HideDeck();
 
         // Start the next round
-        int requiredScore = 300 + round * 100;
-        RoundManager.Instance.StartRound(requiredScore);
+        RoundManager.Instance.StartRound(requiredScore + round * 250);
         BoardManager.Instance.ShowBoard();
     }
 

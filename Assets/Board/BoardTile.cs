@@ -57,6 +57,27 @@ public class BoardTile : MonoBehaviour
         GetComponent<SortingGroup>().sortingOrder = yPos * -10;
     }
 
+    public void SetInactive(bool isInactive)
+    {
+        foreach (var spriteRenderer in unitContainer.GetComponentsInChildren<SpriteRenderer>())
+        {
+            spriteRenderer.color = isInactive ? new Color(0.33f, 0.33f, 0.33f, 1f) : Color.white;
+        }
+
+        SeasonInfo seasonInfo = SeasonManager.GetSeasonInfo(Season);
+        if (seasonInfo != null)
+        {
+            frameImage.color = isInactive
+                ? new Color(
+                    seasonInfo.color.r / 3f,
+                    seasonInfo.color.g / 3f,
+                    seasonInfo.color.b / 3f,
+                    1f
+                )
+                : seasonInfo.color;
+        }
+    }
+
     public void Shake()
     {
         if (shakeBehavior != null)
@@ -128,7 +149,7 @@ public class BoardTile : MonoBehaviour
 
         BoardManager.Instance.EnableTooltips();
 
-        if (targetTile != null && targetTile != this && IsAdjacent(targetTile))
+        if (targetTile != null && targetTile != this)
         {
             // Try to swap with adjacent tile
             BoardManager.Instance.TrySwapTiles(this, targetTile);
@@ -151,15 +172,6 @@ public class BoardTile : MonoBehaviour
         }
 
         return null;
-    }
-
-    private bool IsAdjacent(BoardTile other)
-    {
-        int deltaX = Mathf.Abs(x - other.X);
-        int deltaY = Mathf.Abs(y - other.Y);
-
-        // Adjacent means sharing an edge (not diagonal)
-        return (deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1);
     }
 
     public void UpdateVisual()

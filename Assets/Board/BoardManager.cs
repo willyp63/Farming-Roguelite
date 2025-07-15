@@ -416,11 +416,16 @@ public class BoardManager : Singleton<BoardManager>
         if (tileA == null || tileB == null)
             yield break;
 
-        // Check if tiles are adjacent
+        // Check if tiles are adjacent (including diagonal)
         int deltaX = Mathf.Abs(tileA.X - tileB.X);
         int deltaY = Mathf.Abs(tileA.Y - tileB.Y);
 
-        if ((deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1))
+        // Allow adjacent tiles (horizontal/vertical) and diagonal tiles
+        if (
+            (deltaX == 1 && deltaY == 0)
+            || (deltaX == 0 && deltaY == 1)
+            || (deltaX == 1 && deltaY == 1)
+        )
         {
             // Stop any current hint animation when player makes a move
             StopHintAnimation();
@@ -674,11 +679,15 @@ public class BoardManager : Singleton<BoardManager>
 
                 BoardTile currentTile = board[x, y];
 
-                // Check all 4 adjacent positions
-                CheckAdjacentSwap(currentTile, x + 1, y, validSwaps, swapKeys);
-                CheckAdjacentSwap(currentTile, x - 1, y, validSwaps, swapKeys);
-                CheckAdjacentSwap(currentTile, x, y + 1, validSwaps, swapKeys);
-                CheckAdjacentSwap(currentTile, x, y - 1, validSwaps, swapKeys);
+                // Check all 8 adjacent positions (including diagonal)
+                CheckAdjacentSwap(currentTile, x + 1, y, validSwaps, swapKeys); // Right
+                CheckAdjacentSwap(currentTile, x - 1, y, validSwaps, swapKeys); // Left
+                CheckAdjacentSwap(currentTile, x, y + 1, validSwaps, swapKeys); // Up
+                CheckAdjacentSwap(currentTile, x, y - 1, validSwaps, swapKeys); // Down
+                CheckAdjacentSwap(currentTile, x + 1, y + 1, validSwaps, swapKeys); // Top-right
+                CheckAdjacentSwap(currentTile, x + 1, y - 1, validSwaps, swapKeys); // Bottom-right
+                CheckAdjacentSwap(currentTile, x - 1, y + 1, validSwaps, swapKeys); // Top-left
+                CheckAdjacentSwap(currentTile, x - 1, y - 1, validSwaps, swapKeys); // Bottom-left
             }
         }
 

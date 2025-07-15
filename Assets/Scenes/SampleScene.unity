@@ -1083,7 +1083,6 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
-  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1178,7 +1177,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 4.21875
+  orthographic size: 5.625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1209,30 +1208,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &519420033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ComponentVersion: 1
-  m_AssetsPPU: 128
-  m_RefResolutionX: 1920
-  m_RefResolutionY: 1080
-  m_CropFrame: 0
-  m_GridSnapping: 0
-  m_FilterMode: 0
-  m_UpscaleRT: 0
-  m_PixelSnapping: 0
-  m_CropFrameX: 0
-  m_CropFrameY: 0
-  m_StretchFill: 0
 --- !u!1 &561405882
 GameObject:
   m_ObjectHideFlags: 0
@@ -3134,7 +3109,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 424611207349370158, guid: 2d66a93462a55b3449f0629dc19457cb, type: 3}
       propertyPath: padding
-      value: 0.015625
+      value: 0.3125
+      objectReference: {fileID: 0}
+    - target: {fileID: 424611207349370158, guid: 2d66a93462a55b3449f0629dc19457cb, type: 3}
+      propertyPath: boardWidth
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 424611207349370158, guid: 2d66a93462a55b3449f0629dc19457cb, type: 3}
+      propertyPath: boardHeight
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 424611207349370158, guid: 2d66a93462a55b3449f0629dc19457cb, type: 3}
       propertyPath: boardContainer
@@ -3492,23 +3475,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9208405872701316335, guid: ad77d05d7f7b21049bc9ae1d8efec6f1, type: 3}
       propertyPath: initialTileQuantities.Array.data[0].quantity
-      value: 12
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9208405872701316335, guid: ad77d05d7f7b21049bc9ae1d8efec6f1, type: 3}
       propertyPath: initialTileQuantities.Array.data[1].quantity
-      value: 12
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9208405872701316335, guid: ad77d05d7f7b21049bc9ae1d8efec6f1, type: 3}
       propertyPath: initialTileQuantities.Array.data[2].quantity
-      value: 12
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9208405872701316335, guid: ad77d05d7f7b21049bc9ae1d8efec6f1, type: 3}
       propertyPath: initialTileQuantities.Array.data[3].quantity
-      value: 12
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9208405872701316335, guid: ad77d05d7f7b21049bc9ae1d8efec6f1, type: 3}
       propertyPath: initialTileQuantities.Array.data[4].quantity
-      value: 12
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9208405872701316335, guid: ad77d05d7f7b21049bc9ae1d8efec6f1, type: 3}
       propertyPath: initialUnitQuantities.Array.data[0].quantity
@@ -3804,7 +3787,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7521208293292681469, guid: ff9007b5928f8774c83577a4555dcfd0, type: 3}
       propertyPath: botMoveDelay
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7521208293292681469, guid: ff9007b5928f8774c83577a4555dcfd0, type: 3}
       propertyPath: isBotPlaying
@@ -4080,6 +4063,10 @@ PrefabInstance:
     - target: {fileID: 5894231442061888764, guid: ca24ea658a60fe3428a04e4fe0603c91, type: 3}
       propertyPath: swapSpeed
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5894231442061888764, guid: ca24ea658a60fe3428a04e4fe0603c91, type: 3}
+      propertyPath: boardWidth
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5894231442061888764, guid: ca24ea658a60fe3428a04e4fe0603c91, type: 3}
       propertyPath: gridHeight

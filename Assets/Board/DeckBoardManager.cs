@@ -124,10 +124,11 @@ public class DeckBoardManager : Singleton<DeckBoardManager>
 
     private void GenerateBoard()
     {
-        if (DeckManager.Instance.DeckTiles.Count < TotalNumTiles)
+        var fullDeck = DeckManager.Instance.GetFullDeck();
+        if (fullDeck.Count < TotalNumTiles)
         {
             Debug.LogError(
-                $"Can not generate a {BoardWidth}x{BoardHeight} board with {DeckManager.Instance.DeckTiles.Count} tiles! (needs {TotalNumTiles})"
+                $"Can not generate a {BoardWidth}x{BoardHeight} board with {fullDeck.Count} tiles! (needs {TotalNumTiles})"
             );
             return;
         }
@@ -140,17 +141,16 @@ public class DeckBoardManager : Singleton<DeckBoardManager>
 
         // Create tiles by drawing from the deck in order
         int index = 0;
-        for (int x = 0; x < boardWidth; x += 2)
+        for (int y = 0; y < boardHeight; y++)
         {
-            for (int y = boardHeight - 1; y >= 0; y--)
+            for (int x = 0; x < boardWidth; x++)
             {
-                for (int z = 0; z < 2; z++)
-                {
-                    DeckTile deckTile = DeckManager.Instance.DeckTiles[index];
-                    index++;
+                DeckTile deckTile = fullDeck[index];
+                index++;
 
-                    CreateTileAt(x + z, y, deckTile);
-                }
+                bool isInCurrentDeck = DeckManager.Instance.CurrentDeckTiles.Contains(deckTile);
+
+                CreateTileAt(x, y, deckTile, isInCurrentDeck);
             }
         }
     }
@@ -181,7 +181,7 @@ public class DeckBoardManager : Singleton<DeckBoardManager>
         }
     }
 
-    private void CreateTileAt(int x, int y, DeckTile deckTile)
+    private void CreateTileAt(int x, int y, DeckTile deckTile, bool isInCurrentDeck)
     {
         Vector3 worldPos = GetWorldPosition(x, y);
         BoardTile newTile = Instantiate(
@@ -193,15 +193,21 @@ public class DeckBoardManager : Singleton<DeckBoardManager>
         newTile.transform.localPosition = worldPos;
         newTile.Initialize(x, y, deckTile, false);
         board[x, y] = newTile;
+
+        // Apply gray color to all sprite renderers if tile is not in current deck
+        if (!isInCurrentDeck)
+        {
+            newTile.SetInactive(true);
+        }
     }
 
     public Vector3 GetWorldPosition(int boardXPos, int boardYPos)
     {
-        float boardWidthSize = boardWidth * (tileSize + padding);
-        float boardHeightSize = boardHeight * (tileSize + padding);
+        float boardWidthSize = boardWidth * tileSize;
+        float boardHeightSize = boardHeight * tileSize;
         return new Vector3(
-            boardXPos * (tileSize + padding) - boardWidthSize / 2 + tileSize / 2 + padding / 2,
-            boardYPos * (tileSize + padding) - boardHeightSize / 2 + tileSize / 2 + padding / 2,
+            boardXPos * tileSize - boardWidthSize / 2 + tileSize / 2,
+            boardYPos * tileSize - boardHeightSize / 2 + tileSize / 2,
             0f
         );
     }
